@@ -1,0 +1,151 @@
+@import "tailwindcss";
+
+/* Configuration des couleurs et polices personnalisées selon la charte WAC */
+@theme {
+  /* Couleurs primaires */
+  --color-primary-green: #265335;
+  --color-primary-beige: #F5ECE5;
+
+  /* Couleurs secondaires */
+  --color-secondary-orange: #F67931;
+  --color-secondary-beige: #B19580;
+  --color-secondary-beige-light: #E6D5C7;
+
+  /* Familles de polices - Déclaration pour Tailwind v4 */
+  --font-syne: var(--font-syne), sans-serif;
+  --font-roboto: var(--font-roboto), sans-serif;
+}
+
+/* Configuration typographique selon la charte */
+@layer base {
+  /* Fix horizontal scroll on mobile */
+  html, body {
+    overflow-x: hidden;
+    max-width: 100%;
+  }
+
+  /* Titres: SYNE Bold, majuscules, interlettrage -6% */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-syne);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: -0.06em;
+  }
+
+  /* Textes courants: Roboto, minuscules, interlignage +30% */
+  p, li, a, span {
+    font-family: var(--font-roboto);
+    line-height: 1.3;
+  }
+
+  body {
+    background-color: var(--color-primary-beige);
+    color: var(--color-primary-green);
+    font-family: var(--font-roboto);
+  }
+}
+
+@layer components {
+  /* Boutons stylisés selon la charte */
+  .btn-primary {
+    background-color: var(--color-primary-green);
+    color: var(--color-primary-beige);
+    padding: 0.75rem 1.5rem;
+    font-family: var(--font-syne);
+    font-weight: 700;
+    text-transform: uppercase;
+    transition: all 0.3s;
+  }
+
+  .btn-primary:hover {
+    opacity: 0.9;
+  }
+
+  .btn-secondary {
+    background-color: var(--color-secondary-orange);
+    color: var(--color-primary-beige);
+    padding: 0.75rem 1.5rem;
+    font-family: var(--font-syne);
+    font-weight: 700;
+    text-transform: uppercase;
+    transition: all 0.3s;
+    position: relative;
+  }
+
+  .btn-secondary::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 12px;
+    height: 12px;
+    background-color: var(--color-primary-green);
+  }
+
+  .btn-secondary:hover {
+    opacity: 0.9;
+  }
+
+  .btn-secondary-small {
+    background-color: var(--color-secondary-orange);
+    color: var(--color-primary-beige);
+    padding: 0.6rem 1.2rem;
+    font-family: var(--font-syne);
+    font-weight: 700;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    transition: all 0.3s;
+    position: relative;
+  }
+
+  .btn-secondary-small::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 8px;
+    height: 8px;
+    background-color: var(--color-primary-green);
+  }
+
+  .btn-secondary-small:hover {
+    opacity: 0.9;
+  }
+
+  .btn-beige {
+    background-color: var(--color-primary-beige);
+    color: var(--color-primary-green);
+    padding: 0.75rem 1.5rem;
+    font-family: var(--font-syne);
+    font-weight: 700;
+    text-transform: uppercase;
+    transition: all 0.3s;
+  }
+
+  .btn-beige:hover {
+    opacity: 0.9;
+  }
+
+  /* Container avec marges */
+  .container-custom {
+    max-width: 80rem;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .container-custom {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .container-custom {
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+  }
+}
