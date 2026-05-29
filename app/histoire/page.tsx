@@ -2,10 +2,63 @@ import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import Link from 'next/link'
 import Image from 'next/image'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: "Notre Histoire - Comment We Are Climbers est né | We Are Climbers",
+  description: "Découvrez l'histoire de Julien, fondateur de We Are Climbers, et comment une tendinite a inspiré la création d'une technologie pensée pour les grimpeurs.",
+  openGraph: {
+    title: "Notre Histoire - Comment We Are Climbers est né",
+    description: "Découvrez l'histoire de Julien, fondateur de We Are Climbers, et comment une tendinite a inspiré la création d'une technologie pensée pour les grimpeurs.",
+    url: "https://www.weareclimbers.fr/histoire",
+  },
+}
 
 export default function Histoire() {
+  const personSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: 'Julien',
+    jobTitle: 'Fondateur',
+    worksFor: {
+      '@type': 'Organization',
+      name: 'We Are Climbers'
+    },
+    description: 'Fondateur de We Are Climbers. Ancien grimpeur blessé par une double tendinite, Julien a créé WAC pour aider les grimpeurs à progresser durablement sans se détruire.',
+    knowsAbout: ['Escalade', 'Analyse physiologique', 'Prévention des blessures', 'Entraînement sportif'],
+    url: 'https://www.weareclimbers.fr/histoire'
+  };
+
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Accueil',
+        item: 'https://www.weareclimbers.fr'
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Histoire',
+        item: 'https://www.weareclimbers.fr/histoire'
+      }
+    ]
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+
       <Header />
 
       <main className="bg-primary-beige">
@@ -403,17 +456,17 @@ export default function Histoire() {
           </div>
         </section>
 
-        {/* LE CROWDFUNDING */}
+        {/* L'ACCÈS ANTICIPÉ */}
         <section className="py-20 md:py-32 bg-primary-green text-primary-beige">
           <div className="container-custom">
             <div className="max-w-4xl mx-auto">
               <h2 className="text-4xl md:text-5xl mb-12 text-center" data-aos="fade-up">
-                LE CROWDFUNDING (MAI 2026)
+                L'ACCÈS ANTICIPÉ EST OUVERT
               </h2>
 
               <div className="space-y-6 font-roboto text-lg md:text-xl leading-relaxed">
                 <p data-aos="fade-up">
-                  En mai 2026, on lance notre campagne de crowdfunding.
+                  La campagne Ulule est lancée, jusqu'au 24 juin.
                 </p>
 
                 <p data-aos="fade-up" data-aos-delay="100">
@@ -482,7 +535,7 @@ export default function Histoire() {
 
               <div className="flex flex-col sm:flex-row gap-6 justify-center" data-aos="fade-up" data-aos-delay="200">
                 <Link
-                  href="/early-access"
+                  href="/rejoins-nous"
                   className="inline-block px-12 py-4 text-xl font-bold hover:scale-105 transition-all relative"
                   style={{
                     fontFamily: 'var(--font-syne)',
@@ -492,11 +545,11 @@ export default function Histoire() {
                   }}
                 >
                   <span className="absolute top-0 right-0 w-3 h-3 bg-primary-green"></span>
-                  RESTER INFORMÉ·E
+                  Rejoindre le mouvement
                 </Link>
 
                 <Link
-                  href="/mission"
+                  href="/pour-qui"
                   className="inline-block px-12 py-4 text-xl font-bold hover:scale-105 transition-all"
                   style={{
                     fontFamily: 'var(--font-syne)',
@@ -505,12 +558,12 @@ export default function Histoire() {
                     textTransform: 'uppercase'
                   }}
                 >
-                  DÉCOUVRE NOTRE MISSION
+                  Découvrir pour qui
                 </Link>
               </div>
 
               <p className="mt-12 font-roboto text-primary-green text-lg italic" data-aos="fade-up" data-aos-delay="300">
-                Campagne de crowdfunding prévue : <strong>Mai 2026</strong>
+                Campagne Ulule en cours, jusqu'au <strong>24 juin 2026</strong>.
               </p>
             </div>
           </div>

@@ -3,22 +3,51 @@ import Footer from '@/components/Footer'
 import Image from 'next/image'
 
 export default function Mission() {
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Accueil',
+        item: 'https://www.weareclimbers.fr'
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Mission',
+        item: 'https://www.weareclimbers.fr/mission'
+      }
+    ]
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+
       <Header />
 
       <main className="bg-primary-beige">
         {/* Hero Section */}
         <section
           className="relative py-32 text-primary-beige overflow-hidden"
-          style={{
-            backgroundImage: 'url(/hero-mission.webp)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center'
-          }}
         >
+          {/* Background Image */}
+          <Image
+            src="/hero-mission.webp"
+            alt="Mission We Are Climbers - Grimper ensemble"
+            fill
+            priority={true}
+            quality={85}
+            sizes="100vw"
+            className="object-cover object-center"
+          />
           {/* Overlay for better text readability */}
-          <div className="absolute inset-0 bg-primary-green opacity-70"></div>
+          <div className="absolute inset-0 bg-primary-green opacity-70 z-0"></div>
 
           <div className="container-custom relative z-10">
             <div className="max-w-4xl mx-auto text-center">

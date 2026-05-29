@@ -30,8 +30,9 @@ export default function Header() {
 
   const navigation = [
     { name: 'Histoire', href: '/histoire' },
-    { name: 'Mission', href: '/mission' },
+    { name: 'Nos grimpeurs', href: '/nos-grimpeurs' },
     { name: 'Capteurs', href: '/capteurs' },
+    { name: 'Boutique', href: '/boutique' },
     { name: 'Contact', href: '/contact' },
   ]
 
@@ -75,7 +76,7 @@ export default function Header() {
                 {item.name}
               </Link>
             ))}
-            <Link href="/early-access" className="btn-secondary-small">
+            <Link href="/rejoins-nous" className="btn-secondary-small">
               Rejoins le mouvement
             </Link>
           </div>
@@ -128,7 +129,7 @@ export default function Header() {
                   {item.name}
                 </Link>
               ))}
-              <Link href="/early-access" className="btn-secondary-small inline-block text-center">
+              <Link href="/rejoins-nous" className="btn-secondary-small inline-block text-center">
                 Rejoins-nous
               </Link>
             </div>

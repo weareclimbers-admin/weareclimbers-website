@@ -63,8 +63,13 @@ export default function NewsletterForm({
               onChange={(e) => setEmail(e.target.value)}
               placeholder={placeholder}
               required
-              className="flex-1 px-6 py-4 text-lg border-0 focus:outline-none focus:ring-2 focus:ring-secondary-orange"
-              style={{ fontFamily: 'var(--font-roboto)' }}
+              className="flex-1 px-6 py-4 text-lg border-2 focus:outline-none focus:ring-2 focus:ring-secondary-orange"
+              style={{
+                fontFamily: 'var(--font-roboto)',
+                backgroundColor: 'var(--color-secondary-beige-light)',
+                borderColor: 'var(--color-secondary-orange)',
+                color: 'var(--color-primary-green)'
+              }}
             />
             <button
               type="submit"
@@ -147,7 +152,7 @@ export default function NewsletterForm({
       </form>
 
       <p className="text-sm mt-3 opacity-75 font-roboto" style={{ color: 'var(--color-primary-green)' }}>
-        En t'inscrivant, tu acceptes de recevoir nos emails sur le crowdfunding. Tu peux te désinscrire à tout moment.
+        En t'inscrivant, tu acceptes de recevoir nos emails sur l'Accès Anticipé et l'avancée du projet. Tu peux te désinscrire à tout moment.
       </p>
     </div>
   )

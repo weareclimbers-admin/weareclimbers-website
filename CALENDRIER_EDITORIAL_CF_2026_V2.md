@@ -1403,49 +1403,99 @@ Et toi, tu bosses sur quoi en ce moment ? 👇
 
 ### Mercredi 12 Février
 
-**LinkedIn - Post court - Annonce collaboration Aurélie**
+**LinkedIn - Post long - Présentation béta testeur Elsa Ravinet**
 
-**Pilier** : Prévention obsessionnelle
+**Pilier** : Communauté bienveillante + Transparence radicale
 
 **Titre :**
 ```
-Fier d'annoncer : Aurélie Dutertre rejoint We Are Climbers 💙
+Elle teste WAC avant même qu'elle soit prête.
 ```
 
 **Contenu :**
 ```
-Grande nouvelle :
+Il y a des gens qui croient dans un projet avant même qu'il existe vraiment.
 
-Aurélie Dutertre, kinésithérapeute spécialisée en escalade, rejoint l'aventure We Are Climbers.
+Elsa Ravinet est l'une d'elles.
 
-Son expertise : prévention des blessures en grimpe.
-Sa mission avec WAC : créer des contenus pour que les grimpeurs progressent longtemps, pas juste fort.
-
-Pourquoi on collabore avec des experts santé ?
-
-Parce qu'une app sans expertise médicale, c'est juste un gadget.
-
-WAC, c'est :
-- Des données physiologiques (bracelet Polar)
-- Une analyse intelligente (algorithmes)
-- Une expertise humaine (kinés, scientifiques)
-
-La tech seule ne suffit pas.
-Il faut l'humain.
-
-Merci Aurélie pour ta confiance. 🙏
-
-Les premiers contenus arrivent en Mars.
+Elle va être l'une des premières à tester WAC.
+Vraiment tester. Pas juste "oh c'est cool".
+Critiquer. Casser. Dire ce qui marche pas.
 
 ---
 
-Aurélie Dutertre : [lien profil si dispo]
+QUI EST ELSA ?
+
+Elle grimpe. Sérieusement.
+
+Athlète de haut niveau. Elle va participer aux Championnat de France.
+
+Le genre de profil qui pourrait aller sur des apps toutes prêtes, toutes polies, toutes "parfaites".
+
+Elle a choisi WAC.
+
+À un stade où WAC n'est pas parfait.
+Où l'app a encore des bugs.
+Où le produit n'est pas fini.
+
+Et ça, ça dit quelque chose.
+
+---
+
+POURQUOI ÇA COMPTE POUR NOUS
+
+On ne cherche pas des gens qui vont valider.
+On cherche des gens qui vont TESTER.
+
+Vraiment.
+
+Et Elsa, c'est exactement ça.
+
+Parce qu'un athlète de ce niveau, ça voit des trucs que les autres voient pas.
+Ça ressent des nuances que les autres ignorent.
+Ça dit la vérité.
+
+Et la vérité, c'est le seul truc qui fait progresser un produit.
+
+---
+
+CE QUE ÇA CHANGE
+
+Elsa va utiliser WAC.
+Elle va nous dire ce qui marche.
+Et ce qui ne marche pas.
+
+Et on va écouter.
+
+Parce que construire WAC sans des grimpeurs comme elle, ça serrait se planter.
+
+C'est pas de la marketing.
+C'est pas du personal branding.
+C'est juste : on teste avec les bons grimpeurs.
+Et on fait un produit qui vaut le coup.
+
+---
+
+MERCI ELSA
+
+Pour ta confiance.
+Pour être là avant même que le produit soit prêt.
+Pour ce que tu vas nous apporter.
+
+On ne te décevra pas.
+
+Julien
+Fondateur, We Are Climbers
+
+---
+
+Elsa Ravinet : @ElsaRavinet [tag LinkedIn]
 We Are Climbers : weareclimbers.fr
 
-#Escalade #Kinésithérapie #Prevention #Collaboration #TechSanté
+#WeAreClimbers #BetaTest #Escalade #Transparence #Communauté #Entrepreneuriat
 ```
 
-**Visuel** : Photo portrait Aurélie en contexte professionnel (ou graphique annonce collaboration)
+**Visuel** : Photo Elsa en contexte grimpe (en salle ou en plein air, naturel, pas posé)
 
 ---
 

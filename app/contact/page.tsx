@@ -2,9 +2,29 @@
 
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import Image from 'next/image'
 import { useState } from 'react'
 
 export default function Contact() {
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Accueil',
+        item: 'https://www.weareclimbers.fr'
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Contact',
+        item: 'https://www.weareclimbers.fr/contact'
+      }
+    ]
+  };
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -70,6 +90,11 @@ export default function Contact() {
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+
       <Header />
 
       <main className="bg-primary-beige">
@@ -77,13 +102,20 @@ export default function Contact() {
         <section
           className="pt-32 pb-12 md:py-32 relative"
           style={{
-            backgroundImage: 'url(/hero-contact.jpg)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
             color: 'var(--color-primary-beige)'
           }}
         >
-          <div className="absolute inset-0 bg-primary-green opacity-70"></div>
+          {/* Background Image */}
+          <Image
+            src="/hero-contact.webp"
+            alt="Contactez We Are Climbers"
+            fill
+            priority={true}
+            quality={85}
+            sizes="100vw"
+            className="object-cover object-center"
+          />
+          <div className="absolute inset-0 bg-primary-green opacity-70 z-0"></div>
           <div className="container-custom relative z-10">
             <div className="max-w-4xl mx-auto text-center">
               <h1 className="text-4xl md:text-6xl mb-6">

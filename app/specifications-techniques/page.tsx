@@ -3,8 +3,32 @@ import Footer from '@/components/Footer'
 import Image from 'next/image'
 
 export default function Fonctionnalites() {
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Accueil',
+        item: 'https://www.weareclimbers.fr'
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Spécifications techniques',
+        item: 'https://www.weareclimbers.fr/specifications-techniques'
+      }
+    ]
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+
       <Header />
 
       <main className="bg-primary-beige">
@@ -12,14 +36,21 @@ export default function Fonctionnalites() {
         <section
           className="pt-32 pb-12 md:py-32 relative"
           style={{
-            backgroundImage: 'url(/hero-fonctionnalites.webp)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
             color: 'var(--color-primary-beige)'
           }}
         >
+          {/* Background Image */}
+          <Image
+            src="/hero-fonctionnalites.webp"
+            alt="Spécifications techniques We Are Climbers"
+            fill
+            priority={true}
+            quality={85}
+            sizes="100vw"
+            className="object-cover object-center"
+          />
           {/* Overlay for better text readability */}
-          <div className="absolute inset-0 bg-primary-green opacity-70"></div>
+          <div className="absolute inset-0 bg-primary-green opacity-70 z-0"></div>
 
           <div className="container-custom relative z-10">
             <div className="max-w-4xl mx-auto text-center">
@@ -76,7 +107,7 @@ export default function Fonctionnalites() {
                 <ul className="space-y-3 font-roboto text-primary-green">
                   <li className="flex items-start">
                     <span className="text-secondary-orange mr-2">•</span>
-                    <span>Fréquence cardiaque avec précision médicale (99,4% de précision)</span>
+                    <span>Fréquence cardiaque haute précision (99,4%)</span>
                   </li>
                   <li className="flex items-start">
                     <span className="text-secondary-orange mr-2">•</span>
@@ -857,7 +888,7 @@ export default function Fonctionnalites() {
               Rejoins la communauté We Are Climbers et progresse sainement en escalade.
             </p>
             <div data-aos="fade-up" data-aos-delay="200">
-              <a href="/early-access" className="btn-beige">
+              <a href="/boutique" className="btn-beige">
                 Rejoindre l'aventure
               </a>
             </div>

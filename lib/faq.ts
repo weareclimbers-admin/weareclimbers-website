@@ -13,7 +13,7 @@ export const faqItems: FAQItem[] = [
   {
     id: '2',
     question: "Pourquoi pas ma montre Garmin ou Apple Watch ?",
-    answer: "Les montres connectées estiment la fréquence cardiaque via capteur optique au poignet. Le problème ? Cette technologie est imprécise dans les mouvements explosifs typiques de l'escalade (variations rapides de rythme, positions extrêmes du poignet).\n\nLe bracelet Polar 360 mesure sur l'avant-bras avec précision médicale 99.4% (égale à un ECG), même dans les surplombs les plus intenses. Tests cliniques à l'appui.\n\nPour ta sécurité et pour nos recommandations anti-blessure, on ne fait pas de compromis sur la fiabilité des données. Ta santé mérite mieux qu'une estimation."
+    answer: "Les montres connectées estiment la fréquence cardiaque via capteur optique au poignet. Le problème ? Cette technologie est imprécise dans les mouvements explosifs typiques de l'escalade (variations rapides de rythme, positions extrêmes du poignet).\n\nLe bracelet Polar 360 mesure sur l'avant-bras avec haute précision (99,4%), même dans les surplombs les plus intenses. Tests cliniques à l'appui.\n\nPour ta sécurité et pour nos recommandations anti-blessure, on ne fait pas de compromis sur la fiabilité des données. Ta santé mérite mieux qu'une estimation."
   },
   {
     id: '3',
@@ -28,7 +28,7 @@ export const faqItems: FAQItem[] = [
   {
     id: '5',
     question: "Livraison et garantie ?",
-    answer: "• Livraison gratuite en France métropolitaine (3-5 jours ouvrés)\n• Garantie constructeur Polar 2 ans\n• Satisfait ou remboursé 30 jours (on reprend le bracelet si tu n'es pas content.e)\n\nPour les livraisons hors France, contacte-nous : bonjour@weareclimbers.com"
+    answer: "• Livraison gratuite en France métropolitaine (3-5 jours ouvrés)\n• Garantie constructeur Polar 2 ans\n• Satisfait ou remboursé 30 jours (on reprend le bracelet si tu n'es pas content.e)\n\nPour les livraisons hors France, contacte-nous : bonjour@weareclimbers.fr"
   },
   {
     id: '6',

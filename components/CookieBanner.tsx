@@ -91,10 +91,10 @@ export default function CookieBanner() {
       />
 
       {/* Banner */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 animate-slide-up">
-        <div className="container-custom py-6">
+      <div className="fixed bottom-0 left-0 right-0 z-50 animate-slide-up max-h-[90vh] md:max-h-[85vh] overflow-y-auto">
+        <div className="container-custom py-4 md:py-6">
           <div
-            className="mx-auto max-w-4xl shadow-lg p-6 md:p-8"
+            className="mx-auto max-w-4xl shadow-lg p-4 md:p-8"
             style={{ backgroundColor: 'var(--color-primary-beige)' }}
           >
             {/* Header */}
@@ -139,7 +139,7 @@ export default function CookieBanner() {
                   </div>
                 </div>
               ) : (
-                <div className="space-y-4 font-roboto text-primary-green text-sm bg-secondary-beige-light p-4 rounded">
+                <div className="max-h-[40vh] overflow-y-auto space-y-4 font-roboto text-primary-green text-sm bg-secondary-beige-light p-4 rounded">
                   <div>
                     <h4 className="font-bold mb-2">🔒 Cookies Essentiels (obligatoires)</h4>
                     <p className="mb-2">Ces cookies sont nécessaires au fonctionnement du site :</p>
@@ -220,6 +220,22 @@ export default function CookieBanner() {
         }
         .animate-slide-up {
           animation: slide-up 0.4s ease-out;
+        }
+
+        /* Style de la scrollbar pour webkit (Chrome, Safari, Edge) */
+        .animate-slide-up::-webkit-scrollbar {
+          width: 8px;
+        }
+        .animate-slide-up::-webkit-scrollbar-track {
+          background: rgba(0, 0, 0, 0.1);
+          border-radius: 4px;
+        }
+        .animate-slide-up::-webkit-scrollbar-thumb {
+          background: var(--color-secondary-orange);
+          border-radius: 4px;
+        }
+        .animate-slide-up::-webkit-scrollbar-thumb:hover {
+          background: var(--color-primary-green);
         }
       `}</style>
     </>

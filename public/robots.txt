@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Sitemap: https://www.weareclimbers.fr/sitemap.xml
+Disallow: /api/
+Disallow: /_next/

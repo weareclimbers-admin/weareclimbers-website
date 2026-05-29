@@ -2,24 +2,97 @@ import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import Image from 'next/image'
 import Link from 'next/link'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: "Polar 360 - Capteur cardiaque pour grimpeurs | We Are Climbers",
+  description: "Haute précision ±1 BPM, conçu pour l'escalade. Disponible via la campagne Ulule en cours jusqu'au 24 juin.",
+  openGraph: {
+    title: "Polar 360 - Capteur cardiaque pour grimpeurs",
+    description: "Haute précision ±1 BPM, conçu pour l'escalade. Disponible via la campagne Ulule en cours jusqu'au 24 juin.",
+    url: "https://www.weareclimbers.fr/capteurs",
+  },
+}
 
 export default function Capteurs() {
+  const productSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: 'Polar 360 - Bracelet connecté pour escalade',
+    brand: {
+      '@type': 'Brand',
+      name: 'Polar'
+    },
+    description: 'Bracelet connecté de haute précision pour l\'escalade. Analyse physiologique en temps réel, fréquence cardiaque à ±1 BPM, suivi de récupération et prévention des blessures. Compatible avec l\'application We Are Climbers.',
+    image: 'https://www.weareclimbers.fr/téléchargement (1).png',
+    offers: {
+      '@type': 'Offer',
+      url: 'https://www.weareclimbers.fr/capteurs',
+      priceCurrency: 'EUR',
+      price: '120',
+      availability: 'https://schema.org/PreOrder',
+      availabilityStarts: '2026-05-01',
+      seller: {
+        '@type': 'Organization',
+        name: 'We Are Climbers'
+      }
+    },
+    category: 'Bracelet connecté sport',
+    audience: {
+      '@type': 'PeopleAudience',
+      suggestedMinAge: 16
+    }
+  };
+
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Accueil',
+        item: 'https://www.weareclimbers.fr'
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Capteurs',
+        item: 'https://www.weareclimbers.fr/capteurs'
+      }
+    ]
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+
       <Header />
 
       <main className="bg-primary-beige">
         {/* Hero Section */}
         <section
           className="relative py-32 text-primary-beige overflow-hidden"
-          style={{
-            backgroundImage: 'url(/hero-capteurs.webp)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center'
-          }}
         >
+          {/* Background Image */}
+          <Image
+            src="/hero-capteurs.webp"
+            alt="Capteurs physiologiques pour escalade - We Are Climbers"
+            fill
+            priority={true}
+            quality={85}
+            sizes="100vw"
+            className="object-cover object-center"
+          />
           {/* Overlay for better text readability */}
-          <div className="absolute inset-0 bg-primary-green opacity-70"></div>
+          <div className="absolute inset-0 bg-primary-green opacity-70 z-0"></div>
 
           <div className="container-custom relative z-10">
             <div className="max-w-4xl mx-auto text-center">
@@ -129,10 +202,71 @@ export default function Capteurs() {
                 </div>
               </div>
 
-              <div className="mt-16 text-center" data-aos="fade-up" data-aos-delay="300">
-                <p className="text-2xl md:text-3xl font-bold text-primary-green mb-4">
+              {/* Mock téléphone — screen perf réel */}
+              <div className="mt-16 flex flex-col items-center" data-aos="fade-up" data-aos-delay="300">
+                <p className="text-2xl md:text-3xl font-bold text-primary-green mb-10 text-center">
                   Pas de bullshit. Juste de la science.
                 </p>
+
+                <div className="relative" style={{ width: '260px' }}>
+                  <div
+                    className="relative rounded-[2.5rem] overflow-hidden shadow-2xl"
+                    style={{
+                      backgroundColor: 'var(--color-primary-green)',
+                      padding: '12px 10px',
+                      border: '3px solid var(--color-primary-green)',
+                    }}
+                  >
+                    {/* Encoche */}
+                    <div
+                      className="absolute top-3 left-1/2 -translate-x-1/2 z-10 rounded-full"
+                      style={{ width: '60px', height: '16px', backgroundColor: 'var(--color-primary-green)' }}
+                    />
+                    {/* Écran */}
+                    <div
+                      className="relative overflow-hidden"
+                      style={{ borderRadius: '2rem', aspectRatio: '9/19.5', backgroundColor: '#1a1a2e' }}
+                    >
+                      <Image
+                        src="/images/rejoins-nous/screenshot-perf.jpg"
+                        alt="WAC — Analyse de performance escalade en temps réel"
+                        fill
+                        className="object-cover object-top"
+                      />
+                    </div>
+                    {/* Barre home */}
+                    <div
+                      className="mx-auto mt-2 rounded-full"
+                      style={{ width: '40px', height: '4px', backgroundColor: 'rgba(245,236,229,0.3)' }}
+                    />
+                  </div>
+                  {/* Badge flottant gauche */}
+                  <div
+                    className="absolute -left-6 top-12 px-3 py-2 shadow-lg text-xs font-bold uppercase"
+                    style={{
+                      backgroundColor: 'var(--color-primary-green)',
+                      color: 'var(--color-primary-beige)',
+                      fontFamily: 'var(--font-syne)',
+                      maxWidth: '100px',
+                      lineHeight: '1.3',
+                    }}
+                  >
+                    Données<br />réelles
+                  </div>
+                  {/* Badge flottant droit */}
+                  <div
+                    className="absolute -right-6 bottom-16 px-3 py-2 shadow-lg text-xs font-bold uppercase"
+                    style={{
+                      backgroundColor: 'var(--color-secondary-orange)',
+                      color: 'var(--color-primary-beige)',
+                      fontFamily: 'var(--font-syne)',
+                      maxWidth: '100px',
+                      lineHeight: '1.3',
+                    }}
+                  >
+                    Bêta<br />test actif
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -166,7 +300,7 @@ export default function Capteurs() {
               {/* Caractéristiques Polar 360 */}
               <div className="grid md:grid-cols-2 gap-8 mt-12">
                 <div className="p-8 shadow-lg" style={{ backgroundColor: 'var(--color-secondary-beige-light)', color: 'var(--color-primary-green)' }} data-aos="fade-up" data-aos-delay="0">
-                  <h3 className="text-2xl mb-6 font-bold">PRÉCISION MÉDICALE</h3>
+                  <h3 className="text-2xl mb-6 font-bold">HAUTE PRÉCISION</h3>
                   <ul className="space-y-4 font-roboto text-base">
                     <li className="flex items-start">
                       <span className="text-secondary-orange mr-3 font-bold text-xl">✓</span>
@@ -426,16 +560,16 @@ export default function Capteurs() {
                 </p>
 
                 <p className="text-xl font-medium pt-6">
-                  Le capteur sera disponible lors du lancement de notre campagne de crowdfunding en mai 2026.
+                  Le capteur est disponible dès maintenant via la campagne Ulule en cours, jusqu'au 24 juin.
                 </p>
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center" data-aos="fade-up" data-aos-delay="200">
                 <Link
-                  href="/early-access"
+                  href="/boutique"
                   className="inline-block bg-secondary-orange text-white px-12 py-4 text-xl font-syne hover:bg-opacity-90 transition-all transform hover:scale-105"
                 >
-                  RESTER INFORMÉ·E
+                  VOIR LES CONTREPARTIES
                 </Link>
               </div>
             </div>
@@ -456,10 +590,10 @@ export default function Capteurs() {
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center" data-aos="fade-up" data-aos-delay="200">
                 <Link
-                  href="/mission"
+                  href="/nos-grimpeurs"
                   className="inline-block bg-primary-green text-primary-beige px-10 py-4 text-lg font-syne hover:bg-opacity-90 transition-all"
                 >
-                  DÉCOUVRE NOTRE VISION
+                  DÉCOUVRE NOS GRIMPEURS
                 </Link>
                 <Link
                   href="/contact"

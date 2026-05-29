@@ -4,6 +4,25 @@ import Link from 'next/link'
 import Image from 'next/image'
 
 export default function RoadmapRSE() {
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Accueil',
+        item: 'https://www.weareclimbers.fr'
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Roadmap RSE',
+        item: 'https://www.weareclimbers.fr/roadmap-rse'
+      }
+    ]
+  };
+
   const commitments = [
     {
       icon: '/icons/icons8-plante-50.png',
@@ -63,6 +82,11 @@ export default function RoadmapRSE() {
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+
       <Header />
 
       <main className="bg-primary-beige">
@@ -70,14 +94,21 @@ export default function RoadmapRSE() {
         <section
           className="pt-32 pb-12 md:py-32 relative"
           style={{
-            backgroundImage: 'url(/hero-roadmap-rse.webp)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
             color: 'var(--color-primary-beige)'
           }}
         >
+          {/* Background Image */}
+          <Image
+            src="/hero-roadmap-rse.webp"
+            alt="Roadmap RSE We Are Climbers - Engagement environnemental"
+            fill
+            priority={true}
+            quality={85}
+            sizes="100vw"
+            className="object-cover object-center"
+          />
           {/* Overlay for better text readability */}
-          <div className="absolute inset-0 bg-primary-green opacity-70"></div>
+          <div className="absolute inset-0 bg-primary-green opacity-70 z-0"></div>
 
           <div className="container-custom relative z-10">
             <div className="max-w-4xl mx-auto text-center">
@@ -375,7 +406,7 @@ export default function RoadmapRSE() {
                 Rejoignez-nous dans cette aventure. Ensemble, construisons une escalade plus responsable.
               </p>
               <Link
-                href="/early-access"
+                href="/boutique"
                 className="inline-block bg-secondary-orange text-white px-12 py-4 text-xl font-bold hover:bg-opacity-90 transition-all transform hover:scale-105 relative"
               >
                 <span className="absolute top-0 right-0 w-3 h-3 bg-primary-green"></span>
@@ -383,7 +414,7 @@ export default function RoadmapRSE() {
               </Link>
               <div className="mt-8">
                 <p className="font-roboto text-primary-green text-sm italic">
-                  Campagne de crowdfunding prévue : <strong>Avril-Mai 2026</strong>
+                  Campagne Ulule en cours, jusqu'au <strong>24 juin 2026</strong>.
                 </p>
               </div>
             </div>
