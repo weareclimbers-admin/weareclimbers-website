@@ -3,7 +3,9 @@ import Footer from '@/components/Footer'
 import Image from 'next/image'
 import CountdownTimer from '@/components/CountdownTimer'
 import PackCard from '@/components/PackCard'
+import PressFeature from '@/components/PressFeature'
 import { CAMPAIGN, CONTREPARTIES } from '@/lib/campaign'
+import { DERNIER_ARTICLE } from '@/lib/press'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -183,6 +185,18 @@ export default function Boutique() {
             </div>
           </div>
         </section>
+
+        {/* BLOC 3.5 — PRESSE */}
+        {DERNIER_ARTICLE && (
+          <section
+            className="py-12"
+            style={{ backgroundColor: 'var(--color-secondary-beige-light)' }}
+          >
+            <div className="container-custom">
+              <PressFeature article={DERNIER_ARTICLE} variant="compact" />
+            </div>
+          </section>
+        )}
 
         {/* BLOC 4 — RÉASSURANCE */}
         <section

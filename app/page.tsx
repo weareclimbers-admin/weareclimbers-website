@@ -4,8 +4,10 @@ import CampaignBanner from '@/components/CampaignBanner'
 import Link from 'next/link'
 import Image from 'next/image'
 import FAQItem from '@/components/FAQItem'
+import PressFeature from '@/components/PressFeature'
 import { faqItems } from '@/lib/faq'
 import { CAMPAIGN } from '@/lib/campaign'
+import { DERNIER_ARTICLE } from '@/lib/press'
 
 export default function Home() {
   const faqSchema = {
@@ -608,6 +610,13 @@ export default function Home() {
                 We Are Climbers est développé en collaboration avec la Fédération Française de la Montagne et de l'Escalade. Des grimpeuses et coachs fédéraux testent l'app pour qu'elle soit à la hauteur des meilleurs.
               </p>
             </div>
+
+            {/* Sous-bloc Presse */}
+            {DERNIER_ARTICLE && (
+              <div className="mb-16">
+                <PressFeature article={DERNIER_ARTICLE} variant="full" />
+              </div>
+            )}
 
             {/* Témoignages */}
             <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">

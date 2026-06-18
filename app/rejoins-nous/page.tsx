@@ -5,9 +5,11 @@ import Footer from '@/components/Footer'
 import NewsletterForm from '@/components/NewsletterForm'
 import CountdownTimer from '@/components/CountdownTimer'
 import PackCard from '@/components/PackCard'
+import PressFeature from '@/components/PressFeature'
 import Image from 'next/image'
 import Link from 'next/link'
 import { CAMPAIGN, CONTREPARTIES } from '@/lib/campaign'
+import { DERNIER_ARTICLE } from '@/lib/press'
 
 const betaTesteurs = [
   {
@@ -707,6 +709,16 @@ export default function RejoinsNous() {
             </div>
           </div>
         </section>
+
+
+        {/* BLOC 5 (suite) — PRESSE */}
+        {DERNIER_ARTICLE && (
+          <section className="pb-20 md:pb-32" style={{ backgroundColor: 'var(--color-primary-beige)' }}>
+            <div className="container-custom">
+              <PressFeature article={DERNIER_ARTICLE} variant="medium" />
+            </div>
+          </section>
+        )}
 
 
         {/* BLOC 6 — CE QUE TU REÇOIS EN T'INSCRIVANT */}
