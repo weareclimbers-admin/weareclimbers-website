@@ -40,3 +40,9 @@ next-env.d.ts
 
 # Test files
 test-smtp.js
+
+# Secrets / notes (ne jamais committer de clés API)
+apikeybrevo.md
+
+# Python caches (outillage local)
+__pycache__/
