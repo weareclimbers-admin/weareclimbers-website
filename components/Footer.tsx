@@ -21,7 +21,7 @@ export default function Footer() {
               L'application et les bracelets connectés qui révolutionnent votre pratique de l'escalade.
             </p>
             <p style={{ fontFamily: 'var(--font-roboto)' }} className="text-xs opacity-75">
-              © 2025 We Are Climbers. Tous droits réservés.
+              © 2026 We Are Climbers. Tous droits réservés.
             </p>
           </div>
 
@@ -49,8 +49,13 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/capteurs" style={{ fontFamily: 'var(--font-roboto)' }} className="text-sm transition-colors hover:opacity-75">
-                  Capteurs & Analyse
+                <Link href="/le-bracelet" style={{ fontFamily: 'var(--font-roboto)' }} className="text-sm transition-colors hover:opacity-75">
+                  Le bracelet
+                </Link>
+              </li>
+              <li>
+                <Link href="/l-app" style={{ fontFamily: 'var(--font-roboto)' }} className="text-sm transition-colors hover:opacity-75">
+                  L'app
                 </Link>
               </li>
               <li>
@@ -65,8 +70,13 @@ export default function Footer() {
               </li>
               <li>
                 <Link href="/boutique" style={{ fontFamily: 'var(--font-roboto)' }} className="text-sm transition-colors hover:opacity-75">
-                  Accès Anticipé
+                  Boutique
                 </Link>
+              </li>
+              <li>
+                <a href="https://coach.weareclimbers.fr/tarifs" target="_blank" rel="noopener noreferrer" style={{ fontFamily: 'var(--font-roboto)' }} className="text-sm transition-colors hover:opacity-75">
+                  Offres coach
+                </a>
               </li>
             </ul>
           </div>
@@ -80,13 +90,13 @@ export default function Footer() {
             }} className="text-sm mb-4">Ressources</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/specifications-techniques" style={{ fontFamily: 'var(--font-roboto)' }} className="text-sm transition-colors hover:opacity-75">
+                <Link href="/le-bracelet#specs" style={{ fontFamily: 'var(--font-roboto)' }} className="text-sm transition-colors hover:opacity-75">
                   Spécifications Techniques
                 </Link>
               </li>
               <li>
-                <Link href="/roadmap-rse" style={{ fontFamily: 'var(--font-roboto)' }} className="text-sm transition-colors hover:opacity-75">
-                  Roadmap RSE
+                <Link href="/engagements" style={{ fontFamily: 'var(--font-roboto)' }} className="text-sm transition-colors hover:opacity-75">
+                  Nos engagements
                 </Link>
               </li>
             </ul>
