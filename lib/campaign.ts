@@ -1,14 +1,95 @@
 /**
- * Données de la campagne Ulule "Accès Anticipé" WAC.
+ * Source de vérité de l'état commercial WAC.
  *
- * Pour mettre à jour les chiffres pendant la campagne :
- * - `percentReached` : pourcentage atteint (affiché sur la home et /rejoins-nous)
- * - `CONTREPARTIES[].stockLeft` : nombre restant (null = stock illimité / non communiqué)
- * - `CONTREPARTIES[].soldOut` : passer à true quand épuisé
+ * MODÈLE À PHASES — le site s'adapte automatiquement à la phase active :
+ *   'ulule-live'        → campagne Accès Anticipé Ulule en cours (compte à rebours + CTA Ulule)
+ *   'campaign-success'  → campagne terminée avec succès (preuve sociale + liste d'attente)   ← ACTUEL
+ *   'precommande-live'  → pré-commandes en propre ouvertes (checkout WAC)
  *
- * Pour ajouter une nouvelle contrepartie : pousser un objet dans CONTREPARTIES.
- * La home (bandeau), /boutique et /rejoins-nous se synchronisent automatiquement.
+ * Pour changer de phase : modifier `CAMPAIGN.phase`. Le bandeau, les CTA et le copy
+ * se réalignent via les helpers (getPrimaryCta / getBannerConfig).
+ *
+ * ⚠️ Terminologie : jamais "crowdfunding" / "early access" / "médical". On dit
+ * "Accès Anticipé", "Pack Fondateur/Pionnier", "haute précision / ±1 BPM".
  */
+
+export type CampaignPhase = 'ulule-live' | 'campaign-success' | 'precommande-live';
+
+/**
+ * Nature d'un appel à l'action, pour que chaque page sache comment le rendre :
+ *   'waitlist'    → ouvre / scrolle vers le formulaire liste d'attente (Brevo)
+ *   'ulule'       → lien externe vers Ulule
+ *   'precommande' → lien interne vers le checkout en propre
+ */
+export interface Cta {
+  label: string;
+  kind: 'waitlist' | 'ulule' | 'precommande';
+  /** Destination pour les CTA de type lien (ulule / precommande). Absent pour 'waitlist'. */
+  href?: string;
+}
+
+export const CAMPAIGN = {
+  /** Phase active du site. */
+  phase: 'campaign-success' as CampaignPhase,
+
+  ululeUrl: 'https://www.ulule.fr/we-are-climbers',
+  videoYoutubeId: '0AXX5vCajP8',
+
+  /** Date de clôture Ulule (conservée pour l'historique / le compte à rebours en phase ulule-live). */
+  endDate: '2026-07-10T23:59:59+02:00',
+
+  /**
+   * Preuve sociale publique. On communique UNIQUEMENT l'atteinte de l'objectif à 100%.
+   * (Le nombre de contributeurs et le montant collecté ne sont pas affichés publiquement.)
+   */
+  goalReached: true,
+} as const;
+
+/**
+ * Liste d'attente (entre la fin d'Ulule et l'ouverture des pré-commandes en propre).
+ * Le formulaire réel est `NewsletterForm` (→ /api/newsletter → Brevo).
+ * `anchor` = cible vers laquelle les CTA "waitlist" pointent (section formulaire).
+ */
+export const WAITLIST = {
+  anchor: '#liste-attente',
+  formTitle: 'Sois aux premières loges',
+  formSubtitle:
+    "Les pré-commandes en propre arrivent. Laisse ton email : tu seras prévenu·e en premier, avant tout le monde.",
+  buttonText: 'Préviens-moi du lancement',
+} as const;
+
+/** CTA principal du site selon la phase active. */
+export function getPrimaryCta(): Cta {
+  switch (CAMPAIGN.phase) {
+    case 'ulule-live':
+      return { label: 'Je soutiens WAC sur Ulule', kind: 'ulule', href: CAMPAIGN.ululeUrl };
+    case 'campaign-success':
+      return { label: 'Préviens-moi du lancement', kind: 'waitlist' };
+    case 'precommande-live':
+      return { label: 'Je précommande', kind: 'precommande', href: '/boutique' };
+  }
+}
+
+/** Contenu du bandeau haut de page selon la phase. */
+export function getBannerConfig(): { text: string; cta: Cta } | null {
+  switch (CAMPAIGN.phase) {
+    case 'ulule-live':
+      return {
+        text: buildBannerStockLine(),
+        cta: { label: 'Je soutiens WAC', kind: 'ulule', href: CAMPAIGN.ululeUrl },
+      };
+    case 'campaign-success':
+      return {
+        text: 'Objectif 100 % atteint — merci ! Les pré-commandes en propre arrivent bientôt.',
+        cta: getPrimaryCta(),
+      };
+    case 'precommande-live':
+      return {
+        text: 'Les pré-commandes sont ouvertes.',
+        cta: getPrimaryCta(),
+      };
+  }
+}
 
 export interface Pack {
   id: string;
@@ -25,14 +106,28 @@ export interface Pack {
   highlight: boolean;
 }
 
-export const CAMPAIGN = {
-  ululeUrl: 'https://www.ulule.fr/we-are-climbers',
-  videoYoutubeId: '0AXX5vCajP8',
-  endDate: '2026-06-24T23:59:59+02:00',
-  percentReached: 32,
-} as const;
-
+/**
+ * Contreparties de la campagne Ulule (historique).
+ * Conservées pour la page boutique tant que le checkout en propre n'est pas en ligne.
+ * En phase 'campaign-success', la campagne Ulule est close : tout est considéré terminé.
+ */
 export const CONTREPARTIES: Pack[] = [
+  {
+    id: 'standard',
+    name: 'Membre de la cordée',
+    price: 160,
+    ululeUrl: 'https://fr.ulule.com/we-are-climbers/?reward=2082132',
+    imageUrl: '/images/packs/pack-standard.png',
+    imageAlt: 'Membre de la cordée — 160€',
+    soldOut: false,
+    stockLeft: null,
+    perks: [
+      'Bracelet Polar 360',
+      'Adhésion au WAC Club',
+      "Les 27 prochains contributeurs participent au tirage au sort : 1 an d'abonnement à l'app WAC à gagner",
+    ],
+    highlight: true,
+  },
   {
     id: 'fondateur',
     name: 'Pack Fondateur',
@@ -74,14 +169,14 @@ export const CONTREPARTIES: Pack[] = [
     ululeUrl: 'https://fr.ulule.com/we-are-climbers/?reward=5602370',
     imageUrl: '/images/packs/pack-salon.png',
     imageAlt: 'Pack Salon — 160€',
-    soldOut: false,
-    stockLeft: 9,
+    soldOut: true,
+    stockLeft: 0,
     perks: [
       'Bracelet Polar 360',
       'Adhésion au WAC Club',
       "1 place 2 jours pour le Salon de l'escalade — 7ᵉ édition, janvier 2027",
     ],
-    highlight: true,
+    highlight: false,
   },
   {
     id: 'crux',
@@ -101,16 +196,15 @@ export const CONTREPARTIES: Pack[] = [
   },
 ];
 
-/** Contreparties encore disponibles (non épuisées) */
+/** Contreparties encore disponibles (non épuisées) — pertinent en phase ulule-live uniquement. */
 export function getActiveContreparties(): Pack[] {
   return CONTREPARTIES.filter((p) => !p.soldOut);
 }
 
 /**
- * Texte court "stock restant" pour le bandeau home.
+ * Texte court "stock restant" pour le bandeau home (phase ulule-live).
  * Exemples :
  *   - "Plus que 9 Pack Salon + Pack Crux"
- *   - "Plus que 9 Pack Salon"
  *   - "Pack Crux disponible"
  *   - "Soutiens-nous sur Ulule" (si tout est épuisé)
  */

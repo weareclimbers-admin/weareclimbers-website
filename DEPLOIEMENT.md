@@ -223,5 +223,5 @@ weareclimbers-website/
 ---
 
 **Dernière mise à jour**: 10 Janvier 2026
-**Contact**: privacy@weareclimbers.com
+**Contact**: dpo@weareclimbers.fr
 **Version Homepage**: 2.0 (Redesign complet)

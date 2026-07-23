@@ -1,11 +1,11 @@
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: "Rejoins-nous - Accès Anticipé | We Are Climbers",
-  description: "Fais partie des premiers grimpeurs à tester We Are Climbers. Rejoins notre communauté et accède en avant-première à la technologie.",
+  title: "Rejoins-nous — Liste d'attente pré-commandes | We Are Climbers",
+  description: "L'objectif de campagne est atteint à 100 %. Rejoins la liste d'attente pour être prévenu·e en premier de l'ouverture des pré-commandes du bracelet et de l'app WAC.",
   openGraph: {
-    title: "Rejoins-nous - Accès Anticipé",
-    description: "Fais partie des premiers grimpeurs à tester We Are Climbers. Rejoins notre communauté et accède en avant-première à la technologie.",
+    title: "Rejoins-nous — Liste d'attente pré-commandes",
+    description: "L'objectif de campagne est atteint à 100 %. Rejoins la liste d'attente pour être prévenu·e en premier de l'ouverture des pré-commandes WAC.",
     url: "https://www.weareclimbers.fr/rejoins-nous",
   },
 }

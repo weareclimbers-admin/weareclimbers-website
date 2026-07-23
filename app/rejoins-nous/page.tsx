@@ -3,12 +3,10 @@
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import NewsletterForm from '@/components/NewsletterForm'
-import CountdownTimer from '@/components/CountdownTimer'
-import PackCard from '@/components/PackCard'
 import PressFeature from '@/components/PressFeature'
 import Image from 'next/image'
 import Link from 'next/link'
-import { CAMPAIGN, CONTREPARTIES } from '@/lib/campaign'
+import { CAMPAIGN } from '@/lib/campaign'
 import { DERNIER_ARTICLE } from '@/lib/press'
 
 const betaTesteurs = [
@@ -145,7 +143,7 @@ export default function RejoinsNous() {
                 data-aos="fade-up"
                 data-aos-delay="100"
               >
-                La campagne Ulule est lancée. Soutiens We Are Climbers, sécurise ton bracelet Polar 360 et ton accès à vie à l'app — jusqu'au 24 juin.
+                La campagne a atteint son objectif à 100 %. Prochaine étape : les pré-commandes en propre du bracelet Polar 360 et de l'app WAC. Rejoins la liste d'attente pour être prévenu·e en premier.
               </p>
 
               <div
@@ -154,18 +152,16 @@ export default function RejoinsNous() {
                 data-aos-delay="200"
               >
                 <a
-                  href={CAMPAIGN.ululeUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href="#liste-attente"
                   className="btn-secondary"
                 >
-                  Je soutiens WAC sur Ulule
+                  Rejoins la liste d'attente
                 </a>
                 <a
                   href="#campagne"
                   className="btn-beige"
                 >
-                  Voir la campagne
+                  Découvrir le projet
                 </a>
               </div>
 
@@ -192,7 +188,7 @@ export default function RejoinsNous() {
                 }}
                 data-aos="fade-up"
               >
-                Campagne en cours
+                Campagne réussie
               </p>
 
               <h2
@@ -201,7 +197,7 @@ export default function RejoinsNous() {
                 data-aos="fade-up"
                 data-aos-delay="100"
               >
-                La campagne Ulule est lancée.
+                Objectif atteint à 100 %.
               </h2>
 
               <p
@@ -210,13 +206,8 @@ export default function RejoinsNous() {
                 data-aos="fade-up"
                 data-aos-delay="150"
               >
-                Nous avons déjà atteint <strong>{CAMPAIGN.percentReached}%</strong> de notre objectif grâce aux premiers soutiens. Tu peux nous rejoindre jusqu'au 24 juin.
+                Grâce à vous, la campagne a atteint son objectif. Merci à toute la cordée. La suite : les pré-commandes en propre, sans intermédiaire. Découvre le projet en vidéo.
               </p>
-
-              {/* Compte à rebours */}
-              <div className="mb-14" data-aos="fade-up" data-aos-delay="200">
-                <CountdownTimer variant="large" />
-              </div>
 
               {/* Vidéo YouTube */}
               <div
@@ -236,12 +227,10 @@ export default function RejoinsNous() {
                 />
               </div>
 
-              {/* Gros CTA Ulule */}
+              {/* Gros CTA liste d'attente */}
               <div data-aos="fade-up" data-aos-delay="300">
                 <a
-                  href={CAMPAIGN.ululeUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href="#liste-attente"
                   className="inline-block px-8 py-5 md:px-12 md:py-6 text-base md:text-xl font-bold uppercase transition-opacity hover:opacity-90"
                   style={{
                     fontFamily: 'var(--font-syne)',
@@ -250,13 +239,13 @@ export default function RejoinsNous() {
                     letterSpacing: '0.05em',
                   }}
                 >
-                  Je soutiens We Are Climbers
+                  Rejoins la liste d'attente
                 </a>
                 <p
                   className="text-sm font-roboto mt-4"
                   style={{ opacity: 0.7 }}
                 >
-                  Redirection vers Ulule. Paiement sécurisé.
+                  Sois prévenu·e en premier de l'ouverture des pré-commandes.
                 </p>
               </div>
 
@@ -349,42 +338,21 @@ export default function RejoinsNous() {
                   className="text-3xl md:text-5xl mb-4"
                   style={{ color: 'var(--color-primary-green)', fontFamily: 'var(--font-syne)' }}
                 >
-                  Choisis ta contrepartie.
+                  Les pré-commandes arrivent.
                 </h2>
-              </div>
-
-              {/* Cards générées dynamiquement depuis CONTREPARTIES (lib/campaign.ts) */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-                {CONTREPARTIES.map((pack, i) => (
-                  <PackCard key={pack.id} pack={pack} animationDelay={i * 100} />
-                ))}
-              </div>
-
-              {/* Note sous les packs */}
-              <div
-                className="p-6 text-center"
-                style={{ backgroundColor: 'var(--color-primary-beige)' }}
-                data-aos="fade-up"
-                data-aos-delay="200"
-              >
                 <p
-                  className="text-sm font-roboto italic"
-                  style={{ color: 'var(--color-primary-green)', opacity: 0.7 }}
+                  className="text-lg md:text-xl font-roboto max-w-2xl mx-auto leading-relaxed mt-4"
+                  style={{ color: 'var(--color-primary-green)' }}
                 >
-                  Paiement sécurisé sur Ulule. Livraison estimée après la clôture de la campagne. Détails complets et autres contreparties sur la page Ulule.
+                  Le bracelet Polar 360 et l'app WAC seront bientôt disponibles en pré-commande, directement sur weareclimbers.fr. Les tarifs et contreparties seront dévoilés au lancement.
                 </p>
               </div>
 
-              {/* CTA sous les packs */}
+              {/* CTA */}
               <div className="text-center mt-10" data-aos="fade-up" data-aos-delay="300">
-                <a
-                  href={CAMPAIGN.ululeUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-secondary inline-block"
-                >
-                  Voir toute la campagne sur Ulule
-                </a>
+                <Link href="/boutique" className="btn-secondary inline-block">
+                  Découvrir ce qui arrive
+                </Link>
               </div>
 
             </div>
@@ -431,7 +399,7 @@ export default function RejoinsNous() {
                     className="font-roboto leading-relaxed"
                     style={{ color: 'var(--color-primary-green)' }}
                   >
-                    Tu soutiens WAC sur Ulule en choisissant ta contrepartie. Paiement sécurisé. Aucun débit avant la clôture.
+                    Tu rejoins la liste d'attente avec ton email. Gratuit, sans engagement — tu es simplement prévenu·e en premier.
                   </p>
                 </div>
 
@@ -452,13 +420,13 @@ export default function RejoinsNous() {
                     className="text-xl md:text-2xl mb-4"
                     style={{ color: 'var(--color-primary-green)', fontFamily: 'var(--font-syne)' }}
                   >
-                    24 juin 2026
+                    Bientôt
                   </h3>
                   <p
                     className="font-roboto leading-relaxed"
                     style={{ color: 'var(--color-primary-green)' }}
                   >
-                    Clôture de la campagne. Si l'objectif est atteint, ta contribution est débitée et la production démarre.
+                    Ouverture des pré-commandes en propre. Les inscrits à la liste sont prévenus en premier, avec un tarif de lancement.
                   </p>
                 </div>
 
@@ -479,13 +447,13 @@ export default function RejoinsNous() {
                     className="text-xl md:text-2xl mb-4"
                     style={{ color: 'var(--color-primary-green)', fontFamily: 'var(--font-syne)' }}
                   >
-                    Après la clôture
+                    Ensuite
                   </h3>
                   <p
                     className="font-roboto leading-relaxed"
                     style={{ color: 'var(--color-primary-green)' }}
                   >
-                    Production et livraison des premières unités. Tous les soutiens reçoivent leur bracelet en livraison prioritaire. Tu grimpes avec WAC.
+                    Production et livraison des premières unités. Les inscrits reçoivent leur bracelet en livraison prioritaire. Tu grimpes avec WAC.
                   </p>
                 </div>
 
@@ -734,7 +702,7 @@ export default function RejoinsNous() {
                   className="text-3xl md:text-5xl"
                   style={{ color: 'var(--color-primary-green)', fontFamily: 'var(--font-syne)' }}
                 >
-                  Pas prêt à soutenir ? Reste en contact.
+                  Ce que tu reçois en rejoignant la liste.
                 </h2>
               </div>
 
@@ -747,8 +715,8 @@ export default function RejoinsNous() {
                   },
                   {
                     icon: '📣',
-                    titre: 'Suivi de la campagne',
-                    texte: "Les updates de la campagne Ulule et les annonces clés directement dans ta boîte mail.",
+                    titre: 'Ouverture des pré-commandes',
+                    texte: "Tu es prévenu·e en premier dès l'ouverture des pré-commandes en propre, avant l'annonce publique.",
                   },
                   {
                     icon: '🚀',
@@ -794,10 +762,10 @@ export default function RejoinsNous() {
         </section>
 
 
-        {/* BLOC 7 — FORMULAIRE NEWSLETTER */}
+        {/* BLOC 7 — FORMULAIRE LISTE D'ATTENTE */}
         <section
-          id="newsletter"
-          className="py-20 md:py-32"
+          id="liste-attente"
+          className="py-20 md:py-32 scroll-mt-32"
           style={{ backgroundColor: 'var(--color-primary-green)' }}
         >
           <div className="container-custom">
@@ -814,7 +782,7 @@ export default function RejoinsNous() {
                   className="text-lg md:text-xl font-roboto"
                   style={{ color: 'var(--color-primary-beige)', opacity: 0.85 }}
                 >
-                  Pas envie de soutenir maintenant ? Inscris-toi pour suivre la campagne et être averti à la mise en vente publique.
+                  Laisse ton email : tu seras prévenu·e en premier de l'ouverture des pré-commandes, avec un tarif de lancement réservé à la liste.
                 </p>
               </div>
 

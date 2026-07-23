@@ -2,9 +2,30 @@
 
 import { useState, useEffect } from 'react'
 
+/**
+ * Bandeau de consentement CNIL du site vitrine.
+ *
+ * Deux catégories optionnelles, toutes deux en OPT-IN (désactivées par défaut) :
+ * - « Analytics » → Umami Cloud EU (mesure d'audience, sans cookie tiers)
+ * - « Marketing » → Meta Pixel (Facebook), traceur publicitaire soumis à
+ *   consentement préalable. Le pixel n'est JAMAIS chargé tant que ce
+ *   consentement n'est pas donné (cf. layout.tsx d'où il a été retiré).
+ *
+ * Le choix est mémorisé dans localStorage (`wac_cookie_consent`).
+ */
+type ConsentState = {
+  essential: true
+  analytics: boolean
+  marketing: boolean
+  timestamp: string
+}
+
 export default function CookieBanner() {
   const [showBanner, setShowBanner] = useState(false)
   const [showDetails, setShowDetails] = useState(false)
+  // Cases à cocher du mode « choix personnalisés » (opt-in par défaut = false)
+  const [analyticsChecked, setAnalyticsChecked] = useState(false)
+  const [marketingChecked, setMarketingChecked] = useState(false)
 
   useEffect(() => {
     // Vérifier si l'utilisateur a déjà fait un choix
@@ -13,16 +34,19 @@ export default function CookieBanner() {
       // Afficher le banner après 1 seconde pour une meilleure UX
       setTimeout(() => setShowBanner(true), 1000)
     } else {
-      // Charger analytics si consentement donné
-      const consentData = JSON.parse(consent)
-      if (consentData.analytics) {
-        loadUmamiAnalytics()
+      // Recharger les traceurs correspondant au consentement déjà donné
+      try {
+        const consentData = JSON.parse(consent)
+        if (consentData.analytics) loadUmamiAnalytics()
+        if (consentData.marketing) loadMetaPixel()
+      } catch {
+        /* consentement illisible : on ne charge rien */
       }
     }
   }, [])
 
   const loadUmamiAnalytics = () => {
-    // Charger le script Umami Analytics
+    // Charger le script Umami Analytics (Umami Cloud EU)
     if (typeof window === 'undefined') return
 
     // Vérifier si Umami est déjà chargé
@@ -57,28 +81,56 @@ export default function CookieBanner() {
     document.head.appendChild(script)
   }
 
-  const saveConsent = (analytics: boolean) => {
-    const consent = {
+  const loadMetaPixel = () => {
+    // Charger le Meta Pixel UNIQUEMENT après consentement « Marketing ».
+    if (typeof window === 'undefined') return
+
+    const w = window as any
+    if (w.fbq) return // déjà initialisé
+
+    const pixelId =
+      process.env.NEXT_PUBLIC_META_PIXEL_ID || '1574373133681517'
+
+    // Snippet officiel Meta, exécuté à la demande (et non au chargement de page)
+    const n: any = (w.fbq = function () {
+      // eslint-disable-next-line prefer-rest-params
+      n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+    })
+    if (!w._fbq) w._fbq = n
+    n.push = n
+    n.loaded = true
+    n.version = '2.0'
+    n.queue = []
+
+    const t = document.createElement('script')
+    t.async = true
+    t.src = 'https://connect.facebook.net/en_US/fbevents.js'
+    const s = document.getElementsByTagName('script')[0]
+    s.parentNode?.insertBefore(t, s)
+
+    w.fbq('init', pixelId)
+    w.fbq('track', 'PageView')
+    console.log('✅ Meta Pixel chargé (consentement marketing)')
+  }
+
+  const saveConsent = (analytics: boolean, marketing: boolean) => {
+    const consent: ConsentState = {
       essential: true, // Toujours true
-      analytics: analytics,
-      timestamp: new Date().toISOString()
+      analytics,
+      marketing,
+      timestamp: new Date().toISOString(),
     }
     localStorage.setItem('wac_cookie_consent', JSON.stringify(consent))
 
-    if (analytics) {
-      loadUmamiAnalytics()
-    }
+    if (analytics) loadUmamiAnalytics()
+    if (marketing) loadMetaPixel()
 
     setShowBanner(false)
   }
 
-  const acceptAll = () => {
-    saveConsent(true)
-  }
-
-  const refuseOptional = () => {
-    saveConsent(false)
-  }
+  const acceptAll = () => saveConsent(true, true)
+  const refuseAll = () => saveConsent(false, false)
+  const saveChoices = () => saveConsent(analyticsChecked, marketingChecked)
 
   if (!showBanner) return null
 
@@ -116,7 +168,7 @@ export default function CookieBanner() {
             {/* Content */}
             <div className="mb-6">
               <p className="font-roboto text-primary-green mb-4">
-                We Are Climbers utilise des cookies pour améliorer ton expérience sur le site.
+                We Are Climbers utilise des cookies pour améliorer ton expérience sur le site. Tu peux tout accepter, tout refuser, ou choisir précisément ce que tu autorises.
               </p>
 
               {!showDetails ? (
@@ -134,7 +186,15 @@ export default function CookieBanner() {
                       <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd"/>
                     </svg>
                     <p>
-                      <strong>Cookies analytics</strong> (optionnels) : Comprendre l'usage pour améliorer le site
+                      <strong>Cookies analytics</strong> (optionnels) : Comprendre l'usage pour améliorer le site (Umami, sans cookie tiers)
+                    </p>
+                  </div>
+                  <div className="flex items-start">
+                    <svg className="w-5 h-5 mr-2 mt-0.5 flex-shrink-0 text-primary-green" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd"/>
+                    </svg>
+                    <p>
+                      <strong>Cookies marketing</strong> (optionnels) : Mesure de nos campagnes publicitaires (Meta Pixel / Facebook)
                     </p>
                   </div>
                 </div>
@@ -145,26 +205,40 @@ export default function CookieBanner() {
                     <p className="mb-2">Ces cookies sont nécessaires au fonctionnement du site :</p>
                     <ul className="list-disc pl-6 space-y-1">
                       <li>Mémorisation de ton choix de cookies (13 mois)</li>
-                      <li>Sécurité et protection contre les attaques</li>
-                      <li>Fonctionnement des formulaires</li>
+                      <li>Sécurité et fonctionnement des formulaires</li>
                     </ul>
                   </div>
                   <div>
-                    <h4 className="font-bold mb-2">📊 Cookies Analytics (optionnels)</h4>
-                    <p className="mb-2">Avec <strong>Umami Analytics</strong> (solution européenne, respectueuse de la vie privée) :</p>
-                    <ul className="list-disc pl-6 space-y-1">
-                      <li>Pages visitées et parcours utilisateur</li>
-                      <li>Type d'appareil et navigateur (anonymisé)</li>
-                      <li>Pays de provenance (pas de localisation précise)</li>
-                      <li>Durée de visite</li>
-                    </ul>
-                    <p className="mt-2 text-xs opacity-75">
-                      ⚠️ Aucune donnée personnelle identifiable n'est collectée. Les données restent en Europe et ne sont jamais revendues.
-                    </p>
+                    <label className="flex items-start gap-3 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={analyticsChecked}
+                        onChange={(e) => setAnalyticsChecked(e.target.checked)}
+                        className="mt-1 w-4 h-4 accent-secondary-orange"
+                      />
+                      <span>
+                        <span className="font-bold block mb-1">📊 Cookies Analytics (optionnels)</span>
+                        Avec <strong>Umami Cloud EU</strong> (solution européenne, respectueuse de la vie privée, sans cookie tiers) : pages visitées, type d'appareil et navigateur (anonymisé), pays de provenance, durée de visite. Aucune donnée personnelle identifiable, données hébergées dans l'Union Européenne.
+                      </span>
+                    </label>
+                  </div>
+                  <div>
+                    <label className="flex items-start gap-3 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={marketingChecked}
+                        onChange={(e) => setMarketingChecked(e.target.checked)}
+                        className="mt-1 w-4 h-4 accent-secondary-orange"
+                      />
+                      <span>
+                        <span className="font-bold block mb-1">🎯 Cookies Marketing (optionnels)</span>
+                        Avec le <strong>Meta Pixel (Facebook)</strong> : mesure de la performance de nos campagnes publicitaires et remarketing. Ces cookies tiers déposés par Meta permettent un suivi cross-site. Le pixel n'est chargé <strong>que si tu l'acceptes ici</strong>. Un transfert de données vers les États-Unis (Meta Platforms) peut avoir lieu, encadré par les Clauses Contractuelles Types et le Data Privacy Framework.
+                      </span>
+                    </label>
                   </div>
                   <div className="pt-2 border-t border-secondary-beige">
                     <p className="text-xs">
-                      <strong>Nous n'utilisons PAS :</strong> Google Analytics, publicités ciblées, tracking cross-site, ou cookies tiers invasifs.
+                      <strong>Nous n'utilisons PAS :</strong> Google Analytics ni cookies tiers autres que ceux listés ci-dessus. Les cookies analytics et marketing sont désactivés par défaut : rien n'est chargé sans ton accord.
                     </p>
                   </div>
                 </div>
@@ -174,7 +248,7 @@ export default function CookieBanner() {
                 onClick={() => setShowDetails(!showDetails)}
                 className="mt-4 text-secondary-orange hover:underline font-roboto text-sm font-bold"
               >
-                {showDetails ? '▲ Masquer les détails' : '▼ Voir les détails'}
+                {showDetails ? '▲ Masquer les détails' : '▼ Personnaliser mes choix'}
               </button>
             </div>
 
@@ -187,11 +261,19 @@ export default function CookieBanner() {
                 Accepter tout
               </button>
               <button
-                onClick={refuseOptional}
+                onClick={refuseAll}
                 className="btn-beige flex-1 sm:flex-initial"
               >
-                Refuser les cookies optionnels
+                Tout refuser
               </button>
+              {showDetails && (
+                <button
+                  onClick={saveChoices}
+                  className="btn-beige flex-1 sm:flex-initial"
+                >
+                  Enregistrer mes choix
+                </button>
+              )}
             </div>
 
             {/* Footer Links */}

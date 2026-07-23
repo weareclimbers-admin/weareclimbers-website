@@ -11,7 +11,7 @@ export const LEGAL_NOTICES: LegalDocument = {
   title: 'Mentions Légales',
   subtitle: 'WeAreClimbers SAS',
   version: '1.0',
-  lastUpdated: '2026-05-19',
+  lastUpdated: '2026-07-22',
   preamble: `Conformément aux dispositions de la loi n° 2004-575 du 21 juin 2004 pour la confiance en l'économie numérique et du Code de la consommation, nous vous informons des mentions légales suivantes.`,
   sections: [
     {
@@ -40,7 +40,12 @@ Contact :
         {
           id: '1.2',
           title: "1.2 Hébergement",
-          content: `Webapp coach (weareclimbers-coach) :
+          content: `Site vitrine (weareclimbers.fr) :
+- Hébergeur : Vercel Inc., 340 S Lemon Ave #4133, Walnut CA 91789, États-Unis
+- Site : https://vercel.com
+- Région de déploiement : Europe
+
+Webapp coach (weareclimbers-coach) :
 - Hébergeur : Vercel Inc., 340 S Lemon Ave #4133, Walnut CA 91789, États-Unis
 - Site : https://vercel.com
 - Régions de déploiement : Europe (Frankfurt, Paris)
@@ -403,7 +408,7 @@ France`,
     {
       id: '10',
       title: '10. Mises à Jour des Mentions Légales',
-      content: `Dernière modification : 19 mai 2026
+      content: `Dernière modification : 22 juillet 2026
 Version : 1.0
 
 Nous pouvons modifier ces mentions légales à tout moment. Les modifications entrent en vigueur dès leur publication. En cas de modification substantielle, vous serez invité à les ré-accepter au prochain login.

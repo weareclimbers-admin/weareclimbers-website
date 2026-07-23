@@ -13,6 +13,21 @@ const nextConfig = {
         destination: '/nos-grimpeurs',
         permanent: true, // 301 redirect
       },
+      {
+        source: '/capteurs',
+        destination: '/le-bracelet',
+        permanent: true, // 301 redirect
+      },
+      {
+        source: '/specifications-techniques',
+        destination: '/le-bracelet',
+        permanent: true, // 301 redirect
+      },
+      {
+        source: '/roadmap-rse',
+        destination: '/engagements',
+        permanent: true, // 301 redirect
+      },
     ]
   },
   async headers() {

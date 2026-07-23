@@ -29,11 +29,11 @@ export default function Header() {
   }, [lastScrollY])
 
   const navigation = [
+    { name: 'Le bracelet', href: '/le-bracelet' },
+    { name: "L'app", href: '/l-app' },
     { name: 'Histoire', href: '/histoire' },
     { name: 'Nos grimpeurs', href: '/nos-grimpeurs' },
-    { name: 'Capteurs', href: '/capteurs' },
     { name: 'Boutique', href: '/boutique' },
-    { name: 'Contact', href: '/contact' },
   ]
 
   return (
@@ -76,6 +76,17 @@ export default function Header() {
                 {item.name}
               </Link>
             ))}
+            <Link
+              href="/coachs"
+              style={{
+                fontFamily: 'var(--font-syne)',
+                color: 'var(--color-primary-green)',
+                fontSize: '0.8rem',
+              }}
+              className="transition-opacity hover:opacity-75 uppercase font-bold border-b-2 pb-0.5"
+            >
+              Espace Coach
+            </Link>
             <Link href="/rejoins-nous" className="btn-secondary-small">
               Rejoins le mouvement
             </Link>
@@ -129,6 +140,18 @@ export default function Header() {
                   {item.name}
                 </Link>
               ))}
+              <Link
+                href="/coachs"
+                style={{
+                  fontFamily: 'var(--font-syne)',
+                  color: 'var(--color-primary-green)',
+                  fontSize: '0.8rem',
+                }}
+                className="transition-colors hover:opacity-75 uppercase font-bold"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Espace Coach
+              </Link>
               <Link href="/rejoins-nous" className="btn-secondary-small inline-block text-center">
                 Rejoins-nous
               </Link>

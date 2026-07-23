@@ -1,19 +1,18 @@
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import Image from 'next/image'
-import CountdownTimer from '@/components/CountdownTimer'
-import PackCard from '@/components/PackCard'
+import Link from 'next/link'
 import PressFeature from '@/components/PressFeature'
-import { CAMPAIGN, CONTREPARTIES } from '@/lib/campaign'
+import WaitlistSection from '@/components/WaitlistSection'
 import { DERNIER_ARTICLE } from '@/lib/press'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: "Boutique — Accès Anticipé sur Ulule | We Are Climbers",
-  description: "La campagne Ulule est lancée jusqu'au 24 juin. Pack Salon (160€) et Pack Crux (178€) disponibles. Soutiens We Are Climbers maintenant.",
+  title: "Boutique — Pré-commandes bientôt | We Are Climbers",
+  description: "La campagne a atteint son objectif à 100 %. Les pré-commandes du bracelet Polar 360 et de l'app WAC ouvriront bientôt en propre. Rejoins la liste d'attente.",
   openGraph: {
-    title: "Boutique — Accès Anticipé sur Ulule",
-    description: "La campagne Ulule est lancée jusqu'au 24 juin. Pack Salon (160€) et Pack Crux (178€) disponibles.",
+    title: "Boutique — Pré-commandes bientôt | We Are Climbers",
+    description: "La campagne a atteint son objectif à 100 %. Les pré-commandes du bracelet Polar 360 et de l'app WAC ouvriront bientôt. Rejoins la liste d'attente.",
     url: "https://www.weareclimbers.fr/boutique",
   },
 }
@@ -40,7 +39,7 @@ export default function Boutique() {
                 }}
                 data-aos="fade-up"
               >
-                Campagne Ulule en cours
+                Objectif de campagne atteint à 100 %
               </p>
 
               <h1
@@ -54,7 +53,7 @@ export default function Boutique() {
                 }}
                 data-aos="fade-up"
               >
-                L'Accès Anticipé est ouvert.
+                Les pré-commandes arrivent.
               </h1>
 
               <p
@@ -68,123 +67,66 @@ export default function Boutique() {
                 data-aos="fade-up"
                 data-aos-delay="100"
               >
-                Le bracelet Polar 360 et l'accès à vie à l'app WAC sont disponibles dès maintenant via la campagne Ulule. Jusqu'au 24 juin.
+                Merci ! Grâce à vous, l'objectif est atteint. Prochaine étape : les pré-commandes du bracelet Polar 360 et de l'app WAC, directement sur weareclimbers.fr — sans intermédiaire. La liste d'attente est ouverte.
               </p>
 
-              {/* Compte à rebours */}
-              <div
-                className="mb-10"
-                style={{ color: 'var(--color-primary-green)' }}
-                data-aos="fade-up"
-                data-aos-delay="150"
-              >
-                <CountdownTimer variant="large" />
-              </div>
-
-              {/* CTA Ulule */}
+              {/* CTA liste d'attente */}
               <div data-aos="fade-up" data-aos-delay="200">
-                <a
-                  href={CAMPAIGN.ululeUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-secondary inline-block"
-                >
-                  Voir la campagne sur Ulule
-                </a>
+                <Link href="#liste-attente" className="btn-secondary inline-block">
+                  Préviens-moi du lancement
+                </Link>
               </div>
             </div>
           </div>
         </section>
 
-        {/* BLOC 2 — APERÇU PRODUIT */}
+        {/* BLOC 2 — CE QUI ARRIVE */}
         <section
           className="py-20"
           style={{ backgroundColor: 'var(--color-secondary-beige-light)' }}
         >
           <div className="container-custom">
-            <h2
-              className="text-3xl md:text-5xl text-center mb-12"
-              style={{
-                fontFamily: 'var(--font-syne)',
-                fontWeight: 700,
-                textTransform: 'uppercase',
-                color: 'var(--color-primary-green)'
-              }}
-              data-aos="fade-up"
-            >
-              Choisis ta contrepartie.
-            </h2>
-
-            {/* Cards produit — générées dynamiquement depuis CONTREPARTIES (lib/campaign.ts) */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto mb-8">
-              {CONTREPARTIES.map((pack, i) => (
-                <PackCard key={pack.id} pack={pack} animationDelay={i * 100} />
-              ))}
-            </div>
-
-            {/* Note sous les cards */}
-            <p
-              className="text-center text-sm max-w-3xl mx-auto"
-              style={{
-                fontFamily: 'var(--font-roboto)',
-                color: 'var(--color-primary-green)',
-                lineHeight: '1.6'
-              }}
-              data-aos="fade-up"
-              data-aos-delay="200"
-            >
-              Paiement sécurisé sur Ulule. Livraison estimée après la clôture de la campagne. Détails complets et autres contreparties disponibles sur la page Ulule.
-            </p>
-          </div>
-        </section>
-
-        {/* BLOC 3 — VOIR LA CAMPAGNE COMPLÈTE */}
-        <section
-          className="py-20"
-          style={{ backgroundColor: 'var(--color-primary-green)' }}
-        >
-          <div className="container-custom">
-            <div className="max-w-3xl mx-auto text-center">
+            <div className="max-w-4xl mx-auto text-center">
               <h2
-                className="text-3xl md:text-5xl mb-6"
+                className="text-3xl md:text-5xl mb-8"
                 style={{
                   fontFamily: 'var(--font-syne)',
                   fontWeight: 700,
                   textTransform: 'uppercase',
-                  color: 'var(--color-primary-beige)'
+                  color: 'var(--color-primary-green)'
                 }}
                 data-aos="fade-up"
               >
-                Toutes les contreparties sont sur Ulule.
+                Ce que tu pourras précommander.
               </h2>
 
               <p
-                className="text-lg md:text-xl mb-10"
+                className="text-lg md:text-xl mb-10 leading-relaxed"
                 style={{
                   fontFamily: 'var(--font-roboto)',
-                  color: 'var(--color-primary-beige)',
-                  lineHeight: '1.6',
-                  opacity: 0.9
+                  color: 'var(--color-primary-green)',
+                  lineHeight: '1.6'
                 }}
                 data-aos="fade-up"
                 data-aos-delay="100"
               >
-                Découvre l'ensemble des contreparties disponibles, la barre de progression de la campagne, et soutiens We Are Climbers directement sur Ulule.
+                Le bracelet Polar 360 (haute précision, ±1 BPM) associé à l'app WAC : analyse physiologique en temps réel, prévention des blessures et suivi de récupération. Les détails complets et les tarifs de pré-commande seront dévoilés au lancement.
               </p>
 
               <div data-aos="fade-up" data-aos-delay="200">
-                <a
-                  href={CAMPAIGN.ululeUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-secondary inline-block"
-                >
-                  Voir la campagne sur Ulule
-                </a>
+                <Link href="/le-bracelet" className="btn-beige inline-block">
+                  Découvrir le bracelet
+                </Link>
               </div>
             </div>
           </div>
         </section>
+
+        {/* BLOC 3 — LISTE D'ATTENTE */}
+        <WaitlistSection
+          heading="Sois prévenu·e en premier."
+          subtitle="Laisse ton email : tu seras informé·e dès l'ouverture des pré-commandes, avant l'annonce publique."
+        />
 
         {/* BLOC 3.5 — PRESSE */}
         {DERNIER_ARTICLE && (
@@ -201,7 +143,7 @@ export default function Boutique() {
         {/* BLOC 4 — RÉASSURANCE */}
         <section
           className="py-20"
-          style={{ backgroundColor: 'var(--color-secondary-beige-light)' }}
+          style={{ backgroundColor: 'var(--color-primary-beige)' }}
         >
           <div className="container-custom">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
@@ -234,7 +176,7 @@ export default function Boutique() {
                     lineHeight: '1.6'
                   }}
                 >
-                  Les premiers inscrits reçoivent leur bracelet en priorité.
+                  Les inscrits à la liste d'attente reçoivent leur bracelet en priorité.
                 </p>
               </div>
 
@@ -258,7 +200,7 @@ export default function Boutique() {
                     textTransform: 'uppercase'
                   }}
                 >
-                  Tarif Accès Anticipé
+                  Tarif préférentiel
                 </h3>
                 <p
                   style={{
@@ -267,7 +209,7 @@ export default function Boutique() {
                     lineHeight: '1.6'
                   }}
                 >
-                  Les tarifs Accès Anticipé sont réservés aux soutiens de la campagne. Le tarif public post-campagne sera supérieur.
+                  Un tarif de lancement réservé à la liste d'attente, avant l'ouverture publique.
                 </p>
               </div>
 
@@ -291,7 +233,7 @@ export default function Boutique() {
                     textTransform: 'uppercase'
                   }}
                 >
-                  Paiement sécurisé Ulule
+                  Paiement sécurisé
                 </h3>
                 <p
                   style={{
@@ -300,7 +242,7 @@ export default function Boutique() {
                     lineHeight: '1.6'
                   }}
                 >
-                  Transaction protégée par la plateforme Ulule. Tu n'es débité qu'à la clôture de la campagne, si l'objectif est atteint.
+                  Les pré-commandes se feront via un paiement sécurisé, directement sur notre site.
                 </p>
               </div>
             </div>

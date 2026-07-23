@@ -4,7 +4,7 @@
   "description": "Site vitrine We Are Climbers - Application et bracelets connectés pour grimpeurs",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build --webpack",
     "start": "next start",
     "lint": "next lint"
   },
@@ -19,6 +19,7 @@
   "dependencies": {
     "@types/nodemailer": "^7.0.5",
     "aos": "^2.3.4",
+    "motion": "^12.42.2",
     "next": "^16.1.1",
     "nodemailer": "^7.0.12",
     "react": "^19.2.3",

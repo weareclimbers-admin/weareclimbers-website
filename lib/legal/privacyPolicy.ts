@@ -1,17 +1,25 @@
 import type { LegalDocument } from './types';
 
 /**
- * Politique de Confidentialité WeAreClimbers — webapp coach + app mobile.
+ * Politique de Confidentialité WeAreClimbers — document unifié (site vitrine +
+ * app mobile grimpeur + webapp coach), servi sur le SITE VITRINE weareclimbers.fr.
  *
- * MIROIR de `lib/legal/privacyPolicy.ts` du repo weareclimbers-coach.
- * Source de vérité = repo coach. Coordonner les bumps des deux côtés.
+ * ⚠️ §8 (sous-traitants) et §9 (cookies) DIVERGENT VOLONTAIREMENT du miroir coach :
+ * ils décrivent les sous-traitants réels du SITE VITRINE (Brevo, OVHcloud, Umami
+ * Cloud EU, Meta Pixel, Vercel), et NON la stack de monitoring de la webapp coach
+ * (Sentry / PostHog / Vercel Analytics), hors périmètre des visiteurs du site.
+ * NE PAS resynchroniser aveuglément §8/§9 avec le repo coach.
+ *
+ * v1.0 (2026-05-19) : miroir initial coach.
+ * v1.1 (2026-07-22) : §8 réécrit avec les sous-traitants réels du site vitrine ;
+ *   §9 aligné sur la Politique Cookies du site (Umami opt-in + Meta Pixel opt-in).
  */
 export const PRIVACY_POLICY: LegalDocument = {
   key: 'privacy',
   title: 'Politique de Confidentialité',
   subtitle: 'RGPD — Traitement de vos données personnelles',
-  version: '1.0',
-  lastUpdated: '2026-05-19',
+  version: '1.1',
+  lastUpdated: '2026-07-22',
   preamble: `WeAreClimbers SAS attache une grande importance à la protection de vos données personnelles. La présente politique décrit les données collectées, les finalités, les bases légales, les durées de conservation, vos droits, et les modalités d'exercice de ces droits, conformément au Règlement (UE) 2016/679 (RGPD) et à la loi n° 78-17 dite « Informatique et Libertés ».`,
   sections: [
     {
@@ -129,25 +137,32 @@ En cas de violation de données : notification CNIL sous 72h et notification uti
     {
       id: '8',
       title: '8. Sous-traitants et transferts hors UE',
-      content: `Nous faisons appel aux sous-traitants suivants :
+      content: `Nous faisons appel aux sous-traitants suivants.
+
+Site vitrine weareclimbers.fr :
+- Vercel Inc. (hébergement du site vitrine) — région Europe
+- Brevo / Sendinblue SAS (France) — gestion des inscriptions à la liste d'attente et des demandes de démo coach, envoi d'emails associés ; données hébergées dans l'Union Européenne
+- OVHcloud SAS (France) — envoi des emails transactionnels du site (formulaire de contact, notifications internes) via serveur SMTP
+- Umami Cloud EU — mesure d'audience du site, sans cookie tiers, activée uniquement sur consentement ; données hébergées dans l'Union Européenne
+- Meta Platforms, Inc. (Meta Pixel / Facebook) — mesure de nos campagnes publicitaires, activée uniquement sur consentement marketing (opt-in) ; peut impliquer un transfert vers les États-Unis
+
+Application mobile grimpeur et webapp coach :
 - Google LLC (Firebase Auth, Firestore, Storage, Cloud Functions) — données stockées en europe-west9 (Paris, France), pas de transfert hors UE en production
-- Vercel Inc. (hébergement webapp coach) — région Paris (Europe)
-- Resend (envoi d'emails transactionnels) — UE
 - Polar Electro Oy (SDK bracelets) — données traitées localement sur votre appareil, pas de transfert serveur Polar par défaut
 
-Lorsque des transferts hors UE sont nécessaires (États-Unis), ils sont encadrés par les Clauses Contractuelles Types de la Commission Européenne et/ou par des certifications type Data Privacy Framework.`,
+Lorsque des transferts hors UE sont nécessaires (États-Unis, notamment pour le Meta Pixel), ils sont encadrés par les Clauses Contractuelles Types de la Commission Européenne et/ou par le Data Privacy Framework UE–États-Unis.`,
     },
     {
       id: '9',
       title: '9. Cookies',
-      content: `La webapp coach utilise des cookies strictement nécessaires au fonctionnement (session, préférences). Des cookies analytics optionnels peuvent être activés via votre consentement explicite (bandeau cookies). Voir Politique Cookies pour le détail.`,
+      content: `Le site vitrine utilise des cookies et traceurs strictement nécessaires à son fonctionnement (mémorisation du consentement, sécurité des formulaires). Avec votre consentement (opt-in, catégories indépendantes dans le bandeau de cookies) : une mesure d'audience sans cookie tiers (Umami Cloud EU) et un traceur publicitaire (Meta Pixel) peuvent être activés. Aucun de ces traceurs optionnels n'est chargé sans votre accord. Voir la Politique Cookies pour le détail.`,
     },
     {
       id: '10',
       title: '10. Modifications de la présente politique',
       content: `Toute modification substantielle vous sera notifiée par email et/ou bandeau dans l'application/webapp, et vous serez invité à la ré-accepter au prochain login.
 
-Dernière mise à jour : 19 mai 2026 — Version 1.0`,
+Dernière mise à jour : 22 juillet 2026 — Version 1.1`,
     },
   ],
 };

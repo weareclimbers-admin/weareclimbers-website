@@ -41,12 +41,15 @@ export interface LegalDocument {
 }
 
 /**
- * Versions courantes des documents légaux à l'instant T.
- * Doit rester aligné avec le repo coach.
+ * Versions courantes des documents légaux du SITE VITRINE à l'instant T.
+ *
+ * ⚠️ Ne suit PAS systématiquement le repo coach : `privacy` et `cookies` sont
+ * spécifiques au site (traceurs réels : Umami Cloud EU + Meta Pixel), et divergent
+ * volontairement du miroir coach. `cgu` reste figée en 1.0 (embargo CGU 1.1 / CGV).
  */
 export const CURRENT_LEGAL_VERSIONS = {
   cgu: '1.0',
-  privacy: '1.0',
+  privacy: '1.1',
   legalNotices: '1.0',
-  cookies: '1.0',
+  cookies: '1.1',
 } as const satisfies Record<LegalDocumentKey, string>;

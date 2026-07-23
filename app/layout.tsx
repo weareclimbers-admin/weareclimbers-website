@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { Syne } from 'next/font/google'
 import { Roboto } from 'next/font/google'
-import Script from 'next/script'
 import AOSInit from '@/components/AOSInit'
 import CookieBanner from '@/components/CookieBanner'
 import './globals.css'
@@ -23,9 +22,9 @@ const roboto = Roboto({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.weareclimbers.fr'),
-  title: 'We Are Climbers — Campagne Ulule en cours jusqu\'au 24 juin',
-  description: 'L\'analyse physiologique intelligente pour grimpeurs et grimpeuses. Soutiens We Are Climbers sur Ulule jusqu\'au 24 juin et sécurise ton bracelet Polar 360 + accès à vie à l\'app.',
-  keywords: ['escalade', 'climbing', 'application', 'bracelet connecté', 'sport', 'communauté', 'ulule', 'accès anticipé'],
+  title: 'We Are Climbers — L\'analyse physiologique intelligente pour grimpeurs',
+  description: 'Le bracelet connecté et l\'app qui analysent ton corps en escalade : fréquence cardiaque à ±1 BPM, récupération, prévention des blessures. Grimpons mieux, plus longtemps.',
+  keywords: ['escalade', 'climbing', 'application escalade', 'bracelet connecté escalade', 'analyse physiologique', 'prévention blessures escalade', 'récupération grimpeur', 'coach escalade'],
   icons: {
     icon: '/WAC-acronyme-1-green.svg',
     shortcut: '/WAC-acronyme-1-green.svg',
@@ -36,8 +35,8 @@ export const metadata: Metadata = {
     locale: 'fr_FR',
     url: 'https://www.weareclimbers.fr',
     siteName: 'We Are Climbers',
-    title: 'We Are Climbers — Campagne Ulule en cours jusqu\'au 24 juin',
-    description: 'L\'analyse physiologique intelligente pour grimpeurs et grimpeuses. Soutiens We Are Climbers sur Ulule jusqu\'au 24 juin et sécurise ton bracelet Polar 360 + accès à vie à l\'app.',
+    title: 'We Are Climbers — L\'analyse physiologique intelligente pour grimpeurs',
+    description: 'Le bracelet connecté et l\'app qui analysent ton corps en escalade : fréquence cardiaque à ±1 BPM, récupération, prévention des blessures. Grimpons mieux, plus longtemps.',
     images: [
       {
         url: '/WAC-acronyme-1-green.svg',
@@ -51,8 +50,8 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     site: '@weareclimbers',
     creator: '@weareclimbers',
-    title: 'We Are Climbers — Campagne Ulule en cours jusqu\'au 24 juin',
-    description: 'L\'analyse physiologique intelligente pour grimpeurs et grimpeuses. Soutiens We Are Climbers sur Ulule jusqu\'au 24 juin.',
+    title: 'We Are Climbers — L\'analyse physiologique intelligente pour grimpeurs',
+    description: 'Le bracelet connecté et l\'app qui analysent ton corps en escalade : ±1 BPM, récupération, prévention des blessures. Grimpons mieux, plus longtemps.',
     images: ['/WAC-acronyme-1-green.svg'],
   },
 }
@@ -89,30 +88,13 @@ export default function RootLayout({
             })
           }}
         />
-        {/* Meta Pixel */}
-        <Script id="meta-pixel" strategy="lazyOnload">
-          {`
-            !function(f,b,e,v,n,t,s)
-            {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-            n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-            if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-            n.queue=[];t=b.createElement(e);t.async=!0;
-            t.src=v;s=b.getElementsByTagName(e)[0];
-            s.parentNode.insertBefore(t,s)}(window, document,'script',
-            'https://connect.facebook.net/en_US/fbevents.js');
-            fbq('init', '1574373133681517');
-            fbq('track', 'PageView');
-          `}
-        </Script>
-        <noscript>
-          <img
-            height="1"
-            width="1"
-            style={{ display: 'none' }}
-            src="https://www.facebook.com/tr?id=1574373133681517&ev=PageView&noscript=1"
-            alt=""
-          />
-        </noscript>
+        {/*
+          Meta Pixel (Facebook) : traceur publicitaire soumis à consentement
+          préalable (art. 82 loi Informatique & Libertés / CNIL). Il n'est plus
+          chargé ici de façon inconditionnelle — son injection est déléguée à
+          <CookieBanner /> et n'intervient QUE si l'utilisateur accepte la
+          catégorie « Marketing ». Voir components/CookieBanner.tsx.
+        */}
         <AOSInit />
         {children}
         <CookieBanner />
