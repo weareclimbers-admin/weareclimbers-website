@@ -74,9 +74,9 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <a href="https://coach.weareclimbers.fr/tarifs" target="_blank" rel="noopener noreferrer" style={{ fontFamily: 'var(--font-roboto)' }} className="text-sm transition-colors hover:opacity-75">
+                <Link href="/coachs/offres" style={{ fontFamily: 'var(--font-roboto)' }} className="text-sm transition-colors hover:opacity-75">
                   Offres coach
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
