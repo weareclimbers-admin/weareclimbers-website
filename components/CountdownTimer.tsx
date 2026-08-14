@@ -17,19 +17,28 @@ function computeRemaining(endIso: string) {
   return { days, hours, minutes, seconds, ended: false }
 }
 
-export default function CountdownTimer({ variant = 'large' }: { variant?: Variant }) {
+export default function CountdownTimer({
+  variant = 'large',
+  endDate = CAMPAIGN.endDate,
+  endedLabel = 'La campagne est terminée.',
+}: {
+  variant?: Variant
+  /** Date ISO de fin — défaut : clôture Ulule (historique). La boutique passe la sienne. */
+  endDate?: string
+  endedLabel?: string
+}) {
   // Évite la divergence SSR/CSR : on n'affiche le compteur qu'après hydratation
   const [mounted, setMounted] = useState(false)
-  const [time, setTime] = useState(() => computeRemaining(CAMPAIGN.endDate))
+  const [time, setTime] = useState(() => computeRemaining(endDate))
 
   useEffect(() => {
     setMounted(true)
-    setTime(computeRemaining(CAMPAIGN.endDate))
+    setTime(computeRemaining(endDate))
     const interval = setInterval(() => {
-      setTime(computeRemaining(CAMPAIGN.endDate))
+      setTime(computeRemaining(endDate))
     }, 1000)
     return () => clearInterval(interval)
-  }, [])
+  }, [endDate])
 
   if (!mounted) {
     // Placeholder côté serveur — même taille que le rendu final pour éviter le shift
@@ -38,7 +47,7 @@ export default function CountdownTimer({ variant = 'large' }: { variant?: Varian
   }
 
   if (time.ended) {
-    return variant === 'compact' ? <span>Campagne terminée</span> : <span>La campagne est terminée.</span>
+    return variant === 'compact' ? <span>Terminé</span> : <span>{endedLabel}</span>
   }
 
   if (variant === 'compact') {
