@@ -13,13 +13,16 @@ import type { LegalDocument } from './types';
  * v1.0 (2026-05-19) : miroir initial coach.
  * v1.1 (2026-07-22) : §8 réécrit avec les sous-traitants réels du site vitrine ;
  *   §9 aligné sur la Politique Cookies du site (Umami opt-in + Meta Pixel opt-in).
+ * v1.2 (2026-08-14) : §5 — chemin in-app exact (Réglages → Confidentialité &
+ *   Sécurité) + renvoi vers la page dédiée /supprimer-compte (exigence Google
+ *   Play « URL de suppression de compte »). Clarification sans nouveau traitement.
  */
 export const PRIVACY_POLICY: LegalDocument = {
   key: 'privacy',
   title: 'Politique de Confidentialité',
   subtitle: 'RGPD — Traitement de vos données personnelles',
-  version: '1.1',
-  lastUpdated: '2026-07-22',
+  version: '1.2',
+  lastUpdated: '2026-08-14',
   preamble: `WeAreClimbers SAS attache une grande importance à la protection de vos données personnelles. La présente politique décrit les données collectées, les finalités, les bases légales, les durées de conservation, vos droits, et les modalités d'exercice de ces droits, conformément au Règlement (UE) 2016/679 (RGPD) et à la loi n° 78-17 dite « Informatique et Libertés ».`,
   sections: [
     {
@@ -107,9 +110,11 @@ Vous pouvez modifier ces choix ou révoquer entièrement l'accès à tout moment
 - Droit de déposer une plainte auprès de la CNIL (https://www.cnil.fr/fr/plaintes)
 
 Exercice de vos droits :
-- Application mobile : Paramètres → Mes données
+- Application mobile : Réglages → Confidentialité & Sécurité (« Exporter mes données », « Supprimer mon compte »)
 - Webapp coach : Paramètres → Mes données
 - Email : dpo@weareclimbers.fr
+
+Suppression de compte : la procédure détaillée (étapes dans l'application, demande par e-mail, données supprimées et conservées, délais) est décrite sur la page dédiée https://www.weareclimbers.fr/supprimer-compte.
 
 Délai de réponse : 30 jours maximum (1 mois RGPD).`,
     },
@@ -162,7 +167,7 @@ Lorsque des transferts hors UE sont nécessaires (États-Unis, notamment pour le
       title: '10. Modifications de la présente politique',
       content: `Toute modification substantielle vous sera notifiée par email et/ou bandeau dans l'application/webapp, et vous serez invité à la ré-accepter au prochain login.
 
-Dernière mise à jour : 22 juillet 2026 — Version 1.1`,
+Dernière mise à jour : 14 août 2026 — Version 1.2`,
     },
   ],
 };

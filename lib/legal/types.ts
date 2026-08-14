@@ -49,7 +49,7 @@ export interface LegalDocument {
  */
 export const CURRENT_LEGAL_VERSIONS = {
   cgu: '1.0',
-  privacy: '1.1',
+  privacy: '1.2',
   legalNotices: '1.0',
   cookies: '1.1',
 } as const satisfies Record<LegalDocumentKey, string>;
