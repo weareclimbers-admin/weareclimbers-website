@@ -94,6 +94,7 @@ out.push(`STRIPE_PRICE_PREORDER=${price.id}`)
 // ── 4) Shipping rates (TTC, le port suit la TVA du bien : txcd_92010001) ────
 const RATES = [
   { env: 'STRIPE_SHIPPING_RATE_FR', zone: 'fr', name: 'Livraison France métropolitaine', amount: 499 },
+  { env: 'STRIPE_SHIPPING_RATE_FR_DOMICILE', zone: 'fr-domicile', name: 'Livraison France à domicile', amount: 599 },
   { env: 'STRIPE_SHIPPING_RATE_BE_LU', zone: 'be-lu', name: 'Livraison Belgique & Luxembourg', amount: 699 },
   { env: 'STRIPE_SHIPPING_RATE_CH', zone: 'ch', name: 'Livraison Suisse', amount: 699 },
   { env: 'STRIPE_SHIPPING_RATE_DOM_TOM', zone: 'dom-tom', name: 'Livraison Outre-mer', amount: 999 },

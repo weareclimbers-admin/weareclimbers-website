@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import type Stripe from 'stripe'
 import { getStripe } from '@/lib/stripe'
-import { PREORDER_FLOW, PREORDER_PACK, getZone } from '@/lib/preorder'
+import { getRelayPoint } from '@/lib/mondialrelay'
+import { PREORDER_FLOW, PREORDER_PACK, getZone, getMode } from '@/lib/preorder'
 
 // Pré-commande V2 → création d'une session Stripe Checkout (hébergé, mode payment).
 // Le client envoie sa zone de livraison (choisie sur /boutique) ; la session borne
@@ -31,12 +32,67 @@ async function assertPriceInclusive(stripe: Stripe, priceId: string): Promise<vo
   verifiedInclusivePrices.add(priceId)
 }
 
+interface RelayInput {
+  id: string
+  name: string
+  zip: string
+  city: string
+  country: string
+}
+
+function parseRelay(raw: unknown, allowedCountries: string[]): RelayInput | null {
+  if (!allowedCountries.length || typeof raw !== 'object' || raw === null) return null
+  const r = raw as Record<string, unknown>
+  const id = typeof r.id === 'string' ? r.id.trim() : ''
+  const country = typeof r.country === 'string' ? r.country.toUpperCase() : ''
+  if (!/^\d{4,8}$/.test(id) || !allowedCountries.includes(country)) return null
+  const str = (v: unknown, max: number) => (typeof v === 'string' ? v.slice(0, max) : '')
+  return { id, country, name: str(r.name, 100), zip: str(r.zip, 10), city: str(r.city, 60) }
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json().catch(() => null)
     const zone = getZone(body?.zone)
     if (!zone) {
       return NextResponse.json({ error: 'Zone de livraison invalide' }, { status: 400 })
+    }
+    const mode = getMode(zone, body?.mode)
+    if (!mode) {
+      return NextResponse.json({ error: 'Mode de livraison invalide' }, { status: 400 })
+    }
+
+    // Mode « relais » : le point Mondial Relay choisi est OBLIGATOIRE et voyage
+    // en metadata — l'expédition MR sera créée en lot au moment de l'envoi
+    // (novembre), pas au paiement.
+    let relay: RelayInput | null = null
+    let relayShipping: { name: string; line1: string; zip: string; city: string; country: string } | null = null
+    if (mode.relay) {
+      relay = parseRelay(body?.relay, zone.relayCountries?.map((c) => c.code) ?? [])
+      if (!relay) {
+        return NextResponse.json({ error: 'Choisis ton point relais Mondial Relay.' }, { status: 400 })
+      }
+      // Adresse OFFICIELLE du relais re-vérifiée chez Mondial Relay (par numéro) :
+      // c'est elle qui devient l'adresse de livraison du paiement et de la facture.
+      try {
+        const verified = await getRelayPoint(relay.country, relay.id)
+        if (verified) {
+          relayShipping = {
+            name: verified.name || relay.name,
+            line1: verified.address || verified.name || relay.name,
+            zip: verified.zip || relay.zip,
+            city: verified.city || relay.city,
+            country: relay.country,
+          }
+        }
+      } catch (err) {
+        console.error('checkout: vérification du relais chez MR impossible, fallback client', err)
+      }
+      // Fallback si l'API MR est indisponible : les données affichées au client
+      // (elles viennent de notre propre /api/relay-points quelques secondes avant).
+      if (!relayShipping) {
+        relayShipping = { name: relay.name, line1: relay.name, zip: relay.zip, city: relay.city, country: relay.country }
+      }
     }
 
     const requestedQty = Number(body?.quantity ?? 1)
@@ -45,10 +101,10 @@ export async function POST(request: NextRequest) {
       : 1
 
     const priceId = process.env.STRIPE_PRICE_PREORDER
-    const shippingRateId = process.env[zone.shippingRateEnv]
+    const shippingRateId = process.env[mode.shippingRateEnv]
     if (!priceId || !shippingRateId) {
       console.error(
-        `checkout: config Stripe manquante (STRIPE_PRICE_PREORDER ou ${zone.shippingRateEnv})`,
+        `checkout: config Stripe manquante (STRIPE_PRICE_PREORDER ou ${mode.shippingRateEnv})`,
       )
       return NextResponse.json({ error: 'Configuration serveur manquante' }, { status: 500 })
     }
@@ -63,7 +119,18 @@ export async function POST(request: NextRequest) {
 
     // Metadata métier posées sur la session ET le payment_intent (pattern bracelet :
     // la preuve business reste lisible dans Stripe > Payments même sans la session).
-    const metadata = { flow: PREORDER_FLOW, zone: zone.id }
+    const metadata: Record<string, string> = {
+      flow: PREORDER_FLOW,
+      zone: zone.id,
+      shipping_mode: mode.id,
+    }
+    if (relay && relayShipping) {
+      metadata.relay_id = relay.id
+      metadata.relay_name = relayShipping.name
+      metadata.relay_zip = relayShipping.zip
+      metadata.relay_city = relayShipping.city
+      metadata.relay_country = relayShipping.country
+    }
 
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
@@ -76,20 +143,47 @@ export async function POST(request: NextRequest) {
         },
       ],
       automatic_tax: { enabled: true },
-      shipping_address_collection: {
-        allowed_countries:
-          zone.allowedCountries as Stripe.Checkout.SessionCreateParams.ShippingAddressCollection.AllowedCountry[],
-      },
+      // Mode relais : le relais EST l'adresse de livraison (posée sur le paiement
+      // et la facture) — Stripe ne collecte que l'adresse de FACTURATION.
+      // Mode domicile : collecte classique de l'adresse de livraison, bornée
+      // aux pays de la zone.
+      ...(relayShipping
+        ? { billing_address_collection: 'required' as const }
+        : {
+            shipping_address_collection: {
+              allowed_countries:
+                zone.allowedCountries as Stripe.Checkout.SessionCreateParams.ShippingAddressCollection.AllowedCountry[],
+            },
+          }),
       shipping_options: [{ shipping_rate: shippingRateId }],
       phone_number_collection: { enabled: true }, // requis par les transporteurs
       allow_promotion_codes: true, // code « liste d'attente » diffusé via Brevo
       customer_creation: 'always', // les acheteurs restent visibles dans Stripe > Customers
       metadata,
+      // NB : impossible de poser le relais en `payment_intent_data.shipping` —
+      // incompatible avec automatic_tax (erreur Stripe vérifiée le 14/08). Le
+      // relais vit donc en metadata + champ dédié sur la facture.
       payment_intent_data: { metadata },
       // Facture Stripe générée automatiquement à chaque commande — son PDF est lié
       // dans l'email de confirmation custom (webhook). On n'active PAS les emails
       // de facture côté compte Stripe : réglage partagé avec le SaaS coach.
-      invoice_creation: { enabled: true, invoice_data: { metadata } },
+      // En mode relais, le point relais apparaît sur la facture (champ dédié).
+      invoice_creation: {
+        enabled: true,
+        invoice_data: {
+          metadata,
+          ...(relayShipping && relay
+            ? {
+                custom_fields: [
+                  {
+                    name: 'Livraison en point relais',
+                    value: `${relayShipping.name}, ${relayShipping.zip} ${relayShipping.city} (n° ${relay.id})`.slice(0, 140),
+                  },
+                ],
+              }
+            : {}),
+        },
+      },
       success_url: `${siteUrl}/boutique/merci?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${siteUrl}/boutique`,
     })

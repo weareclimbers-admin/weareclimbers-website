@@ -42,7 +42,8 @@ function getShippingInfo(session: Stripe.Checkout.Session): ShippingInfo | undef
 }
 
 function formatAddress(session: Stripe.Checkout.Session): string {
-  const addr = getShippingInfo(session)?.address
+  // Mode relais : pas d'adresse de livraison collectée → adresse de facturation.
+  const addr = getShippingInfo(session)?.address ?? session.customer_details?.address
   if (!addr) return '—'
   return (
     [addr.line1, addr.line2, `${addr.postal_code ?? ''} ${addr.city ?? ''}`.trim(), addr.country]
@@ -134,13 +135,18 @@ async function notifyNewPreorder(
     const paymentIntentId =
       typeof session.payment_intent === 'string' ? session.payment_intent : session.payment_intent?.id
 
+    const relayLabel = session.metadata?.relay_id
+      ? `${session.metadata.relay_name || '—'} — ${session.metadata.relay_zip || ''} ${session.metadata.relay_city || ''} (n° ${session.metadata.relay_id}, ${session.metadata.relay_country || ''})`
+      : null
+
     const rows: [string, string][] = [
       ['Client', getShippingInfo(session)?.name || session.customer_details?.name || '—'],
       ['Email', session.customer_details?.email || '—'],
       ['Téléphone', session.customer_details?.phone || '—'],
       ['Commande', extras.quantityLabel],
       ['Total payé', formatEur(session.amount_total)],
-      ['Zone', zone],
+      ['Zone', session.metadata?.shipping_mode ? `${zone} · ${session.metadata.shipping_mode}` : zone],
+      ...(relayLabel ? ([['Point relais', relayLabel]] as [string, string][]) : []),
       ['Adresse', formatAddress(session)],
       ['Facture', extras.invoiceHostedUrl || '—'],
       ['Paiement', paymentIntentId ? `https://dashboard.stripe.com/payments/${paymentIntentId}` : session.id],
@@ -203,10 +209,14 @@ async function sendCustomerConfirmation(session: Stripe.Checkout.Session, extras
     const firstName = (session.customer_details?.name || '').trim().split(/\s+/)[0] || ''
     const invoiceLink = extras.invoicePdfUrl || extras.invoiceHostedUrl
 
+    const relayLabel = session.metadata?.relay_id
+      ? `Point relais ${session.metadata.relay_name || ''}, ${session.metadata.relay_zip || ''} ${session.metadata.relay_city || ''}`.trim()
+      : null
+
     const rows: [string, string][] = [
       ['Commande', extras.quantityLabel],
       ['Total payé', formatEur(session.amount_total)],
-      ['Livraison', formatAddress(session)],
+      ['Livraison', relayLabel || formatAddress(session)],
       ...(PREORDER_PACK.deliveryWindow
         ? ([['Expédition estimée', PREORDER_PACK.deliveryWindow]] as [string, string][])
         : []),

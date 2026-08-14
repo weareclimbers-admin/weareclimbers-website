@@ -5,7 +5,8 @@
  *   - Paiement intégral à la commande (pas d'acompte)
  *   - Pack unique : bracelet Polar 360 + app WAC
  *   - Livraison par zones : France métropolitaine / Belgique-Luxembourg / Suisse / Outre-mer
- *   - Prix : 179 € TTC hors promotion ; ports TTC : FR 4,99 / BE-LU 6,99 / CH 6,99 / DOM 9,99
+ *   - Prix : 179 € TTC hors promotion ; ports TTC : FR relais 4,99 ou domicile 5,99 (au choix),
+ *     BE-LU relais 6,99, CH domicile 6,99, DOM domicile 9,99
  *   - Promo liste d'attente : −10 % (≈161,10 € TTC, parité tarif Ulule sans la commission)
  *   - Codes promo activés (code « liste d'attente » diffusé via Brevo, liste #11)
  *
@@ -82,20 +83,35 @@ export interface ShippingZone {
    * donc chaque session n'autorise que les pays de sa zone.
    */
   allowedCountries: string[]
-  /** Nom de la variable d'env serveur portant l'ID du shipping rate Stripe de la zone. */
-  shippingRateEnv: string
+  /**
+   * Pays du réseau point relais Mondial Relay proposés dans le sélecteur de
+   * relais (absent = la zone ne livre pas en point relais).
+   */
+  relayCountries?: { code: string; label: string }[]
+  /** Modes de livraison proposés (1 ou 2). L'UI affiche un choix si > 1. */
+  modes: ShippingMode[]
+}
+
+export interface ShippingMode {
+  id: 'relais' | 'domicile'
+  label: string
+  /** true = le client doit choisir un point relais Mondial Relay avant paiement. */
+  relay: boolean
   /**
    * Frais de port TTC affichés (€) — purement présentatif, doit matcher le
-   * shipping rate Stripe de la zone (comme priceTtc ↔ STRIPE_PRICE_PREORDER).
+   * shipping rate Stripe du mode (comme priceTtc ↔ STRIPE_PRICE_PREORDER).
    */
   shippingTtc: number | null
+  /** Nom de la variable d'env serveur portant l'ID du shipping rate Stripe. */
+  shippingRateEnv: string
 }
 
 /**
- * Zones de livraison actées le 14/08/2026 : FR / BE-LU / CH / Outre-mer.
- * Frais de port par zone : TODO(Julien) — montants à définir, puis shipping rates
- * Stripe à créer avec tax_code 'txcd_92010001' (le port suit la TVA du bien —
- * PAS txcd_00000000, erreur connue du shipping bracelet existant).
+ * Zones + modes actés le 14/08/2026 : France au CHOIX point relais (4,99 €) ou
+ * domicile (5,99 €) ; BE-LU point relais uniquement (6,99 €) ; CH (6,99 €) et
+ * Outre-mer (9,99 €) à domicile uniquement (hors réseau Mondial Relay — traités
+ * manuellement via Colissimo/La Poste). Shipping rates Stripe avec
+ * tax_code 'txcd_92010001' (le port suit la TVA du bien — PAS txcd_00000000).
  *
  * TVA (gérée par Stripe Tax, prix inclusifs — le client paie toujours le même TTC) :
  *   - FR + Monaco : TVA française 20 % extraite du prix
@@ -110,23 +126,56 @@ export const SHIPPING_ZONES: ShippingZone[] = [
     id: 'fr',
     label: 'France métropolitaine',
     allowedCountries: ['FR', 'MC'],
-    shippingRateEnv: 'STRIPE_SHIPPING_RATE_FR',
-    shippingTtc: 4.99,
+    relayCountries: [{ code: 'FR', label: 'France' }],
+    modes: [
+      {
+        id: 'relais',
+        label: 'En point relais Mondial Relay',
+        relay: true,
+        shippingTtc: 4.99,
+        shippingRateEnv: 'STRIPE_SHIPPING_RATE_FR',
+      },
+      {
+        id: 'domicile',
+        label: 'À domicile',
+        relay: false,
+        shippingTtc: 5.99, // acté par Julien le 14/08
+        shippingRateEnv: 'STRIPE_SHIPPING_RATE_FR_DOMICILE',
+      },
+    ],
   },
   {
     id: 'be-lu',
     label: 'Belgique & Luxembourg',
     allowedCountries: ['BE', 'LU'],
-    shippingRateEnv: 'STRIPE_SHIPPING_RATE_BE_LU',
-    shippingTtc: 6.99, // Belgique alignée sur le Luxembourg — confirmé par Julien le 14/08
+    relayCountries: [
+      { code: 'BE', label: 'Belgique' },
+      { code: 'LU', label: 'Luxembourg' },
+    ],
+    modes: [
+      {
+        id: 'relais',
+        label: 'En point relais Mondial Relay',
+        relay: true,
+        shippingTtc: 6.99, // Belgique alignée sur le Luxembourg — confirmé par Julien le 14/08
+        shippingRateEnv: 'STRIPE_SHIPPING_RATE_BE_LU',
+      },
+    ],
   },
   {
     id: 'ch',
     label: 'Suisse',
     note: 'TVA et frais de douane suisses à la charge du destinataire.',
     allowedCountries: ['CH'],
-    shippingRateEnv: 'STRIPE_SHIPPING_RATE_CH',
-    shippingTtc: 6.99,
+    modes: [
+      {
+        id: 'domicile',
+        label: 'À domicile',
+        relay: false,
+        shippingTtc: 6.99,
+        shippingRateEnv: 'STRIPE_SHIPPING_RATE_CH',
+      },
+    ],
   },
   {
     id: 'dom-tom',
@@ -135,11 +184,29 @@ export const SHIPPING_ZONES: ShippingZone[] = [
     // DROM + COM. Liste ajustable selon la réalité logistique — à confirmer avec
     // Julien et à vérifier en mode test (support Stripe Checkout + Stripe Tax).
     allowedCountries: ['GP', 'MQ', 'GF', 'RE', 'YT', 'PM', 'BL', 'MF', 'PF', 'NC', 'WF'],
-    shippingRateEnv: 'STRIPE_SHIPPING_RATE_DOM_TOM',
-    shippingTtc: 9.99,
+    modes: [
+      {
+        id: 'domicile',
+        label: 'À domicile',
+        relay: false,
+        shippingTtc: 9.99,
+        shippingRateEnv: 'STRIPE_SHIPPING_RATE_DOM_TOM',
+      },
+    ],
   },
 ]
 
 export function getZone(id: string | undefined | null): ShippingZone | undefined {
   return SHIPPING_ZONES.find((z) => z.id === id)
+}
+
+export function getMode(zone: ShippingZone, modeId: string | undefined | null): ShippingMode | undefined {
+  if (zone.modes.length === 1 && !modeId) return zone.modes[0]
+  return zone.modes.find((m) => m.id === modeId)
+}
+
+/** Port TTC le moins cher d'une zone (affichage sur la carte de zone). */
+export function cheapestShipping(zone: ShippingZone): number | null {
+  const prices = zone.modes.map((m) => m.shippingTtc).filter((p): p is number => p !== null)
+  return prices.length ? Math.min(...prices) : null
 }

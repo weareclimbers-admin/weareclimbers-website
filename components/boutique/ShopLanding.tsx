@@ -11,7 +11,7 @@ import Magnetic from '@/components/Magnetic'
 import PressFeature from '@/components/PressFeature'
 import CountdownTimer from '@/components/CountdownTimer'
 import { DERNIER_ARTICLE } from '@/lib/press'
-import { PREORDER_PACK, SHIPPING_ZONES, PREORDER_END_DATE, PREORDER_END_LABEL } from '@/lib/preorder'
+import { PREORDER_PACK, SHIPPING_ZONES, PREORDER_END_DATE, PREORDER_END_LABEL, cheapestShipping } from '@/lib/preorder'
 
 /**
  * Boutique pré-commande V2 — vraie page e-commerce (galerie + panneau d'achat
@@ -147,21 +147,101 @@ function formatPrice(value: number): string {
   }).format(value)
 }
 
+/** Point relais tel que renvoyé par /api/relay-points (miroir de lib/mondialrelay). */
+interface RelayPointLite {
+  id: string
+  name: string
+  address: string
+  zip: string
+  city: string
+  country: string
+  distanceMeters: number | null
+}
+
 export default function ShopLanding() {
   const [mainImage, setMainImage] = useState(0)
   const [zoneId, setZoneId] = useState(SHIPPING_ZONES[0].id)
+  const [modeId, setModeId] = useState(SHIPPING_ZONES[0].modes[0].id)
   const [quantity, setQuantity] = useState(1)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  // Sélection du point relais Mondial Relay (modes « relais »)
+  const [relayCountry, setRelayCountry] = useState('FR')
+  const [relayZip, setRelayZip] = useState('')
+  const [relayPoints, setRelayPoints] = useState<RelayPointLite[] | null>(null)
+  const [relaySearching, setRelaySearching] = useState(false)
+  const [relayError, setRelayError] = useState<string | null>(null)
+  const [selectedRelay, setSelectedRelay] = useState<RelayPointLite | null>(null)
+
+  const currentZone = SHIPPING_ZONES.find((z) => z.id === zoneId) ?? SHIPPING_ZONES[0]
+  const currentMode = currentZone.modes.find((m) => m.id === modeId) ?? currentZone.modes[0]
+
+  function resetRelay() {
+    setRelayZip('')
+    setRelayPoints(null)
+    setRelayError(null)
+    setSelectedRelay(null)
+    setError(null)
+  }
+
+  function selectZone(id: string) {
+    const zone = SHIPPING_ZONES.find((z) => z.id === id) ?? SHIPPING_ZONES[0]
+    setZoneId(zone.id)
+    setModeId(zone.modes[0].id)
+    setRelayCountry(zone.relayCountries?.[0]?.code ?? 'FR')
+    resetRelay()
+  }
+
+  async function searchRelays() {
+    setRelaySearching(true)
+    setRelayError(null)
+    setRelayPoints(null)
+    setSelectedRelay(null)
+    try {
+      const params = new URLSearchParams({ zone: zoneId, country: relayCountry, zip: relayZip.trim() })
+      const res = await fetch(`/api/relay-points?${params}`)
+      const data = await res.json().catch(() => null)
+      if (!res.ok || !Array.isArray(data?.points)) {
+        throw new Error(data?.error || 'Recherche indisponible. Réessaye dans quelques instants.')
+      }
+      if (data.points.length === 0) {
+        setRelayError('Aucun point relais trouvé autour de ce code postal.')
+      } else {
+        setRelayPoints(data.points)
+      }
+    } catch (err) {
+      setRelayError(err instanceof Error ? err.message : 'Recherche indisponible. Réessaye.')
+    } finally {
+      setRelaySearching(false)
+    }
+  }
+
   async function handleCheckout() {
+    if (currentMode.relay && !selectedRelay) {
+      setError('Choisis ton point relais Mondial Relay avant de continuer.')
+      return
+    }
     setLoading(true)
     setError(null)
     try {
       const res = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ zone: zoneId, quantity }),
+        body: JSON.stringify({
+          zone: zoneId,
+          mode: currentMode.id,
+          quantity,
+          relay: selectedRelay
+            ? {
+                id: selectedRelay.id,
+                name: selectedRelay.name,
+                zip: selectedRelay.zip,
+                city: selectedRelay.city,
+                country: selectedRelay.country,
+              }
+            : undefined,
+        }),
       })
       const data = await res.json().catch(() => null)
       if (!res.ok || !data?.url) {
@@ -252,7 +332,7 @@ export default function ShopLanding() {
               transition={{ type: 'spring', stiffness: 120, damping: 18 }}
             >
               <div
-                className="relative flex items-center justify-center p-8 md:p-12"
+                className="relative flex items-center justify-center p-8 md:p-12 rounded-[20px] overflow-hidden"
                 style={{ backgroundColor: 'var(--color-secondary-beige-light)', border: '2px solid var(--color-primary-green)' }}
               >
                 <Image
@@ -273,7 +353,7 @@ export default function ShopLanding() {
                     type="button"
                     onClick={() => setMainImage(i)}
                     aria-label={`Voir la photo ${i + 1}`}
-                    className="relative p-2 transition-opacity"
+                    className="relative p-2 transition-opacity rounded-xl overflow-hidden"
                     style={{
                       backgroundColor: 'var(--color-secondary-beige-light)',
                       border: `2px solid ${i === mainImage ? 'var(--color-secondary-orange)' : 'var(--color-primary-green)'}`,
@@ -344,7 +424,7 @@ export default function ShopLanding() {
                 </p>
               ) : (
                 <p
-                  className="mb-2 inline-block px-4 py-2 text-sm font-bold uppercase"
+                  className="mb-2 inline-block px-4 py-2 text-sm font-bold uppercase rounded-lg"
                   style={{
                     fontFamily: 'var(--font-syne)',
                     color: 'var(--color-primary-green)',
@@ -390,7 +470,7 @@ export default function ShopLanding() {
                   {SHIPPING_ZONES.map((z) => (
                     <label
                       key={z.id}
-                      className="flex items-start gap-3 p-3.5 cursor-pointer transition-colors"
+                      className="flex items-start gap-3 p-3.5 cursor-pointer transition-colors rounded-xl"
                       style={{
                         border: `2px solid ${zoneId === z.id ? 'var(--color-secondary-orange)' : 'var(--color-primary-green)'}`,
                         backgroundColor: zoneId === z.id ? 'var(--color-secondary-beige-light)' : 'transparent',
@@ -401,7 +481,7 @@ export default function ShopLanding() {
                         name="zone"
                         value={z.id}
                         checked={zoneId === z.id}
-                        onChange={() => setZoneId(z.id)}
+                        onChange={() => selectZone(z.id)}
                         className="mt-1"
                         style={{ accentColor: 'var(--color-secondary-orange)' }}
                       />
@@ -413,12 +493,13 @@ export default function ShopLanding() {
                           >
                             {z.label}
                           </span>
-                          {z.shippingTtc !== null && (
+                          {cheapestShipping(z) !== null && (
                             <span
                               className="flex-none text-sm font-bold"
                               style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-secondary-orange)' }}
                             >
-                              {formatPrice(z.shippingTtc)}
+                              {z.modes.length > 1 ? 'dès ' : ''}
+                              {formatPrice(cheapestShipping(z) as number)}
                             </span>
                           )}
                         </span>
@@ -433,9 +514,188 @@ export default function ShopLanding() {
                 </div>
               </fieldset>
 
+              {/* Mode de livraison (si la zone en propose plusieurs — France : relais ou domicile) */}
+              {currentZone.modes.length > 1 && (
+                <fieldset className="mb-6">
+                  <legend
+                    className="text-sm font-bold uppercase mb-3"
+                    style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-primary-green)', letterSpacing: '0.1em' }}
+                  >
+                    Comment veux-tu être livré·e ?
+                  </legend>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {currentZone.modes.map((m) => (
+                      <label
+                        key={m.id}
+                        className="flex items-center gap-3 p-3.5 cursor-pointer transition-colors rounded-xl"
+                        style={{
+                          border: `2px solid ${currentMode.id === m.id ? 'var(--color-secondary-orange)' : 'var(--color-primary-green)'}`,
+                          backgroundColor: currentMode.id === m.id ? 'var(--color-secondary-beige-light)' : 'transparent',
+                        }}
+                      >
+                        <input
+                          type="radio"
+                          name="mode"
+                          value={m.id}
+                          checked={currentMode.id === m.id}
+                          onChange={() => {
+                            setModeId(m.id)
+                            resetRelay()
+                          }}
+                          style={{ accentColor: 'var(--color-secondary-orange)' }}
+                        />
+                        <span className="flex-1 flex items-baseline justify-between gap-2">
+                          <span
+                            className="text-sm font-bold uppercase"
+                            style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-primary-green)' }}
+                          >
+                            {m.label}
+                          </span>
+                          {m.shippingTtc !== null && (
+                            <span
+                              className="flex-none text-sm font-bold"
+                              style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-secondary-orange)' }}
+                            >
+                              {formatPrice(m.shippingTtc)}
+                            </span>
+                          )}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                </fieldset>
+              )}
+
+              {/* Point relais Mondial Relay (modes « relais ») */}
+              {currentMode.relay && (
+                <div className="mb-6">
+                  <p
+                    className="text-sm font-bold uppercase mb-3"
+                    style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-primary-green)', letterSpacing: '0.1em' }}
+                  >
+                    Ton point relais Mondial Relay
+                  </p>
+
+                  <div className="flex flex-wrap items-stretch gap-2">
+                    {(currentZone.relayCountries ?? []).length > 1 && (
+                      <div className="flex rounded-lg overflow-hidden" style={{ border: '2px solid var(--color-primary-green)' }}>
+                        {(currentZone.relayCountries ?? []).map((c) => (
+                          <button
+                            key={c.code}
+                            type="button"
+                            onClick={() => {
+                              setRelayCountry(c.code)
+                              setRelayPoints(null)
+                              setSelectedRelay(null)
+                              setRelayError(null)
+                            }}
+                            className="px-3 text-xs font-bold uppercase"
+                            style={{
+                              fontFamily: 'var(--font-syne)',
+                              backgroundColor: relayCountry === c.code ? 'var(--color-primary-green)' : 'transparent',
+                              color: relayCountry === c.code ? 'var(--color-primary-beige)' : 'var(--color-primary-green)',
+                            }}
+                          >
+                            {c.label}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      value={relayZip}
+                      onChange={(e) => setRelayZip(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault()
+                          searchRelays()
+                        }
+                      }}
+                      placeholder={relayCountry === 'FR' ? 'Code postal (ex. 64100)' : 'Code postal'}
+                      aria-label="Code postal pour la recherche de point relais"
+                      className="flex-1 min-w-[140px] px-3 py-2.5 text-sm bg-transparent outline-none rounded-lg"
+                      style={{
+                        fontFamily: 'var(--font-roboto)',
+                        color: 'var(--color-primary-green)',
+                        border: '2px solid var(--color-primary-green)',
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={searchRelays}
+                      disabled={relaySearching || relayZip.trim().length < 4}
+                      className="px-4 py-2.5 text-sm font-bold uppercase disabled:opacity-40 transition-opacity rounded-lg"
+                      style={{
+                        fontFamily: 'var(--font-syne)',
+                        backgroundColor: 'var(--color-primary-green)',
+                        color: 'var(--color-primary-beige)',
+                      }}
+                    >
+                      {relaySearching ? 'Recherche…' : 'Chercher'}
+                    </button>
+                  </div>
+
+                  {relayError && (
+                    <p className="mt-3 text-sm font-bold" style={{ fontFamily: 'var(--font-roboto)', color: '#8C2B1E' }}>
+                      {relayError}
+                    </p>
+                  )}
+
+                  {relayPoints && (
+                    <div className="mt-3 max-h-64 overflow-y-auto space-y-2 pr-1">
+                      {relayPoints.map((p) => (
+                        <label
+                          key={p.id}
+                          className="flex items-start gap-3 p-3 cursor-pointer transition-colors rounded-lg"
+                          style={{
+                            border: `2px solid ${selectedRelay?.id === p.id ? 'var(--color-secondary-orange)' : 'rgba(38,83,53,0.35)'}`,
+                            backgroundColor: selectedRelay?.id === p.id ? 'var(--color-secondary-beige-light)' : 'transparent',
+                          }}
+                        >
+                          <input
+                            type="radio"
+                            name="relay"
+                            checked={selectedRelay?.id === p.id}
+                            onChange={() => {
+                              setSelectedRelay(p)
+                              setError(null)
+                            }}
+                            className="mt-1"
+                            style={{ accentColor: 'var(--color-secondary-orange)' }}
+                          />
+                          <span className="flex-1">
+                            <span className="flex items-baseline justify-between gap-2">
+                              <span className="text-sm font-bold" style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-primary-green)' }}>
+                                {p.name}
+                              </span>
+                              {p.distanceMeters !== null && (
+                                <span className="flex-none text-xs font-bold" style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-secondary-orange)' }}>
+                                  {p.distanceMeters < 1000 ? `${p.distanceMeters} m` : `${(p.distanceMeters / 1000).toFixed(1)} km`}
+                                </span>
+                              )}
+                            </span>
+                            <span className="block text-xs mt-0.5" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', opacity: 0.75 }}>
+                              {p.address && `${p.address}, `}
+                              {p.zip} {p.city}
+                            </span>
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+                  )}
+
+                  <p className="mt-3 text-xs" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', opacity: 0.65, lineHeight: 1.5 }}>
+                    Ton colis sera livré dans le point relais choisi — c&apos;est lui qui apparaîtra
+                    comme adresse de livraison sur ta facture. Au paiement, seule ton adresse de
+                    facturation te sera demandée.
+                  </p>
+                </div>
+              )}
+
               {/* Quantité + CTA */}
               <div className="flex items-stretch gap-4 mb-4">
-                <div className="flex items-center" style={{ border: '2px solid var(--color-primary-green)' }}>
+                <div className="flex items-center rounded-lg overflow-hidden" style={{ border: '2px solid var(--color-primary-green)' }}>
                   <button
                     type="button"
                     onClick={() => setQuantity((q) => Math.max(1, q - 1))}
@@ -480,7 +740,7 @@ export default function ShopLanding() {
               {error && (
                 <p
                   role="alert"
-                  className="mb-4 px-4 py-3 text-sm font-bold"
+                  className="mb-4 px-4 py-3 text-sm font-bold rounded-lg"
                   style={{ fontFamily: 'var(--font-roboto)', color: '#8C2B1E', backgroundColor: '#FDE8E2', border: '2px solid #8C2B1E' }}
                 >
                   {error}
@@ -740,7 +1000,7 @@ export default function ShopLanding() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
             {STEPS.map((step, i) => (
               <Reveal key={step.title} delay={i * 0.1}>
-                <div className="h-full p-6" style={{ border: '2px solid var(--color-primary-green)', backgroundColor: 'var(--color-primary-beige)' }}>
+                <div className="h-full p-6 rounded-[20px]" style={{ border: '2px solid var(--color-primary-green)', backgroundColor: 'var(--color-primary-beige)' }}>
                   <span
                     className="inline-flex w-10 h-10 items-center justify-center text-lg font-bold mb-4"
                     style={{ fontFamily: 'var(--font-syne)', backgroundColor: 'var(--color-secondary-orange)', color: 'var(--color-primary-beige)' }}
@@ -804,7 +1064,7 @@ export default function ShopLanding() {
           <div className="max-w-3xl mx-auto space-y-4">
             {FAQ.map((item, i) => (
               <Reveal key={item.q} delay={i * 0.08}>
-                <details className="group" style={{ border: '2px solid var(--color-primary-green)', backgroundColor: 'var(--color-secondary-beige-light)' }}>
+                <details className="group rounded-[20px] overflow-hidden" style={{ border: '2px solid var(--color-primary-green)', backgroundColor: 'var(--color-secondary-beige-light)' }}>
                   <summary
                     className="flex items-center justify-between gap-4 p-5 cursor-pointer list-none font-bold uppercase text-sm md:text-base"
                     style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-primary-green)' }}
