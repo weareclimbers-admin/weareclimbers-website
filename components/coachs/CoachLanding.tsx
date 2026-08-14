@@ -106,7 +106,12 @@ export default function CoachLanding() {
                   <a href="#demo" className="btn-secondary inline-block">Demander une démo</a>
                 </Magnetic>
                 <Magnetic>
-                  <a href="/coachs/offres" className="btn-beige inline-block">
+                  <a
+                    href="https://coach.weareclimbers.fr/tarifs"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-beige inline-block"
+                  >
                     Voir les offres
                   </a>
                 </Magnetic>
@@ -393,7 +398,9 @@ export default function CoachLanding() {
             <p className="mt-8 text-sm" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-beige)', opacity: 0.85 }}>
               Tu veux d'abord voir les tarifs&nbsp;?{' '}
               <a
-                href="/coachs/offres"
+                href="https://coach.weareclimbers.fr/tarifs"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="underline font-bold hover:opacity-80"
                 style={{ color: 'var(--color-secondary-orange)' }}
               >

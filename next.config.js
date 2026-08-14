@@ -28,6 +28,12 @@ const nextConfig = {
         destination: '/engagements',
         permanent: true, // 301 redirect
       },
+      {
+        // Page temporaire « grille tarifaire à venir », retirée : la grille vit sur la webapp coach
+        source: '/coachs/offres',
+        destination: 'https://coach.weareclimbers.fr/tarifs',
+        permanent: true, // 301 redirect
+      },
     ]
   },
   async headers() {
