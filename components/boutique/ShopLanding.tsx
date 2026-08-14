@@ -752,6 +752,14 @@ export default function ShopLanding() {
                 Inscrit·e à la liste d&apos;attente ? Ton code s&apos;applique au moment du paiement.
               </p>
 
+              <p className="text-xs mt-2" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', opacity: 0.7, lineHeight: 1.6 }}>
+                En précommandant, tu acceptes nos{' '}
+                <Link href="/cgv" target="_blank" className="underline underline-offset-2 font-bold hover:opacity-70 transition-opacity">
+                  Conditions Générales de Vente
+                </Link>
+                .
+              </p>
+
               {/* Découverte pour qui arrive directement ici (pattern fiche produit Polar) */}
               <p className="text-sm mt-4" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)' }}>
                 Tu découvres We Are Climbers ?{' '}

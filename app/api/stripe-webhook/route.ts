@@ -263,6 +263,7 @@ async function sendCustomerConfirmation(session: Stripe.Checkout.Session, extras
             </p>
             <p style="margin:0; font-size:13px; opacity:.7;">
               Une question ? Réponds simplement à cet email.<br/>
+              Conditions Générales de Vente : <a href="https://www.weareclimbers.fr/cgv" style="color:#265335;">weareclimbers.fr/cgv</a> — rétractation possible 14 jours après réception.<br/>
               We Are Climbers — Grimpons mieux, plus longtemps.
             </p>
           </div>

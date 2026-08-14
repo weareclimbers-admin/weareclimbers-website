@@ -5,15 +5,17 @@ import { CGU } from './cgu';
 import { PRIVACY_POLICY } from './privacyPolicy';
 import { LEGAL_NOTICES } from './legalNotices';
 import { COOKIES_POLICY } from './cookiesPolicy';
+import { CGV } from './cgv';
 
 export const LEGAL_DOCUMENTS: Record<LegalDocumentKey, LegalDocument> = {
   cgu: CGU,
   privacy: PRIVACY_POLICY,
   legalNotices: LEGAL_NOTICES,
   cookies: COOKIES_POLICY,
+  cgv: CGV,
 };
 
-export { CGU, PRIVACY_POLICY, LEGAL_NOTICES, COOKIES_POLICY };
+export { CGU, PRIVACY_POLICY, LEGAL_NOTICES, COOKIES_POLICY, CGV };
 
 /**
  * Mapping URL slug → document key — spécifique au SITE VITRINE.
@@ -30,6 +32,7 @@ export const LEGAL_SLUG_TO_KEY: Record<string, LegalDocumentKey> = {
   privacy: 'privacy',
   cookies: 'cookies',
   'mentions-legales': 'legalNotices',
+  cgv: 'cgv',
 };
 
 export const LEGAL_KEY_TO_SLUG: Record<LegalDocumentKey, string> = {
@@ -37,6 +40,7 @@ export const LEGAL_KEY_TO_SLUG: Record<LegalDocumentKey, string> = {
   privacy: 'privacy',
   cookies: 'cookies',
   legalNotices: 'mentions-legales',
+  cgv: 'cgv',
 };
 
 export function getLegalDocumentBySlug(slug: string): LegalDocument | null {
