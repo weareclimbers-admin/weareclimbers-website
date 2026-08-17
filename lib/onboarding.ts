@@ -28,7 +28,7 @@ export const ONBOARDING = {
   merci: {
     video: {
       key: 'merci',
-      youtubeId: null,
+      youtubeId: 't567GnJQj0Y',
       title: "Un mot de l'équipe",
       description: 'Deux minutes pour te dire merci — et te raconter la suite.',
     } satisfies OnboardingVideo,
@@ -39,19 +39,19 @@ export const ONBOARDING = {
     videos: [
       {
         key: 'bracelet-premiers-pas',
-        youtubeId: null,
+        youtubeId: 'DK9kKUSrlxI',
         title: 'Premiers pas avec ton bracelet',
         description: 'Déballage, mise en charge, mise en route : le tour du propriétaire.',
       },
       {
         key: 'bracelet-etats',
-        youtubeId: null,
+        youtubeId: 'kaix8pUTiIE',
         title: 'Comprendre ses états',
         description: "Ce que le bracelet te dit selon ses signaux — et ce qu'il fait en ce moment.",
       },
       {
         key: 'bracelet-connexion',
-        youtubeId: null,
+        youtubeId: '7tSGBqNxzyQ',
         title: "Le connecter à l'app",
         description: "Création du compte, Bluetooth, appairage : la connexion pas à pas.",
       },
@@ -61,7 +61,7 @@ export const ONBOARDING = {
   /** Étape 3 — téléchargement de l'app. `null` = pas encore en ligne → bouton "Bientôt". */
   stores: {
     appStoreUrl: null as string | null,
-    playStoreUrl: null as string | null,
+    playStoreUrl: 'https://play.google.com/store/apps/details?id=com.juliensalvadori.WeAreClimbersClean' as string | null,
   },
 
   /** Contact support affiché en fin de parcours */
