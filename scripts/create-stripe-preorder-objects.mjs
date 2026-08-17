@@ -27,13 +27,20 @@ function loadEnvKey() {
   throw new Error('STRIPE_SECRET_KEY introuvable (.env.local)')
 }
 
+// Mode LIVE : uniquement via le flag explicite --live (annoncé à Julien avant),
+// avec une clé rk_live_. Par défaut : TEST strict.
+const LIVE = process.argv.includes('--live')
 const key = loadEnvKey()
-if (!key.startsWith('rk_test_')) {
+if (LIVE && !key.startsWith('rk_live_')) {
+  throw new Error('--live exige une clé restreinte LIVE (rk_live_...)')
+}
+if (!LIVE && !key.startsWith('rk_test_')) {
   throw new Error(
     'Sécurité : ce script exige une clé restreinte TEST (rk_test_...). ' +
-      'Le passage en live se fera explicitement, avec annonce préalable à Julien.',
+      'Pour le live : flag --live explicite, avec annonce préalable à Julien.',
   )
 }
+console.log(`Mode : ${LIVE ? '🔴 LIVE (compte réel)' : '🧪 TEST'}\n`)
 
 const stripe = new Stripe(key)
 const out = []
@@ -144,6 +151,36 @@ if (promo) {
     metadata: { flow: FLOW },
   })
   console.log(`✅ Code promo créé : ${PROMO_CODE} (${promo.id})`)
+}
+
+// ── 6) Webhook endpoint dédié website (optionnel : --webhook-url <url>) ─────
+// ⚠️ Ne JAMAIS toucher à l'endpoint des Cloud Functions coach — le nôtre est
+// identifié par son URL (route du site). Le secret whsec n'est renvoyé qu'à la
+// création : le noter immédiatement.
+const webhookArgIdx = process.argv.indexOf('--webhook-url')
+if (webhookArgIdx !== -1) {
+  const webhookUrl = process.argv[webhookArgIdx + 1]
+  if (!webhookUrl?.startsWith('https://')) throw new Error('--webhook-url invalide')
+  const endpoints = await stripe.webhookEndpoints.list({ limit: 100 })
+  let endpoint = endpoints.data.find((e) => e.url === webhookUrl)
+  if (endpoint) {
+    console.log(
+      `Webhook déjà existant pour cette URL : ${endpoint.id} (secret non récupérable — régénérer via le dashboard si perdu)`,
+    )
+  } else {
+    endpoint = await stripe.webhookEndpoints.create({
+      url: webhookUrl,
+      enabled_events: [
+        'checkout.session.completed',
+        'checkout.session.async_payment_succeeded',
+        'checkout.session.async_payment_failed',
+      ],
+      description: 'Website pré-commandes V2 (dédié — distinct des Cloud Functions coach)',
+      metadata: { flow: FLOW },
+    })
+    console.log(`✅ Webhook créé : ${endpoint.id} → ${webhookUrl}`)
+    out.push(`STRIPE_WEBHOOK_SECRET=${endpoint.secret}`)
+  }
 }
 
 console.log('\n──────── Lignes à coller dans .env.local (et Vercel au moment voulu) ────────')
