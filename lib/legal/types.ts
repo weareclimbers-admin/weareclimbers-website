@@ -9,7 +9,9 @@
  * ET coach (webapp B2B). Pas de duplication.
  */
 
-export type LegalDocumentKey = 'cgu' | 'privacy' | 'legalNotices' | 'cookies';
+// NB : 'cgv' est SPÉCIFIQUE AU SITE VITRINE (vente de biens en pré-commande) —
+// n'existe pas côté repo coach, ne pas resynchroniser aveuglément.
+export type LegalDocumentKey = 'cgu' | 'privacy' | 'legalNotices' | 'cookies' | 'cgv';
 
 export interface LegalSubsection {
   id: string;
@@ -52,4 +54,5 @@ export const CURRENT_LEGAL_VERSIONS = {
   privacy: '1.2',
   legalNotices: '1.0',
   cookies: '1.1',
+  cgv: '1.0',
 } as const satisfies Record<LegalDocumentKey, string>;
