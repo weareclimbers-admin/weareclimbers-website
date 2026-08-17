@@ -71,9 +71,10 @@ if (!SENDER.address || !SENDER.zip || !SENDER.city) {
 /** Poids du colis en grammes, multiplié par la quantité commandée. */
 const UNIT_WEIGHT = parseInt(env.PREORDER_PARCEL_WEIGHT_GRAMS || '350', 10)
 
-/** Mode de collecte MR : CCC = enlèvement chez l'expéditeur, REL = dépôt en relais.
- *  TODO(Julien) : à aligner sur le contrat MR réel avant le passage en prod. */
-const MODE_COL = env.WAC_MR_MODE_COL || 'CCC'
+/** Mode de collecte MR : REL = dépôt en point relais (contrat WAC — validé en réel
+ *  le 17/08/2026, expédition 02097674 ; avec CCC l'API répond « Nous n'avons pas
+ *  pu obtenir un prix pour cet envoi »). */
+const MODE_COL = env.WAC_MR_MODE_COL || 'REL'
 
 const MR_API2_URL = env.MONDIAL_RELAY_API2_URL || 'https://connect-api.mondialrelay.com/api/shipment'
 
