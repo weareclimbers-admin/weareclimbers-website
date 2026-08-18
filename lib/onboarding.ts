@@ -60,7 +60,7 @@ export const ONBOARDING = {
 
   /** Étape 3 — téléchargement de l'app. `null` = pas encore en ligne → bouton "Bientôt". */
   stores: {
-    appStoreUrl: null as string | null,
+    appStoreUrl: 'https://apps.apple.com/fr/app/id6760418771' as string | null,
     playStoreUrl: 'https://play.google.com/store/apps/details?id=com.juliensalvadori.WeAreClimbersClean' as string | null,
   },
 
