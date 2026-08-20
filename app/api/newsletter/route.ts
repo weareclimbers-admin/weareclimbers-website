@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, name } = await request.json()
+    const { email, name, utm } = await request.json()
 
     // Validation des données
     if (!email || !email.includes('@')) {
@@ -26,14 +26,25 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Attribution de campagne — attributs personnalisés créés dans Brevo.
+    // Toujours envoyés à la création, vides si absents (un inscrit « sans
+    // source » reste distinguable d'un attribut jamais renseigné).
+    const cleanUtm = (value: unknown) =>
+      typeof value === 'string' ? value.trim().slice(0, 200) : ''
+    const utmAttributes = {
+      UTM_SOURCE: cleanUtm(utm?.utm_source),
+      UTM_MEDIUM: cleanUtm(utm?.utm_medium),
+      UTM_CAMPAIGN: cleanUtm(utm?.utm_campaign),
+      UTM_CONTENT: cleanUtm(utm?.utm_content),
+    }
+    const hasUtm = Object.values(utmAttributes).some(Boolean)
+
     // Préparation des données pour Brevo
     const contactData = {
       email: email.toLowerCase().trim(),
       attributes: {
         PRENOM: name || '',
-        // On peut ajouter d'autres attributs ici plus tard
-        // SOURCE: 'Website Early Access',
-        // SIGNUP_DATE: new Date().toISOString()
+        ...utmAttributes,
       },
       listIds: [parseInt(listId)], // Ajout à la liste "Early Supporters WAC"
       updateEnabled: false // Force une erreur si le contact existe déjà
@@ -96,7 +107,13 @@ export async function POST(request: NextRequest) {
             'api-key': apiKey
           },
           body: JSON.stringify({
-            attributes: contactData.attributes,
+            attributes: {
+              PRENOM: name || '',
+              // Contact existant : on n'écrase pas une attribution déjà
+              // enregistrée avec des valeurs vides ; on ne met à jour que si
+              // cette visite porte réellement des UTM.
+              ...(hasUtm ? utmAttributes : {}),
+            },
             listIds: contactData.listIds
           })
         })

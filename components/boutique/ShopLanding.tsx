@@ -321,6 +321,11 @@ export default function ShopLanding() {
         </div>
       </section>
 
+      {/* Cible des liens de campagne déjà diffusés vers /boutique#liste-attente :
+          une fois cette page en prod, ils doivent atterrir sur la commande
+          (la prévente remplace la liste d'attente). Ne pas supprimer cet id. */}
+      <span id="liste-attente" aria-hidden className="block scroll-mt-32" />
+
       {/* ───────────── FICHE PRODUIT ───────────── */}
       <section id="commande" className="relative overflow-hidden pt-6 pb-16 md:pt-10 md:pb-24">
         <div className="container-custom relative z-10">

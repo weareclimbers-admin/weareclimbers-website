@@ -50,7 +50,7 @@ export default function CookieBanner() {
     if (typeof window === 'undefined') return
 
     // Vérifier si Umami est déjà chargé
-    if ((window as any).umami) {
+    if (window.umami) {
       console.log('Umami Analytics déjà chargé')
       return
     }
@@ -69,6 +69,9 @@ export default function CookieBanner() {
     script.defer = true
     script.src = scriptSrc
     script.setAttribute('data-website-id', websiteId)
+    // Seul le domaine public est mesuré — les previews Vercel et localhost
+    // ne polluent pas les stats de campagne même si on y consent.
+    script.setAttribute('data-domains', 'www.weareclimbers.fr')
 
     script.onload = () => {
       console.log('✅ Umami Analytics chargé et actif')

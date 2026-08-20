@@ -23,19 +23,29 @@ export default function NewsletterForm({
     setStatus('loading')
     setMessage('')
 
+    // UTM capturés à l'atterrissage par UtmCapture (sessionStorage `wac_utm`)
+    let utm: Record<string, string> = {}
+    try {
+      utm = JSON.parse(sessionStorage.getItem('wac_utm') ?? '{}')
+    } catch {
+      /* capture illisible : on soumet sans attribution */
+    }
+
     try {
       const response = await fetch('/api/newsletter', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           email: email.trim(),
-          name: name.trim()
+          name: name.trim(),
+          utm
         })
       })
 
       const data = await response.json()
 
       if (response.ok) {
+        window.umami?.track('inscription-liste-attente')
         setStatus('success')
         setMessage(data.message || 'Merci ! Tu fais maintenant partie du mouvement.')
         setEmail('')

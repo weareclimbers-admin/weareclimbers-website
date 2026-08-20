@@ -3,6 +3,7 @@ import { Syne } from 'next/font/google'
 import { Roboto } from 'next/font/google'
 import AOSInit from '@/components/AOSInit'
 import CookieBanner from '@/components/CookieBanner'
+import UtmCapture from '@/components/UtmCapture'
 import './globals.css'
 
 // Configuration des fonts selon la charte graphique
@@ -96,6 +97,7 @@ export default function RootLayout({
           catégorie « Marketing ». Voir components/CookieBanner.tsx.
         */}
         <AOSInit />
+        <UtmCapture />
         {children}
         <CookieBanner />
       </body>

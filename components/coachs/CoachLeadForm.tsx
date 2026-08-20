@@ -27,6 +27,7 @@ export default function CoachLeadForm() {
       })
       const data = await res.json()
       if (res.ok) {
+        window.umami?.track('demande-demo-coach')
         setStatus('success')
         setMessage(data.message || 'Merci ! On te recontacte très vite.')
         setName(''); setStructure(''); setEmail('')

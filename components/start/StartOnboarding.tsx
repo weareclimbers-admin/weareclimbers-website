@@ -372,6 +372,7 @@ function StoreButton({ store, href }: { store: 'apple' | 'google'; href: string 
       href={href}
       target="_blank"
       rel="noopener noreferrer"
+      data-umami-event={store === 'apple' ? 'clic-app-store' : 'clic-play-store'}
       className="flex flex-1 items-center justify-center gap-3 bg-[var(--color-primary-green)] px-6 py-4 text-[var(--color-primary-beige)] transition-transform hover:-translate-y-0.5"
       style={{ borderRadius: 20 }}
     >
