@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion } from 'motion/react'
 import PhoneShot from '@/components/PhoneShot'
 import { Reveal, TitleReveal } from '@/components/Reveal'
@@ -12,6 +12,7 @@ import PressFeature from '@/components/PressFeature'
 import CountdownTimer from '@/components/CountdownTimer'
 import { DERNIER_ARTICLE } from '@/lib/press'
 import { PREORDER_PACK, SHIPPING_ZONES, PREORDER_END_DATE, PREORDER_END_LABEL, cheapestShipping } from '@/lib/preorder'
+import { CREATOR_STORAGE_KEY, detectCreator } from '@/lib/creator'
 
 /**
  * Boutique pré-commande V2 — vraie page e-commerce (galerie + panneau d'achat
@@ -174,6 +175,27 @@ export default function ShopLanding() {
   const [relayError, setRelayError] = useState<string | null>(null)
   const [selectedRelay, setSelectedRelay] = useState<RelayPointLite | null>(null)
 
+  // Attribution créateur UGC capturée à l'atterrissage (UtmCapture → sessionStorage),
+  // relue au montage : affiche la contrepartie premium et voyage vers les metadata
+  // Stripe au checkout. sessionStorage indisponible → paiement normal sans créateur.
+  const [attribution, setAttribution] = useState<{ creator: string; utm: Record<string, string> }>({
+    creator: '',
+    utm: {},
+  })
+  const creatorDetected = detectCreator(attribution.creator, attribution.utm)
+
+  useEffect(() => {
+    try {
+      const rawUtm = JSON.parse(sessionStorage.getItem('wac_utm') ?? '{}')
+      setAttribution({
+        creator: sessionStorage.getItem(CREATOR_STORAGE_KEY) ?? '',
+        utm: typeof rawUtm === 'object' && rawUtm !== null ? rawUtm : {},
+      })
+    } catch {
+      /* capture illisible : paiement sans attribution */
+    }
+  }, [])
+
   const currentZone = SHIPPING_ZONES.find((z) => z.id === zoneId) ?? SHIPPING_ZONES[0]
   const currentMode = currentZone.modes.find((m) => m.id === modeId) ?? currentZone.modes[0]
 
@@ -232,6 +254,8 @@ export default function ShopLanding() {
           zone: zoneId,
           mode: currentMode.id,
           quantity,
+          creator: attribution.creator,
+          utm: attribution.utm,
           relay: selectedRelay
             ? {
                 id: selectedRelay.id,
@@ -696,6 +720,19 @@ export default function ShopLanding() {
                     facturation te sera demandée.
                   </p>
                 </div>
+              )}
+
+              {creatorDetected && (
+                <p
+                  className="mb-4 px-4 py-3 text-sm font-bold rounded-lg"
+                  style={{
+                    fontFamily: 'var(--font-roboto)',
+                    color: 'var(--color-primary-beige)',
+                    backgroundColor: 'var(--color-secondary-orange)',
+                  }}
+                >
+                  3 mois d&apos;abonnement premium offerts
+                </p>
               )}
 
               {/* Quantité + CTA */}

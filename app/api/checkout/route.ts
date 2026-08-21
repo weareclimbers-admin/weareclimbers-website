@@ -3,6 +3,7 @@ import type Stripe from 'stripe'
 import { getStripe } from '@/lib/stripe'
 import { getRelayPoint } from '@/lib/mondialrelay'
 import { PREORDER_FLOW, PREORDER_PACK, getZone, getMode } from '@/lib/preorder'
+import { detectCreator, type CapturedUtm } from '@/lib/creator'
 
 // Pré-commande V2 → création d'une session Stripe Checkout (hébergé, mode payment).
 // Le client envoie sa zone de livraison (choisie sur /boutique) ; la session borne
@@ -117,12 +118,27 @@ export async function POST(request: NextRequest) {
     // EST le domaine public.
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || request.nextUrl.origin
 
+    // Attribution créateur UGC + UTM, capturées côté client (UtmCapture) et
+    // transmises par la boutique. Valeurs déclaratives → bornées.
+    const utm: CapturedUtm =
+      typeof body?.utm === 'object' && body.utm !== null ? (body.utm as CapturedUtm) : {}
+    const utmValue = (v: unknown) => (typeof v === 'string' ? v.trim().slice(0, 200) : '')
+    const creator = detectCreator(body?.creator, utm)
+
     // Metadata métier posées sur la session ET le payment_intent (pattern bracelet :
     // la preuve business reste lisible dans Stripe > Payments même sans la session).
+    // Les clés creator / grant_premium_months / utm_* sont attendues TELLES QUELLES
+    // par les Cloud Functions Firebase (octroi des 3 mois premium) — ne pas renommer.
     const metadata: Record<string, string> = {
       flow: PREORDER_FLOW,
       zone: zone.id,
       shipping_mode: mode.id,
+      creator,
+      grant_premium_months: creator ? '3' : '0',
+      utm_source: utmValue(utm.utm_source),
+      utm_medium: utmValue(utm.utm_medium),
+      utm_campaign: utmValue(utm.utm_campaign),
+      utm_content: utmValue(utm.utm_content),
     }
     if (relay && relayShipping) {
       metadata.relay_id = relay.id
