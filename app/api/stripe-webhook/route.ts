@@ -248,6 +248,29 @@ async function sendCustomerConfirmation(session: Stripe.Checkout.Session, extras
                 .join('')}
             </tbody>
           </table>
+          ${
+            // Achat via créateur partenaire : l'octroi des 3 mois premium (Cloud
+            // Functions app) s'apparie par EMAIL — si le compte app utilise une
+            // autre adresse que celle du paiement, l'offre se perd en silence.
+            // Ce bloc est le filet : dire à l'acheteur QUELLE adresse utiliser.
+            session.metadata?.grant_premium_months === '3'
+              ? `<div style="margin:24px 24px 0; padding:16px 20px; background:#F5ECE5; border-left:4px solid #D85A1A;">
+                   <p style="margin:0 0 8px; font-family:'Syne',Arial,sans-serif; font-weight:700; text-transform:uppercase; color:#D85A1A;">
+                     3 mois d'abonnement premium offerts
+                   </p>
+                   <p style="margin:0 0 8px;">
+                     Crée ton compte We Are Climbers dans l'app avec cette adresse —
+                     <strong>${customerEmail}</strong> — et tes 3 mois s'activeront
+                     automatiquement à la connexion.
+                   </p>
+                   <p style="margin:0; font-size:13px; opacity:.8;">
+                     C'est un cadeau ? Transmets cet email à la personne qui utilisera le
+                     bracelet — si son compte app utilise une autre adresse, il lui suffit
+                     de répondre à cet email pour activer l'offre.
+                   </p>
+                 </div>`
+              : ''
+          }
           <div style="padding:24px; line-height:1.6;">
             ${
               invoiceLink
