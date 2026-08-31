@@ -11,6 +11,7 @@ interface CoachLead {
   name?: string
   structure?: string
   profil?: string
+  phone?: string
 }
 
 /**
@@ -41,6 +42,7 @@ async function notifyNewCoachLead(lead: CoachLead) {
       ['Prénom', lead.name || '—'],
       ['Structure', lead.structure || '—'],
       ['Profil', lead.profil || '—'],
+      ['Téléphone', lead.phone || '—'],
       ['Email', lead.email],
     ]
 
@@ -83,7 +85,7 @@ async function notifyNewCoachLead(lead: CoachLead) {
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, name, structure, profil } = await request.json()
+    const { email, name, structure, profil, phone } = await request.json()
 
     if (!email || !email.includes('@')) {
       return NextResponse.json({ error: 'Email invalide' }, { status: 400 })
@@ -97,7 +99,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Configuration serveur manquante' }, { status: 500 })
     }
 
-    const lead: CoachLead = { email: email.toLowerCase().trim(), name, structure, profil }
+    const lead: CoachLead = { email: email.toLowerCase().trim(), name, structure, profil, phone }
 
     const contactData = {
       email: lead.email,
@@ -105,6 +107,7 @@ export async function POST(request: NextRequest) {
         PRENOM: name || '',
         STRUCTURE: structure || '',
         PROFIL_COACH: profil || '', // "Coach indépendant" | "Club"
+        TELEPHONE: phone || '', // attribut texte (pas le champ natif SMS : pas de validation de format)
       },
       listIds: [parseInt(listId)],
       updateEnabled: true, // un coach qui redemande une démo met à jour son contact
@@ -123,7 +126,7 @@ export async function POST(request: NextRequest) {
     if (response.ok || response.status === 204) {
       await notifyNewCoachLead(lead)
       return NextResponse.json(
-        { success: true, message: 'Merci ! On te recontacte très vite pour ta démo.' },
+        { success: true, message: 'Ta demande est enregistrée. Choisis ton créneau pour la démo.' },
         { status: 200 },
       )
     }
@@ -147,7 +150,7 @@ export async function POST(request: NextRequest) {
     if (isDuplicate) {
       await notifyNewCoachLead(lead)
       return NextResponse.json(
-        { success: true, message: 'Ta demande est déjà enregistrée. On te recontacte !' },
+        { success: true, message: 'Ta demande est déjà enregistrée. Choisis ton créneau pour la démo.' },
         { status: 200 },
       )
     }

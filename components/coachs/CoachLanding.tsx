@@ -103,7 +103,7 @@ export default function CoachLanding() {
                 transition={{ type: 'spring', stiffness: 120, damping: 18, delay: 0.35 }}
               >
                 <Magnetic>
-                  <a href="#demo" className="btn-secondary inline-block">Demander une démo</a>
+                  <a href="#demo" className="btn-secondary inline-block">Réserver une démo</a>
                 </Magnetic>
                 <Magnetic>
                   <a
@@ -388,7 +388,7 @@ export default function CoachLanding() {
           </Reveal>
           <Reveal delay={0.1}>
             <p className="text-lg md:text-xl mb-10 max-w-2xl mx-auto" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-beige)', opacity: 0.9, lineHeight: '1.6' }}>
-              Réserve ta démo et découvre l'espace coach en avant-première. On te recontacte.
+              Réserve ta démo et découvre l'espace coach en avant-première. Choisis ton créneau en 2 minutes.
             </p>
           </Reveal>
           <Reveal delay={0.15}>
