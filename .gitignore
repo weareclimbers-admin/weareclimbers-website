@@ -46,3 +46,6 @@ apikeybrevo.md
 
 # Python caches (outillage local)
 __pycache__/
+
+.vercel
+.env*
