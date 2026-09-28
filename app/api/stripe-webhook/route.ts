@@ -135,8 +135,8 @@ async function notifyNewPreorder(
     const paymentIntentId =
       typeof session.payment_intent === 'string' ? session.payment_intent : session.payment_intent?.id
 
-    const relayLabel = session.metadata?.relay_id
-      ? `${session.metadata.relay_name || '—'} — ${session.metadata.relay_zip || ''} ${session.metadata.relay_city || ''} (n° ${session.metadata.relay_id}, ${session.metadata.relay_country || ''})`
+    const relayLabel = session.metadata?.relay_point_code
+      ? `${session.metadata.relay_name || '—'} — ${session.metadata.relay_zip || ''} ${session.metadata.relay_city || ''} (n° ${session.metadata.relay_point_code}, ${session.metadata.relay_country || ''})`
       : null
 
     const rows: [string, string][] = [
@@ -209,7 +209,7 @@ async function sendCustomerConfirmation(session: Stripe.Checkout.Session, extras
     const firstName = (session.customer_details?.name || '').trim().split(/\s+/)[0] || ''
     const invoiceLink = extras.invoicePdfUrl || extras.invoiceHostedUrl
 
-    const relayLabel = session.metadata?.relay_id
+    const relayLabel = session.metadata?.relay_point_code
       ? `Point relais ${session.metadata.relay_name || ''}, ${session.metadata.relay_zip || ''} ${session.metadata.relay_city || ''}`.trim()
       : null
 
@@ -353,8 +353,8 @@ async function handlePaidPreorder(session: Stripe.Checkout.Session) {
   await notifyNewPreorder(session, extras)
   await sendCustomerConfirmation(session, extras)
   await addToBrevoPreorderList(session)
-  // TODO(chantier Mondial Relay) : créer l'expédition via l'API Mondial Relay ici
-  // (commande → colis/étiquette automatiques — sujet dédié à venir avec Julien).
+  // NB : l'expédition n'est PAS créée ici. Modèle « carnet de commandes » : les
+  // étiquettes Boxtal sont générées en lot via scripts/create-boxtal-shipments.mjs.
 }
 
 export async function POST(request: NextRequest) {

@@ -1,16 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { searchRelayPoints } from '@/lib/mondialrelay'
+import { searchParcelPoints } from '@/lib/boxtal'
 import { getZone } from '@/lib/preorder'
 
-// Recherche de points relais Mondial Relay pour la boutique pré-commande.
+// Recherche de points relais Chronopost Shop2Shop pour la boutique pré-commande.
 // GET /api/relay-points?zone=fr&country=FR&zip=64210
-// La clé privée MR reste côté serveur — le client ne voit que cette route.
-// Les pays autorisés par zone viennent de lib/preorder (relayCountries).
+// Réseau Boxtal CHRP_NETWORK (Shop2Shop). Les identifiants Boxtal restent côté serveur.
+// La réponse conserve la forme historique { points: [{ id, name, address, zip, city,
+// country, distanceMeters }] } pour ne rien changer côté ShopLanding (id = code point Boxtal).
 
 const ZIP_PATTERNS: Record<string, RegExp> = {
   FR: /^\d{5}$/,
-  BE: /^\d{4}$/,
-  LU: /^\d{4}$/,
 }
 
 export async function GET(request: NextRequest) {
@@ -31,7 +30,20 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Code postal invalide' }, { status: 400 })
     }
 
-    const points = await searchRelayPoints({ country, zip })
+    const found = await searchParcelPoints({
+      countryIsoCode: country,
+      postalCode: zip,
+      networks: ['CHRP_NETWORK'],
+    })
+    const points = found.map((p) => ({
+      id: p.code,
+      name: p.name,
+      address: p.street,
+      zip: p.zip,
+      city: p.city,
+      country: p.country,
+      distanceMeters: p.distanceMeters,
+    }))
     return NextResponse.json({ points }, { status: 200 })
   } catch (error) {
     console.error('relay-points API error:', error)

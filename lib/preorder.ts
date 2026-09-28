@@ -84,7 +84,7 @@ export interface ShippingZone {
    */
   allowedCountries: string[]
   /**
-   * Pays du réseau point relais Mondial Relay proposés dans le sélecteur de
+   * Pays du réseau point relais Chronopost Shop2Shop proposés dans le sélecteur de
    * relais (absent = la zone ne livre pas en point relais).
    */
   relayCountries?: { code: string; label: string }[]
@@ -95,7 +95,7 @@ export interface ShippingZone {
 export interface ShippingMode {
   id: 'relais' | 'domicile'
   label: string
-  /** true = le client doit choisir un point relais Mondial Relay avant paiement. */
+  /** true = le client doit choisir un point relais Chronopost Shop2Shop avant paiement. */
   relay: boolean
   /**
    * Frais de port TTC affichés (€) — purement présentatif, doit matcher le
@@ -107,10 +107,10 @@ export interface ShippingMode {
 }
 
 /**
- * Zones + modes actés le 14/08/2026 : France au CHOIX point relais (4,99 €) ou
- * domicile (5,99 €) ; BE-LU point relais uniquement (6,99 €) ; CH (6,99 €) et
- * Outre-mer (9,99 €) à domicile uniquement (hors réseau Mondial Relay — traités
- * manuellement via Colissimo/La Poste). Shipping rates Stripe avec
+ * Zones + modes (maj 28/09/2026, migration Boxtal) : France au CHOIX point relais
+ * Chronopost Shop2Shop (4,99 €) ou domicile Colissimo signature (5,99 €) ; BE-LU
+ * domicile Colissimo International (6,99 €) ; CH (6,99 €) et Outre-mer (9,99 €) à
+ * domicile (douane, traités à la main en v1). Shipping rates Stripe avec
  * tax_code 'txcd_92010001' (le port suit la TVA du bien — PAS txcd_00000000).
  *
  * TVA (gérée par Stripe Tax, prix inclusifs — le client paie toujours le même TTC) :
@@ -130,7 +130,7 @@ export const SHIPPING_ZONES: ShippingZone[] = [
     modes: [
       {
         id: 'relais',
-        label: 'En point relais Mondial Relay',
+        label: 'En point relais Chronopost Shop2Shop',
         relay: true,
         shippingTtc: 4.99,
         shippingRateEnv: 'STRIPE_SHIPPING_RATE_FR',
@@ -148,16 +148,14 @@ export const SHIPPING_ZONES: ShippingZone[] = [
     id: 'be-lu',
     label: 'Belgique & Luxembourg',
     allowedCountries: ['BE', 'LU'],
-    relayCountries: [
-      { code: 'BE', label: 'Belgique' },
-      { code: 'LU', label: 'Luxembourg' },
-    ],
+    // Shop2Shop = réseau FR uniquement → BE-LU passe en domicile (Colissimo International
+    // avec signature via Boxtal). Bascule assumée du relais MR vers le domicile (28/09).
     modes: [
       {
-        id: 'relais',
-        label: 'En point relais Mondial Relay',
-        relay: true,
-        shippingTtc: 6.99, // Belgique alignée sur le Luxembourg — confirmé par Julien le 14/08
+        id: 'domicile',
+        label: 'À domicile',
+        relay: false,
+        shippingTtc: 6.99, // inchangé (décision « absorber » 28/09)
         shippingRateEnv: 'STRIPE_SHIPPING_RATE_BE_LU',
       },
     ],

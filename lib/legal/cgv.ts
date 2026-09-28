@@ -15,8 +15,8 @@ export const CGV: LegalDocument = {
   key: 'cgv',
   title: 'Conditions Générales de Vente',
   subtitle: 'Pré-commandes weareclimbers.fr',
-  version: '1.0',
-  lastUpdated: '2026-08-14',
+  version: '1.1',
+  lastUpdated: '2026-09-28',
   preamble: `Les présentes Conditions Générales de Vente (« CGV ») régissent les ventes de produits conclues sur le site weareclimbers.fr entre WeAreClimbers SAS et toute personne physique agissant en qualité de consommateur (« le Client »). Toute commande implique l'acceptation préalable et sans réserve des présentes CGV.`,
   sections: [
     {
@@ -111,7 +111,7 @@ Le prix applicable est celui en vigueur au jour de la commande. WeAreClimbers se
       id: '6',
       title: '6. Commande',
       content: `Le processus de commande comprend les étapes suivantes :
-1. Sélection de la quantité, de la zone de livraison et du mode de livraison (le cas échéant, choix du point relais Mondial Relay) sur la boutique ;
+1. Sélection de la quantité, de la zone de livraison et du mode de livraison (le cas échéant, choix du point relais Chronopost Shop2Shop) sur la boutique ;
 2. Redirection vers la page de paiement sécurisée opérée par Stripe : saisie des coordonnées (adresse de facturation ou de livraison selon le mode choisi, téléphone, email), éventuel code promotionnel, puis validation du paiement ;
 3. Confirmation de la commande : un email récapitulatif est adressé au Client, accompagné de sa facture.
 
@@ -136,8 +136,8 @@ Une facture est établie automatiquement et transmise au Client par email au for
           id: '8.1',
           title: '8.1 Zones et modes de livraison',
           content: `Les produits sont livrés dans les zones suivantes, selon les modes proposés au moment de la commande :
-- France métropolitaine (et Monaco) : livraison en point relais Mondial Relay ou à domicile ;
-- Belgique et Luxembourg : livraison en point relais Mondial Relay ;
+- France métropolitaine (et Monaco) : livraison en point relais Chronopost Shop2Shop ou à domicile ;
+- Belgique et Luxembourg : livraison à domicile ;
 - Suisse : livraison à domicile ;
 - Collectivités françaises d'outre-mer : livraison à domicile.
 
@@ -256,7 +256,7 @@ Rien dans les présentes CGV ne limite ou n'exclut la responsabilité de WeAreCl
     {
       id: '12',
       title: '12. Données personnelles',
-      content: `Les données personnelles collectées dans le cadre des commandes (identité, coordonnées, adresse, historique d'achat) sont traitées par WeAreClimbers SAS, responsable de traitement, aux fins de gestion des commandes, des livraisons, de la facturation et de la relation client. Elles sont transmises aux seuls prestataires nécessaires à l'exécution de la commande (Stripe pour le paiement, Mondial Relay ou l'opérateur postal pour la livraison, Brevo pour les emails transactionnels).
+      content: `Les données personnelles collectées dans le cadre des commandes (identité, coordonnées, adresse, historique d'achat) sont traitées par WeAreClimbers SAS, responsable de traitement, aux fins de gestion des commandes, des livraisons, de la facturation et de la relation client. Elles sont transmises aux seuls prestataires nécessaires à l'exécution de la commande (Stripe pour le paiement, Boxtal et les transporteurs qu'il opère — Colissimo/La Poste, Chronopost — pour la livraison, Brevo pour les emails transactionnels).
 
 Pour le détail des traitements, des durées de conservation et de vos droits (accès, rectification, effacement, opposition, portabilité), consultez notre Politique de Confidentialité. Contact : dpo@weareclimbers.fr.`,
     },

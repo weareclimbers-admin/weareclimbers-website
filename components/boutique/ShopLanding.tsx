@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion } from 'motion/react'
 import PhoneShot from '@/components/PhoneShot'
 import { Reveal, TitleReveal } from '@/components/Reveal'
@@ -13,6 +13,7 @@ import CountdownTimer from '@/components/CountdownTimer'
 import { DERNIER_ARTICLE } from '@/lib/press'
 import { PREORDER_PACK, SHIPPING_ZONES, PREORDER_END_DATE, PREORDER_END_LABEL, cheapestShipping } from '@/lib/preorder'
 import { CREATOR_STORAGE_KEY, detectCreator } from '@/lib/creator'
+import type { ParcelPoint } from '@boxtal/parcel-point-map'
 
 /**
  * Boutique pré-commande V2 — vraie page e-commerce (galerie + panneau d'achat
@@ -148,7 +149,7 @@ function formatPrice(value: number): string {
   }).format(value)
 }
 
-/** Point relais tel que renvoyé par /api/relay-points (miroir de lib/mondialrelay). */
+/** Point relais tel que renvoyé par /api/relay-points (miroir de la réponse Boxtal serveur). */
 interface RelayPointLite {
   id: string
   name: string
@@ -167,13 +168,25 @@ export default function ShopLanding() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  // Sélection du point relais Mondial Relay (modes « relais »)
+  // Sélection du point relais Chronopost Shop2Shop (modes « relais »)
   const [relayCountry, setRelayCountry] = useState('FR')
   const [relayZip, setRelayZip] = useState('')
   const [relayPoints, setRelayPoints] = useState<RelayPointLite[] | null>(null)
   const [relaySearching, setRelaySearching] = useState(false)
   const [relayError, setRelayError] = useState<string | null>(null)
   const [selectedRelay, setSelectedRelay] = useState<RelayPointLite | null>(null)
+
+  // Carte interactive Boxtal (choix visuel du point Shop2Shop). Fallback recherche
+  // manuelle (liste) si la clé manque, si le module échoue, ou si la carte ne charge pas.
+  const mapRef = useRef<null | {
+    searchParcelPoints: (
+      address: { country: string; zipCode: string; city: string },
+      cb: (pp: ParcelPoint) => void,
+    ) => void
+  }>(null)
+  const mapLoadedRef = useRef(false)
+  const [mapReady, setMapReady] = useState(false)
+  const [mapFailed, setMapFailed] = useState(false)
 
   // Attribution créateur UGC capturée à l'atterrissage (UtmCapture → sessionStorage),
   // relue au montage : affiche la contrepartie premium et voyage vers les metadata
@@ -198,6 +211,52 @@ export default function ShopLanding() {
 
   const currentZone = SHIPPING_ZONES.find((z) => z.id === zoneId) ?? SHIPPING_ZONES[0]
   const currentMode = currentZone.modes.find((m) => m.id === modeId) ?? currentZone.modes[0]
+
+  // Monte la carte Boxtal quand le mode relais est actif ; bascule en recherche
+  // manuelle si le token échoue, si le module échoue, ou si la carte ne charge pas (8 s).
+  useEffect(() => {
+    if (!currentMode.relay) return
+    let cancelled = false
+    mapLoadedRef.current = false
+    setMapReady(false)
+    setMapFailed(false)
+    const timeout = setTimeout(() => {
+      if (!cancelled && !mapLoadedRef.current) setMapFailed(true)
+    }, 8000)
+    void (async () => {
+      try {
+        // Token JWT généré côté serveur (la clé secrète carte ne fuite pas au client).
+        const [{ BoxtalParcelPointMap }, tokRes] = await Promise.all([
+          import('@boxtal/parcel-point-map'),
+          fetch('/api/boxtal-map-token'),
+        ])
+        const tok = await tokRes.json().catch(() => null)
+        if (!tokRes.ok || !tok?.accessToken) throw new Error('token carte indisponible')
+        if (cancelled) return
+        mapRef.current = new BoxtalParcelPointMap({
+          domToLoadMap: '#boxtal-parcel-map',
+          accessToken: tok.accessToken,
+          config: {
+            locale: 'fr',
+            parcelPointNetworks: [{ code: 'CHRP_NETWORK' }],
+            options: { autoSelectNearestParcelPoint: false, primaryColor: '#265335' },
+          },
+          onMapLoaded: () => {
+            if (cancelled) return
+            mapLoadedRef.current = true
+            setMapReady(true)
+          },
+        })
+      } catch {
+        if (!cancelled) setMapFailed(true)
+      }
+    })()
+    return () => {
+      cancelled = true
+      clearTimeout(timeout)
+      mapRef.current = null
+    }
+  }, [currentMode.relay])
 
   function resetRelay() {
     setRelayZip('')
@@ -239,9 +298,48 @@ export default function ShopLanding() {
     }
   }
 
+  // Recherche pilotée par le code postal : via la carte si dispo, sinon la liste.
+  async function onRelaySearch() {
+    const zip = relayZip.trim()
+    if (zip.length < 4) return
+    setError(null)
+    if (mapRef.current && !mapFailed) {
+      setRelayError(null)
+      // La carte hébergée géocode l'adresse pour se centrer → il lui faut une ville.
+      // On la résout depuis le code postal via l'API publique gouv (sans clé).
+      let city = ''
+      try {
+        const r = await fetch(
+          `https://geo.api.gouv.fr/communes?codePostal=${encodeURIComponent(zip)}&fields=nom&format=json`,
+        )
+        const communes = await r.json()
+        city = Array.isArray(communes) && communes[0]?.nom ? String(communes[0].nom) : ''
+      } catch {
+        /* on tente quand même sans ville */
+      }
+      mapRef.current.searchParcelPoints(
+        { country: relayCountry, zipCode: zip, city },
+        (pp) => {
+          setSelectedRelay({
+            id: pp.code,
+            name: pp.name,
+            address: pp.location.street ?? '',
+            zip: pp.location.zipCode,
+            city: pp.location.city,
+            country: pp.location.country,
+            distanceMeters: null,
+          })
+          setError(null)
+        },
+      )
+    } else {
+      searchRelays()
+    }
+  }
+
   async function handleCheckout() {
     if (currentMode.relay && !selectedRelay) {
-      setError('Choisis ton point relais Mondial Relay avant de continuer.')
+      setError('Choisis ton point relais Chronopost Shop2Shop avant de continuer.')
       return
     }
     setLoading(true)
@@ -595,14 +693,14 @@ export default function ShopLanding() {
                 </fieldset>
               )}
 
-              {/* Point relais Mondial Relay (modes « relais ») */}
+              {/* Point relais Chronopost Shop2Shop (modes « relais ») */}
               {currentMode.relay && (
                 <div className="mb-6">
                   <p
                     className="text-sm font-bold uppercase mb-3"
                     style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-primary-green)', letterSpacing: '0.1em' }}
                   >
-                    Ton point relais Mondial Relay
+                    Ton point relais Chronopost Shop2Shop
                   </p>
 
                   <div className="flex flex-wrap items-stretch gap-2">
@@ -638,7 +736,7 @@ export default function ShopLanding() {
                       onKeyDown={(e) => {
                         if (e.key === 'Enter') {
                           e.preventDefault()
-                          searchRelays()
+                          onRelaySearch()
                         }
                       }}
                       placeholder={relayCountry === 'FR' ? 'Code postal (ex. 64100)' : 'Code postal'}
@@ -652,8 +750,8 @@ export default function ShopLanding() {
                     />
                     <button
                       type="button"
-                      onClick={searchRelays}
-                      disabled={relaySearching || relayZip.trim().length < 4}
+                      onClick={onRelaySearch}
+                      disabled={relaySearching || relayZip.trim().length < 4 || (!mapFailed && !mapReady)}
                       className="px-4 py-2.5 text-sm font-bold uppercase disabled:opacity-40 transition-opacity rounded-lg"
                       style={{
                         fontFamily: 'var(--font-syne)',
@@ -661,9 +759,18 @@ export default function ShopLanding() {
                         color: 'var(--color-primary-beige)',
                       }}
                     >
-                      {relaySearching ? 'Recherche…' : 'Chercher'}
+                      {!mapFailed && !mapReady ? 'Carte…' : relaySearching ? 'Recherche…' : 'Chercher'}
                     </button>
                   </div>
+
+                  {/* Carte interactive (choix visuel) ; masquée si fallback manuel */}
+                  {!mapFailed && (
+                    <div
+                      id="boxtal-parcel-map"
+                      className="mt-3 rounded-lg overflow-hidden"
+                      style={{ height: 340, border: '2px solid var(--color-primary-green)' }}
+                    />
+                  )}
 
                   {relayError && (
                     <p className="mt-3 text-sm font-bold" style={{ fontFamily: 'var(--font-roboto)', color: '#8C2B1E' }}>
@@ -671,7 +778,7 @@ export default function ShopLanding() {
                     </p>
                   )}
 
-                  {relayPoints && (
+                  {mapFailed && relayPoints && (
                     <div className="mt-3 max-h-64 overflow-y-auto space-y-2 pr-1">
                       {relayPoints.map((p) => (
                         <label
@@ -711,6 +818,21 @@ export default function ShopLanding() {
                           </span>
                         </label>
                       ))}
+                    </div>
+                  )}
+
+                  {selectedRelay && (
+                    <div
+                      className="mt-3 p-3 rounded-lg"
+                      style={{ border: '2px solid var(--color-secondary-orange)', backgroundColor: 'var(--color-secondary-beige-light)' }}
+                    >
+                      <span className="text-sm font-bold" style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-primary-green)' }}>
+                        ✓ {selectedRelay.name}
+                      </span>
+                      <span className="block text-xs mt-0.5" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', opacity: 0.75 }}>
+                        {selectedRelay.address && `${selectedRelay.address}, `}
+                        {selectedRelay.zip} {selectedRelay.city}
+                      </span>
                     </div>
                   )}
 

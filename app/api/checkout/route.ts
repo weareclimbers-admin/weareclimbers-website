@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import type Stripe from 'stripe'
 import { getStripe } from '@/lib/stripe'
-import { getRelayPoint } from '@/lib/mondialrelay'
 import { PREORDER_FLOW, PREORDER_PACK, getZone, getMode } from '@/lib/preorder'
 import { detectCreator, type CapturedUtm } from '@/lib/creator'
 
@@ -46,7 +45,8 @@ function parseRelay(raw: unknown, allowedCountries: string[]): RelayInput | null
   const r = raw as Record<string, unknown>
   const id = typeof r.id === 'string' ? r.id.trim() : ''
   const country = typeof r.country === 'string' ? r.country.toUpperCase() : ''
-  if (!/^\d{4,8}$/.test(id) || !allowedCountries.includes(country)) return null
+  // Code point Boxtal (Shop2Shop) = alphanumérique (ex. « 2461Y », « 7910O »).
+  if (!/^[A-Za-z0-9]{3,15}$/.test(id) || !allowedCountries.includes(country)) return null
   const str = (v: unknown, max: number) => (typeof v === 'string' ? v.slice(0, max) : '')
   return { id, country, name: str(r.name, 100), zip: str(r.zip, 10), city: str(r.city, 60) }
 }
@@ -63,37 +63,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Mode de livraison invalide' }, { status: 400 })
     }
 
-    // Mode « relais » : le point Mondial Relay choisi est OBLIGATOIRE et voyage
-    // en metadata — l'expédition MR sera créée en lot au moment de l'envoi
-    // (novembre), pas au paiement.
+    // Mode « relais » : le point Chronopost Shop2Shop choisi est OBLIGATOIRE et
+    // voyage en metadata (relay_point_code) — l'expédition Boxtal sera créée en lot
+    // au moment de l'envoi, pas au paiement.
     let relay: RelayInput | null = null
     let relayShipping: { name: string; line1: string; zip: string; city: string; country: string } | null = null
     if (mode.relay) {
       relay = parseRelay(body?.relay, zone.relayCountries?.map((c) => c.code) ?? [])
       if (!relay) {
-        return NextResponse.json({ error: 'Choisis ton point relais Mondial Relay.' }, { status: 400 })
+        return NextResponse.json({ error: 'Choisis ton point relais Chronopost Shop2Shop.' }, { status: 400 })
       }
-      // Adresse OFFICIELLE du relais re-vérifiée chez Mondial Relay (par numéro) :
-      // c'est elle qui devient l'adresse de livraison du paiement et de la facture.
-      try {
-        const verified = await getRelayPoint(relay.country, relay.id)
-        if (verified) {
-          relayShipping = {
-            name: verified.name || relay.name,
-            line1: verified.address || verified.name || relay.name,
-            zip: verified.zip || relay.zip,
-            city: verified.city || relay.city,
-            country: relay.country,
-          }
-        }
-      } catch (err) {
-        console.error('checkout: vérification du relais chez MR impossible, fallback client', err)
-      }
-      // Fallback si l'API MR est indisponible : les données affichées au client
-      // (elles viennent de notre propre /api/relay-points quelques secondes avant).
-      if (!relayShipping) {
-        relayShipping = { name: relay.name, line1: relay.name, zip: relay.zip, city: relay.city, country: relay.country }
-      }
+      // Les données du point viennent de notre propre /api/relay-points (Boxtal,
+      // réseau Shop2Shop) quelques secondes avant : on les reprend telles quelles
+      // comme adresse de livraison affichée sur la facture.
+      relayShipping = { name: relay.name, line1: relay.name, zip: relay.zip, city: relay.city, country: relay.country }
     }
 
     const requestedQty = Number(body?.quantity ?? 1)
@@ -141,11 +124,12 @@ export async function POST(request: NextRequest) {
       utm_content: utmValue(utm.utm_content),
     }
     if (relay && relayShipping) {
-      metadata.relay_id = relay.id
+      metadata.relay_point_code = relay.id
       metadata.relay_name = relayShipping.name
       metadata.relay_zip = relayShipping.zip
       metadata.relay_city = relayShipping.city
       metadata.relay_country = relayShipping.country
+      metadata.relay_network = 'CHRP_NETWORK'
     }
 
     const session = await stripe.checkout.sessions.create({
@@ -192,7 +176,7 @@ export async function POST(request: NextRequest) {
             ? {
                 custom_fields: [
                   {
-                    name: 'Livraison en point relais',
+                    name: 'Point relais Shop2Shop',
                     value: `${relayShipping.name}, ${relayShipping.zip} ${relayShipping.city} (n° ${relay.id})`.slice(0, 140),
                   },
                 ],

@@ -54,5 +54,5 @@ export const CURRENT_LEGAL_VERSIONS = {
   privacy: '1.2',
   legalNotices: '1.0',
   cookies: '1.1',
-  cgv: '1.0',
+  cgv: '1.1',
 } as const satisfies Record<LegalDocumentKey, string>;
