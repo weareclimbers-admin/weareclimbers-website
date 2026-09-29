@@ -15,7 +15,7 @@
  *   3. Résout l'offre Boxtal selon zone + mode de livraison :
  *        - domicile FR      → POFR-ColissimoExpert (Colissimo domicile AVEC signature)
  *        - domicile BE-LU   → POFR-ColissimoExpertInternational
- *        - relais (Shop2Shop) → CHRP-ChronoShoptoShop + pickupPointCode (metadata.relay_point_code)
+ *        - relais → CHRP-Chrono2ShopDirect (Chrono 2Shop Direct, pro) + pickupPointCode (metadata.relay_point_code)
  *   4. Assurance : insured = (quantité >= 2) — décision Julien 28/09 (1 bracelet = non assuré)
  *   5. Crée l'expédition (POST /shipping/v3.1/shipping-order), récupère l'étiquette PDF
  *      (GET .../shipping-document, type LABEL) et le n° de suivi
@@ -97,10 +97,12 @@ const UNIT_VALUE_EUR = parseFloat(env.PREORDER_UNIT_VALUE_EUR || '179')
 /** Résout l'offre Boxtal (shippingOfferCode) selon zone + mode. null = à faire à la main. */
 function resolveOffer(zone, mode) {
   if (mode === 'relais') {
-    // Shop2Shop = produit C2C → expéditeur RESIDENTIAL OBLIGATOIRE (avec BUSINESS,
-    // aucune offre n'est trouvée). Réseau FR ; BE-LU relais non couvert en v1 → manuel.
+    // Chrono 2Shop Direct = version PRO (expéditeur ENTREPRISE) de Shop2Shop, même tarif
+    // (2,99 € HT) et mêmes points relais. On l'utilise car WAC est une société : l'étiquette
+    // affiche « WeAreClimbers » en expéditeur, et c'est l'offre conforme pour un pro (Shop2Shop
+    // est réservée aux particuliers). Réseau FR ; BE-LU relais non couvert en v1 → manuel.
     return zone === 'fr'
-      ? { code: 'CHRP-ChronoShoptoShop', needsPickup: true, senderType: 'RESIDENTIAL' }
+      ? { code: 'CHRP-Chrono2ShopDirect', needsPickup: true, senderType: 'BUSINESS' }
       : null
   }
   // domicile (Colissimo avec signature) — expéditeur BUSINESS
