@@ -91,17 +91,21 @@ const PARCEL = {
 }
 const UNIT_VALUE_EUR = parseFloat(env.PREORDER_UNIT_VALUE_EUR || '179')
 
+
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 /** Résout l'offre Boxtal (shippingOfferCode) selon zone + mode. null = à faire à la main. */
 function resolveOffer(zone, mode) {
   if (mode === 'relais') {
-    // Shop2Shop = réseau français. BE-LU relais non couvert en v1 → manuel.
-    return zone === 'fr' ? { code: 'CHRP-ChronoShoptoShop', needsPickup: true } : null
+    // Shop2Shop = produit C2C → expéditeur RESIDENTIAL OBLIGATOIRE (avec BUSINESS,
+    // aucune offre n'est trouvée). Réseau FR ; BE-LU relais non couvert en v1 → manuel.
+    return zone === 'fr'
+      ? { code: 'CHRP-ChronoShoptoShop', needsPickup: true, senderType: 'RESIDENTIAL' }
+      : null
   }
-  // domicile (Colissimo avec signature)
-  if (zone === 'fr') return { code: 'POFR-ColissimoExpert', needsPickup: false }
-  if (zone === 'be-lu') return { code: 'POFR-ColissimoExpertInternational', needsPickup: false }
+  // domicile (Colissimo avec signature) — expéditeur BUSINESS
+  if (zone === 'fr') return { code: 'POFR-ColissimoExpert', needsPickup: false, senderType: 'BUSINESS' }
+  if (zone === 'be-lu') return { code: 'POFR-ColissimoExpertInternational', needsPickup: false, senderType: 'BUSINESS' }
   return null // ch / dom-tom → douane CN23, manuel en v1
 }
 
@@ -200,9 +204,10 @@ async function fetchDocs(orderId, { tries = 6, delayMs = 2500 } = {}) {
 
 async function createShipment({ offer, dest, weightG, insured, qty, orderRef }) {
   const from = boxtalAddress({
-    type: 'BUSINESS',
+    type: offer.senderType || 'BUSINESS',
     name: SENDER.name,
-    company: 'WeAreClimbers',
+    // Un expéditeur RESIDENTIAL (exigé par Shop2Shop) ne porte pas de société.
+    ...(offer.senderType === 'RESIDENTIAL' ? {} : { company: 'WeAreClimbers' }),
     line1: SENDER.address,
     zip: SENDER.zip,
     city: SENDER.city,
@@ -332,11 +337,25 @@ for (const session of toShip.slice(0, LIMIT === Infinity ? undefined : LIMIT)) {
   const email = session.customer_details?.email ?? ''
   const phone = session.customer_details?.phone ?? ''
 
-  // Relais : le colis va au point relais, mais Boxtal veut l'adresse du destinataire
-  // pour le notifier → adresse de facturation. Domicile : adresse de livraison collectée.
+  // Relais : la destination EST le point relais → la localisation du toAddress doit
+  // être celle du RELAIS (zip/ville), sinon l'offre Shop2Shop ne matche pas (le relais
+  // doit être dans la zone du destinataire). Le contact reste le client (notification).
+  // Domicile : adresse de livraison collectée par Stripe.
   const ship = getShippingAddress(session)
-  const addr = isRelay ? session.customer_details?.address : ship?.address ?? session.customer_details?.address
-  const name = isRelay ? session.customer_details?.name ?? '' : ship?.name ?? session.customer_details?.name ?? ''
+  let addr, name
+  if (isRelay) {
+    name = session.customer_details?.name ?? ''
+    addr = {
+      line1: session.metadata.relay_name || 'Point relais',
+      line2: '',
+      postal_code: session.metadata.relay_zip,
+      city: session.metadata.relay_city,
+      country: session.metadata.relay_country || 'FR',
+    }
+  } else {
+    addr = ship?.address ?? session.customer_details?.address
+    name = ship?.name ?? session.customer_details?.name ?? ''
+  }
 
   // Quantité → poids + valeur + règle d'assurance
   let qty = 1
