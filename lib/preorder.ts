@@ -130,7 +130,7 @@ export const SHIPPING_ZONES: ShippingZone[] = [
     modes: [
       {
         id: 'relais',
-        label: 'En point relais Chronopost Shop2Shop',
+        label: 'En point relais Chronopost',
         relay: true,
         shippingTtc: 4.99,
         shippingRateEnv: 'STRIPE_SHIPPING_RATE_FR',

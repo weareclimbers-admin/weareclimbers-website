@@ -111,7 +111,7 @@ Le prix applicable est celui en vigueur au jour de la commande. WeAreClimbers se
       id: '6',
       title: '6. Commande',
       content: `Le processus de commande comprend les étapes suivantes :
-1. Sélection de la quantité, de la zone de livraison et du mode de livraison (le cas échéant, choix du point relais Chronopost Shop2Shop) sur la boutique ;
+1. Sélection de la quantité, de la zone de livraison et du mode de livraison (le cas échéant, choix du point relais Chronopost) sur la boutique ;
 2. Redirection vers la page de paiement sécurisée opérée par Stripe : saisie des coordonnées (adresse de facturation ou de livraison selon le mode choisi, téléphone, email), éventuel code promotionnel, puis validation du paiement ;
 3. Confirmation de la commande : un email récapitulatif est adressé au Client, accompagné de sa facture.
 
@@ -136,7 +136,7 @@ Une facture est établie automatiquement et transmise au Client par email au for
           id: '8.1',
           title: '8.1 Zones et modes de livraison',
           content: `Les produits sont livrés dans les zones suivantes, selon les modes proposés au moment de la commande :
-- France métropolitaine (et Monaco) : livraison en point relais Chronopost Shop2Shop ou à domicile ;
+- France métropolitaine (et Monaco) : livraison en point relais Chronopost ou à domicile ;
 - Belgique et Luxembourg : livraison à domicile ;
 - Suisse : livraison à domicile ;
 - Collectivités françaises d'outre-mer : livraison à domicile.

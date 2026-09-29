@@ -339,7 +339,7 @@ export default function ShopLanding() {
 
   async function handleCheckout() {
     if (currentMode.relay && !selectedRelay) {
-      setError('Choisis ton point relais Chronopost Shop2Shop avant de continuer.')
+      setError('Choisis ton point relais Chronopost avant de continuer.')
       return
     }
     setLoading(true)
@@ -700,7 +700,7 @@ export default function ShopLanding() {
                     className="text-sm font-bold uppercase mb-3"
                     style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-primary-green)', letterSpacing: '0.1em' }}
                   >
-                    Ton point relais Chronopost Shop2Shop
+                    Ton point relais Chronopost
                   </p>
 
                   <div className="flex flex-wrap items-stretch gap-2">

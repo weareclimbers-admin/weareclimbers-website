@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
     if (mode.relay) {
       relay = parseRelay(body?.relay, zone.relayCountries?.map((c) => c.code) ?? [])
       if (!relay) {
-        return NextResponse.json({ error: 'Choisis ton point relais Chronopost Shop2Shop.' }, { status: 400 })
+        return NextResponse.json({ error: 'Choisis ton point relais Chronopost.' }, { status: 400 })
       }
       // Les données du point viennent de notre propre /api/relay-points (Boxtal,
       // réseau Shop2Shop) quelques secondes avant : on les reprend telles quelles
@@ -176,7 +176,7 @@ export async function POST(request: NextRequest) {
             ? {
                 custom_fields: [
                   {
-                    name: 'Point relais Shop2Shop',
+                    name: 'Point relais Chronopost',
                     value: `${relayShipping.name}, ${relayShipping.zip} ${relayShipping.city} (n° ${relay.id})`.slice(0, 140),
                   },
                 ],
