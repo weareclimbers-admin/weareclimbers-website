@@ -293,14 +293,25 @@ console.log(
 const toShip = []
 const manual = []
 const done = []
+const refunded = []
 
-for await (const session of stripe.checkout.sessions.list({ limit: 100, expand: ['data.payment_intent'] })) {
+for await (const session of stripe.checkout.sessions.list({
+  limit: 100,
+  expand: ['data.payment_intent', 'data.payment_intent.latest_charge'],
+})) {
   if (session.metadata?.flow !== 'preorder_v2') continue
   if (session.payment_status !== 'paid') continue
 
   const pi = typeof session.payment_intent === 'object' ? session.payment_intent : null
   if (pi?.metadata?.boxtal_order) {
     done.push({ session, order: pi.metadata.boxtal_order })
+    continue
+  }
+
+  // Commande remboursée (totale ou partielle) → on ne l'expédie pas.
+  const charge = pi && typeof pi.latest_charge === 'object' ? pi.latest_charge : null
+  if (charge && (charge.refunded || (charge.amount_refunded ?? 0) > 0)) {
+    refunded.push(session)
     continue
   }
 
@@ -314,6 +325,7 @@ for await (const session of stripe.checkout.sessions.list({ limit: 100, expand: 
 }
 
 if (done.length) console.log(`Déjà expédiées (metadata boxtal_order) : ${done.length}`)
+if (refunded.length) console.log(`Remboursées (non expédiées) : ${refunded.length}`)
 if (manual.length) {
   console.log(`\n⚠️ À expédier À LA MAIN (hors périmètre Boxtal v1) : ${manual.length}`)
   for (const s of manual) {
@@ -436,5 +448,5 @@ for (const session of toShip.slice(0, LIMIT === Infinity ? undefined : LIMIT)) {
 
 console.log(`\n──────── Bilan ────────`)
 console.log(
-  `Créées : ${created}${GO ? '' : ' (dry-run)'} · Échecs/skips : ${failed} · Manuelles : ${manual.length} · Déjà faites : ${done.length}`,
+  `Créées : ${created}${GO ? '' : ' (dry-run)'} · Échecs/skips : ${failed} · Manuelles : ${manual.length} · Remboursées : ${refunded.length} · Déjà faites : ${done.length}`,
 )
