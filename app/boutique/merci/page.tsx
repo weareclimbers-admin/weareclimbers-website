@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { Metadata } from 'next'
 import { getStripe } from '@/lib/stripe'
 import { PREORDER_FLOW } from '@/lib/preorder'
+import MetaPurchase from '@/components/boutique/MetaPurchase'
 
 // Success URL du checkout Stripe (?session_id=...). Hors sitemap, noindex :
 // on n'y arrive que depuis Stripe.
@@ -20,16 +21,32 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 }
 
-async function getPremiumEmail(sessionId: string | undefined): Promise<string | null> {
-  if (!sessionId?.startsWith('cs_')) return null
+// Données lues sur la session Stripe pour cette page :
+// - premiumEmail : email d'appariement des 3 mois premium (offre créateur) ;
+// - value/currency : montant réellement payé → alimente l'event Meta Purchase.
+interface MerciSessionData {
+  premiumEmail: string | null
+  value: number | null
+  currency: string
+}
+
+async function getSessionData(sessionId: string | undefined): Promise<MerciSessionData> {
+  const empty: MerciSessionData = { premiumEmail: null, value: null, currency: 'EUR' }
+  if (!sessionId?.startsWith('cs_')) return empty
   try {
     const session = await getStripe().checkout.sessions.retrieve(sessionId)
-    if (session.metadata?.flow !== PREORDER_FLOW) return null
-    if (session.metadata?.grant_premium_months !== '3') return null
-    return session.customer_details?.email ?? null
+    const isPremium =
+      session.metadata?.flow === PREORDER_FLOW &&
+      session.metadata?.grant_premium_months === '3'
+    return {
+      premiumEmail: isPremium ? session.customer_details?.email ?? null : null,
+      // Stripe renvoie les montants en centimes.
+      value: session.amount_total != null ? session.amount_total / 100 : null,
+      currency: (session.currency ?? 'eur').toUpperCase(),
+    }
   } catch (err) {
     console.error('merci: session Stripe illisible, affichage générique', err)
-    return null
+    return empty
   }
 }
 
@@ -39,10 +56,17 @@ export default async function MerciPrecommande({
   searchParams: Promise<{ session_id?: string }>
 }) {
   const { session_id } = await searchParams
-  const premiumEmail = await getPremiumEmail(session_id)
+  const { premiumEmail, value, currency } = await getSessionData(session_id)
 
   return (
     <>
+      {/* Meta Pixel — Purchase (montant réel Stripe). eventId déterministe
+          dérivé du session_id → dédup avec la CAPI (phase 2) + idempotent au
+          refresh. On ne le monte pas sans montant (Purchase exige une valeur). */}
+      {session_id && value !== null && (
+        <MetaPurchase eventId={`purchase_${session_id}`} value={value} currency={currency} />
+      )}
+
       <Header />
 
       <main className="bg-primary-beige">

@@ -85,14 +85,20 @@ export default function CookieBanner() {
   }
 
   const loadMetaPixel = () => {
-    // Charger le Meta Pixel UNIQUEMENT après consentement « Marketing ».
+    // Charger le/les Meta Pixel(s) UNIQUEMENT après consentement « Marketing ».
     if (typeof window === 'undefined') return
 
     const w = window as any
     if (w.fbq) return // déjà initialisé
 
-    const pixelId =
+    // Deux pixels distincts, tous deux gatés consentement :
+    // - VITRINE : mesure marketing globale du site (PageView sur toutes les pages)
+    // - BOUTIQUE : dédié aux pré-commandes /boutique2, cible du retargeting
+    //   e-commerce (ViewContent / InitiateCheckout / Purchase via trackSingle).
+    const sitePixelId =
       process.env.NEXT_PUBLIC_META_PIXEL_ID || '1574373133681517'
+    const shopPixelId =
+      process.env.NEXT_PUBLIC_META_PIXEL_SHOP_ID || '1424037446331441'
 
     // Snippet officiel Meta, exécuté à la demande (et non au chargement de page)
     const n: any = (w.fbq = function () {
@@ -111,9 +117,13 @@ export default function CookieBanner() {
     const s = document.getElementsByTagName('script')[0]
     s.parentNode?.insertBefore(t, s)
 
-    w.fbq('init', pixelId)
+    // On initialise les deux pixels ; le PageView part vers les deux.
+    // Les events e-commerce, eux, sont routés vers le seul pixel boutique
+    // (fbq('trackSingle', shopPixelId, ...) — cf. lib/meta-pixel.ts).
+    w.fbq('init', sitePixelId)
+    if (shopPixelId && shopPixelId !== sitePixelId) w.fbq('init', shopPixelId)
     w.fbq('track', 'PageView')
-    console.log('✅ Meta Pixel chargé (consentement marketing)')
+    console.log('✅ Meta Pixel(s) chargé(s) (consentement marketing)')
   }
 
   const saveConsent = (analytics: boolean, marketing: boolean) => {
