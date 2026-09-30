@@ -13,6 +13,7 @@ import CountdownTimer from '@/components/CountdownTimer'
 import { DERNIER_ARTICLE } from '@/lib/press'
 import { PREORDER_PACK, SHIPPING_ZONES, PREORDER_END_DATE, PREORDER_END_LABEL, cheapestShipping } from '@/lib/preorder'
 import { CREATOR_STORAGE_KEY, detectCreator } from '@/lib/creator'
+import { trackShopEvent, SHOP_CONTENT, newEventId } from '@/lib/meta-pixel'
 import type { ParcelPoint } from '@boxtal/parcel-point-map'
 
 /**
@@ -209,6 +210,22 @@ export default function ShopLanding() {
     }
   }, [])
 
+  // Meta Pixel (boutique) — ViewContent au montage : « a vu le bracelet »,
+  // le socle du retargeting produit. No-op sans consentement marketing.
+  // L'eventID prépare le dédoublonnage avec la Conversions API (phase 2).
+  useEffect(() => {
+    trackShopEvent(
+      'ViewContent',
+      {
+        ...SHOP_CONTENT,
+        ...(PREORDER_PACK.priceTtc !== null
+          ? { value: PREORDER_PACK.priceTtc, currency: 'EUR' }
+          : {}),
+      },
+      newEventId(),
+    )
+  }, [])
+
   const currentZone = SHIPPING_ZONES.find((z) => z.id === zoneId) ?? SHIPPING_ZONES[0]
   const currentMode = currentZone.modes.find((m) => m.id === modeId) ?? currentZone.modes[0]
 
@@ -345,6 +362,19 @@ export default function ShopLanding() {
     setLoading(true)
     setError(null)
     try {
+      // Meta Pixel — InitiateCheckout : départ vers le paiement Stripe.
+      // No-op sans consentement. eventID prépare le dédup CAPI (phase 2).
+      const price = PREORDER_PACK.priceTtc
+      trackShopEvent(
+        'InitiateCheckout',
+        {
+          ...SHOP_CONTENT,
+          num_items: quantity,
+          ...(price !== null ? { value: price * quantity, currency: 'EUR' } : {}),
+        },
+        newEventId(),
+      )
+
       const res = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
