@@ -3,6 +3,8 @@ import type Stripe from 'stripe'
 import { getStripe } from '@/lib/stripe'
 import { PREORDER_FLOW, PREORDER_PACK, getZone, getMode } from '@/lib/preorder'
 import { detectCreator, type CapturedUtm } from '@/lib/creator'
+import { sendCapiEvent, readClientSignals } from '@/lib/meta-capi'
+import { SHOP_CONTENT } from '@/lib/meta-content'
 
 // Pré-commande V2 → création d'une session Stripe Checkout (hébergé, mode payment).
 // Le client envoie sa zone de livraison (choisie sur /boutique) ; la session borne
@@ -108,6 +110,12 @@ export async function POST(request: NextRequest) {
     const utmValue = (v: unknown) => (typeof v === 'string' ? v.trim().slice(0, 200) : '')
     const creator = detectCreator(body?.creator, utm)
 
+    // Meta CAPI (phase 2) : consentement marketing + event_id du pixel
+    // InitiateCheckout + signaux navigateur (_fbp/_fbc/IP/UA) pour le dédup.
+    const marketingConsent = body?.marketingConsent === true
+    const metaEventId = typeof body?.metaEventId === 'string' ? body.metaEventId : ''
+    const signals = readClientSignals(request)
+
     // Metadata métier posées sur la session ET le payment_intent (pattern bracelet :
     // la preuve business reste lisible dans Stripe > Payments même sans la session).
     // Les clés creator / grant_premium_months / utm_* sont attendues TELLES QUELLES
@@ -130,6 +138,17 @@ export async function POST(request: NextRequest) {
       metadata.relay_city = relayShipping.city
       metadata.relay_country = relayShipping.country
       metadata.relay_network = 'CHRP_NETWORK'
+    }
+
+    // Meta CAPI : le webhook (Purchase serveur) n'a pas accès aux cookies
+    // _fbp/_fbc ni au consentement (Stripe → serveur). On les range ici pour
+    // qu'il les relise. Signaux stockés uniquement si consentement marketing.
+    metadata.fb_consent = marketingConsent ? 'granted' : 'denied'
+    if (marketingConsent) {
+      if (signals.fbp) metadata.fb_fbp = signals.fbp
+      if (signals.fbc) metadata.fb_fbc = signals.fbc
+      if (signals.clientIp) metadata.fb_client_ip = signals.clientIp
+      if (signals.userAgent) metadata.fb_client_ua = signals.userAgent.slice(0, 500)
     }
 
     const session = await stripe.checkout.sessions.create({
@@ -191,6 +210,30 @@ export async function POST(request: NextRequest) {
     if (!session.url) {
       console.error('checkout: session créée sans URL', session.id)
       return NextResponse.json({ error: 'Erreur serveur. Réessaye dans quelques instants.' }, { status: 500 })
+    }
+
+    // Meta CAPI — InitiateCheckout serveur, dédoublonné avec le pixel via le
+    // même event_id. Best-effort (ne lève jamais) ; on n'envoie rien sans
+    // consentement ni event_id (dédup impossible). Pas d'email/nom à ce stade :
+    // l'appariement repose sur _fbp/_fbc + IP + user-agent.
+    if (marketingConsent && metaEventId) {
+      const price = PREORDER_PACK.priceTtc
+      await sendCapiEvent({
+        eventName: 'InitiateCheckout',
+        eventId: metaEventId,
+        eventSourceUrl: request.headers.get('referer') ?? `${siteUrl}/boutique`,
+        userData: {
+          clientIp: signals.clientIp,
+          userAgent: signals.userAgent,
+          fbp: signals.fbp,
+          fbc: signals.fbc,
+        },
+        customData: {
+          ...SHOP_CONTENT,
+          num_items: quantity,
+          ...(price !== null ? { value: price * quantity, currency: 'EUR' } : {}),
+        },
+      })
     }
 
     return NextResponse.json({ url: session.url }, { status: 200 })

@@ -11,23 +11,12 @@
  * serveur doivent envoyer le MÊME `eventID` + le même `event_name`.
  */
 
-/** ID du pixel dédié à la boutique. Surchargable par env (fallback = ID Meta). */
-export const META_SHOP_PIXEL_ID =
-  process.env.NEXT_PUBLIC_META_PIXEL_SHOP_ID || '1424037446331441'
-
-/**
- * Identité produit de la pré-commande — DOIT être identique partout
- * (pixel + CAPI, ViewContent/InitiateCheckout/Purchase) pour que le
- * retargeting et le catalogue fonctionnent. SKU figé volontairement.
- */
-export const SHOP_CONTENT = {
-  content_ids: ['polar360-pack'],
-  content_type: 'product',
-  content_name: 'Bracelet Polar 360 + App WAC',
-} as const
+// Source de vérité unique (client + serveur) : SKU produit + ID pixel boutique.
+export { SHOP_CONTENT, META_SHOP_PIXEL_ID } from '@/lib/meta-content'
+import { META_SHOP_PIXEL_ID } from '@/lib/meta-content'
 
 /** Le consentement « Marketing » est-il donné ? (même source que CookieBanner) */
-function hasMarketingConsent(): boolean {
+export function hasMarketingConsent(): boolean {
   try {
     const raw = localStorage.getItem('wac_cookie_consent')
     if (!raw) return false
