@@ -13,7 +13,7 @@ import CountdownTimer from '@/components/CountdownTimer'
 import { DERNIER_ARTICLE } from '@/lib/press'
 import { PREORDER_PACK, SHIPPING_ZONES, PREORDER_END_DATE, PREORDER_END_LABEL, cheapestShipping } from '@/lib/preorder'
 import { CREATOR_STORAGE_KEY, detectCreator } from '@/lib/creator'
-import { trackShopEvent, SHOP_CONTENT, newEventId } from '@/lib/meta-pixel'
+import { trackShopEvent, SHOP_CONTENT, newEventId, hasMarketingConsent } from '@/lib/meta-pixel'
 import type { ParcelPoint } from '@boxtal/parcel-point-map'
 
 /**
@@ -363,8 +363,10 @@ export default function ShopLanding() {
     setError(null)
     try {
       // Meta Pixel — InitiateCheckout : départ vers le paiement Stripe.
-      // No-op sans consentement. eventID prépare le dédup CAPI (phase 2).
+      // No-op sans consentement. Le même event_id est transmis au serveur
+      // (metaEventId) pour que la CAPI dédoublonne l'event serveur.
       const price = PREORDER_PACK.priceTtc
+      const checkoutEventId = newEventId()
       trackShopEvent(
         'InitiateCheckout',
         {
@@ -372,7 +374,7 @@ export default function ShopLanding() {
           num_items: quantity,
           ...(price !== null ? { value: price * quantity, currency: 'EUR' } : {}),
         },
-        newEventId(),
+        checkoutEventId,
       )
 
       const res = await fetch('/api/checkout', {
@@ -393,6 +395,10 @@ export default function ShopLanding() {
                 country: selectedRelay.country,
               }
             : undefined,
+          // Meta CAPI (phase 2) : dédup InitiateCheckout serveur (même event_id)
+          // et gating consentement pour le Purchase serveur (via metadata Stripe).
+          metaEventId: checkoutEventId,
+          marketingConsent: hasMarketingConsent(),
         }),
       })
       const data = await res.json().catch(() => null)

@@ -4,6 +4,8 @@ import nodemailer from 'nodemailer'
 import type Mail from 'nodemailer/lib/mailer'
 import { getStripe } from '@/lib/stripe'
 import { PREORDER_FLOW, PREORDER_PACK } from '@/lib/preorder'
+import { sendCapiEvent } from '@/lib/meta-capi'
+import { SHOP_CONTENT } from '@/lib/meta-content'
 
 // Webhook Stripe DÉDIÉ au site (endpoint + whsec distincts des Cloud Functions
 // coach — ne jamais partager). Les events Stripe sont broadcastés à tout le
@@ -347,12 +349,58 @@ async function addToBrevoPreorderList(session: Stripe.Checkout.Session) {
   }
 }
 
+/**
+ * Meta CAPI — Purchase serveur (le canal le plus fiable : déclenché à la
+ * confirmation Stripe, contourne adblockers/iOS/refus JS). Dédoublonné avec le
+ * pixel navigateur via event_id = purchase_<session_id>, identique des deux côtés.
+ *
+ * Gaté sur le consentement marketing capturé au checkout (metadata.fb_consent).
+ * Les signaux _fbp/_fbc/IP/UA viennent aussi de la metadata : le webhook n'a
+ * pas le navigateur du client. Best-effort — sendCapiEvent ne lève jamais.
+ */
+async function sendPurchaseCapi(session: Stripe.Checkout.Session) {
+  if (session.metadata?.fb_consent !== 'granted') return
+  const value = session.amount_total != null ? session.amount_total / 100 : null
+  if (value === null) return // Purchase exige une valeur monétaire
+
+  const details = session.customer_details
+  const addr = getShippingInfo(session)?.address ?? details?.address
+  const nameParts = (details?.name || '').trim().split(/\s+/).filter(Boolean)
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.weareclimbers.fr'
+
+  await sendCapiEvent({
+    eventName: 'Purchase',
+    eventId: `purchase_${session.id}`,
+    eventSourceUrl: `${siteUrl}/boutique/merci`,
+    userData: {
+      email: details?.email,
+      phone: details?.phone,
+      firstName: nameParts[0] ?? null,
+      lastName: nameParts.length > 1 ? nameParts.slice(1).join(' ') : null,
+      city: addr?.city,
+      zip: addr?.postal_code,
+      country: addr?.country,
+      fbp: session.metadata?.fb_fbp ?? null,
+      fbc: session.metadata?.fb_fbc ?? null,
+      clientIp: session.metadata?.fb_client_ip ?? null,
+      userAgent: session.metadata?.fb_client_ua ?? null,
+    },
+    customData: {
+      ...SHOP_CONTENT,
+      value,
+      currency: (session.currency ?? 'eur').toUpperCase(),
+      order_id: session.id,
+    },
+  })
+}
+
 async function handlePaidPreorder(session: Stripe.Checkout.Session) {
   const extras = await buildOrderExtras(session)
   // Chaque étape est best-effort : la commande est payée, rien ne doit lever.
   await notifyNewPreorder(session, extras)
   await sendCustomerConfirmation(session, extras)
   await addToBrevoPreorderList(session)
+  await sendPurchaseCapi(session)
   // NB : l'expédition n'est PAS créée ici. Modèle « carnet de commandes » : les
   // étiquettes Boxtal sont générées en lot via scripts/create-boxtal-shipments.mjs.
 }
