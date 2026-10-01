@@ -19,8 +19,8 @@ import type { ParcelPoint } from '@boxtal/parcel-point-map'
 /**
  * Boutique pré-commande V2 — vraie page e-commerce (galerie + panneau d'achat
  * sticky + sélecteur de zone + quantité → checkout Stripe hébergé).
- * Montée sur /boutique2 (noindex) le temps du chantier ; remplacera /boutique
- * après le GO de Julien.
+ * EN LIGNE sur /boutique depuis le 01/10/2026 (anciennement en préparation sur
+ * /boutique2, qui redirige désormais ici).
  *
  * TODO(Julien) : packshots provisoires (réutilisés des autres pages) — à
  * remplacer par les vrais visuels boutique. FAQ et copy à valider.
