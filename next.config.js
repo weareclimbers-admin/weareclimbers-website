@@ -4,6 +4,13 @@ const nextConfig = {
   async redirects() {
     return [
       {
+        // Boutique mise en live le 01/10/2026 : /boutique2 (page de préparation)
+        // remplace désormais /boutique. On redirige l'ancienne URL de travail.
+        source: '/boutique2',
+        destination: '/boutique',
+        permanent: true, // 301 redirect
+      },
+      {
         source: '/early-access',
         destination: '/rejoins-nous',
         permanent: true, // 301 redirect
