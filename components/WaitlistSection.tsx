@@ -1,20 +1,30 @@
+import Link from 'next/link'
 import NewsletterForm from './NewsletterForm'
-import { WAITLIST } from '@/lib/campaign'
+import { WAITLIST, CAMPAIGN } from '@/lib/campaign'
 
 /**
- * Section liste d'attente réutilisable — cible de tous les CTA "waitlist" du site (#liste-attente).
- * Affiche la preuve sociale (objectif 100 % atteint) + le formulaire Brevo.
+ * Section CTA de fin de page réutilisable — cible #liste-attente de tous les CTA du site.
+ * Phase-aware (lib/campaign.ts) :
+ *   - avant l'ouverture : formulaire liste d'attente (Brevo)
+ *   - 'precommande-live' : CTA direct vers la boutique (la liste d'attente n'existe plus)
  *
- * À placer en bas des pages pendant l'entre-deux (Ulule terminé → pré-commandes en propre).
  * `heading` / `subtitle` permettent d'adapter l'accroche au contexte de la page.
+ * En phase 'precommande-live', le sous-titre est forcé sur le message pré-commande
+ * (les sous-titres passés par les pages sont orientés liste d'attente).
  */
+const PREORDER_SUBTITLE =
+  "Les pré-commandes sont ouvertes. Réserve ton bracelet Polar 360 + l'app au tarif de lancement, en quantités limitées."
+
 export default function WaitlistSection({
   heading = WAITLIST.formTitle,
-  subtitle = WAITLIST.formSubtitle,
+  subtitle,
 }: {
   heading?: string
   subtitle?: string
 }) {
+  const isPreorder = CAMPAIGN.phase === 'precommande-live'
+  const resolvedSubtitle = isPreorder ? PREORDER_SUBTITLE : subtitle ?? WAITLIST.formSubtitle
+
   return (
     <section
       id="liste-attente"
@@ -45,10 +55,16 @@ export default function WaitlistSection({
           className="text-lg md:text-xl mb-8 max-w-2xl mx-auto leading-relaxed"
           style={{ fontFamily: 'var(--font-roboto)', lineHeight: '1.6' }}
         >
-          {subtitle}
+          {resolvedSubtitle}
         </p>
 
-        <NewsletterForm variant="footer" buttonText={WAITLIST.buttonText} />
+        {isPreorder ? (
+          <Link href="/boutique" className="btn-secondary inline-block">
+            Je précommande →
+          </Link>
+        ) : (
+          <NewsletterForm variant="footer" buttonText={WAITLIST.buttonText} />
+        )}
       </div>
     </section>
   )

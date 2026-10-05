@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
+import StoreButtons from '@/components/StoreButtons'
 
 export default function Footer() {
   return (
@@ -20,6 +21,13 @@ export default function Footer() {
             <p style={{ fontFamily: 'var(--font-roboto)' }} className="text-sm mb-4">
               L'application et les bracelets connectés qui révolutionnent votre pratique de l'escalade.
             </p>
+
+            {/* Téléchargement de l'app */}
+            <p style={{ fontFamily: 'var(--font-syne)' }} className="text-xs font-bold uppercase tracking-wide mb-3">
+              Télécharge l'app
+            </p>
+            <StoreButtons theme="dark" className="max-w-sm mb-6" />
+
             <p style={{ fontFamily: 'var(--font-roboto)' }} className="text-xs opacity-75">
               © 2026 We Are Climbers. Tous droits réservés.
             </p>
@@ -64,13 +72,8 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/rejoins-nous" style={{ fontFamily: 'var(--font-roboto)' }} className="text-sm transition-colors hover:opacity-75">
-                  Rejoins le mouvement
-                </Link>
-              </li>
-              <li>
                 <Link href="/boutique" style={{ fontFamily: 'var(--font-roboto)' }} className="text-sm transition-colors hover:opacity-75">
-                  Boutique
+                  Pré-commandes
                 </Link>
               </li>
               <li>

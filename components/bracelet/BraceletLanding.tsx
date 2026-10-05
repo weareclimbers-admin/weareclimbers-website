@@ -7,6 +7,7 @@ import { motion, useScroll, useSpring, useTransform } from 'motion/react'
 import { Reveal, TitleReveal, CountUp } from '@/components/Reveal'
 import TopoLines from '@/components/TopoLines'
 import Magnetic from '@/components/Magnetic'
+import StoreButtons from '@/components/StoreButtons'
 import WaitlistSection from '@/components/WaitlistSection'
 
 /**
@@ -68,9 +69,9 @@ export default function BraceletLanding() {
                 transition={{ type: 'spring', stiffness: 120, damping: 18, delay: 0.35 }}
               >
                 <Magnetic>
-                  <a href="#liste-attente" className="btn-secondary inline-block">
-                    Réserve ta place sur la liste →
-                  </a>
+                  <Link href="/boutique" className="btn-secondary inline-block">
+                    Je précommande →
+                  </Link>
                 </Magnetic>
                 <Magnetic>
                   <Link href="/l-app" className="btn-primary inline-block">
@@ -330,6 +331,16 @@ export default function BraceletLanding() {
               </Reveal>
             ))}
           </div>
+
+          {/* L'app est déjà en ligne — téléchargement direct */}
+          <Reveal delay={0.1}>
+            <div className="mt-14 text-center">
+              <p className="mb-5 text-base md:text-lg" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)' }}>
+                L'app qui analyse tes séances est gratuite, sur iOS et Android.
+              </p>
+              <StoreButtons className="max-w-md mx-auto justify-center" />
+            </div>
+          </Reveal>
         </div>
       </section>
 
@@ -445,11 +456,8 @@ export default function BraceletLanding() {
         </div>
       </section>
 
-      {/* ───────────── CTA LISTE D'ATTENTE ───────────── */}
-      <WaitlistSection
-        heading="Réserve ta place sur la liste."
-        subtitle="Les pré-commandes ouvrent bientôt, directement sur weareclimbers.fr. Les inscrits profitent du tarif Fondateur en avant-première — avant l'ouverture publique."
-      />
+      {/* ───────────── CTA PRÉ-COMMANDE ───────────── */}
+      <WaitlistSection heading="Réserve ton bracelet." />
     </main>
   )
 }

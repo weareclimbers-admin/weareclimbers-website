@@ -3,8 +3,9 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useState, useEffect } from 'react'
+import CampaignBanner from './CampaignBanner'
 
-export default function Header() {
+export default function Header({ showCampaignBanner = true }: { showCampaignBanner?: boolean } = {}) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [isVisible, setIsVisible] = useState(true)
   const [lastScrollY, setLastScrollY] = useState(0)
@@ -33,7 +34,6 @@ export default function Header() {
     { name: "L'app", href: '/l-app' },
     { name: 'Histoire', href: '/histoire' },
     { name: 'Nos grimpeurs', href: '/nos-grimpeurs' },
-    { name: 'Boutique', href: '/boutique' },
   ]
 
   return (
@@ -46,6 +46,7 @@ export default function Header() {
       }}
       className="fixed top-0 left-0 right-0 shadow-sm"
     >
+      {showCampaignBanner && <CampaignBanner />}
       <nav className="container-custom py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
@@ -87,8 +88,8 @@ export default function Header() {
             >
               Espace Coach
             </Link>
-            <Link href="/rejoins-nous" className="btn-secondary-small">
-              Rejoins le mouvement
+            <Link href="/boutique" className="btn-secondary-small">
+              Pré-commandes
             </Link>
           </div>
 
@@ -152,8 +153,8 @@ export default function Header() {
               >
                 Espace Coach
               </Link>
-              <Link href="/rejoins-nous" className="btn-secondary-small inline-block text-center">
-                Rejoins-nous
+              <Link href="/boutique" className="btn-secondary-small inline-block text-center">
+                Pré-commandes
               </Link>
             </div>
           </div>

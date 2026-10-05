@@ -6,7 +6,7 @@ import { Reveal, TitleReveal } from '@/components/Reveal'
 import TopoLines from '@/components/TopoLines'
 import Magnetic from '@/components/Magnetic'
 import PhoneShot from '@/components/PhoneShot'
-import WaitlistSection from '@/components/WaitlistSection'
+import StoreButtons from '@/components/StoreButtons'
 import ReadyGauge from '@/components/home/ReadyGauge'
 
 /**
@@ -121,9 +121,9 @@ export default function AppLanding() {
                 transition={{ type: 'spring', stiffness: 120, damping: 18, delay: 0.35 }}
               >
                 <Magnetic>
-                  <a href="#liste-attente" className="btn-secondary inline-block">
-                    Rejoins la liste →
-                  </a>
+                  <Link href="/boutique" className="btn-secondary inline-block">
+                    Je précommande →
+                  </Link>
                 </Magnetic>
                 <Magnetic>
                   <Link href="/le-bracelet" className="btn-beige inline-block">
@@ -198,11 +198,24 @@ export default function AppLanding() {
         </section>
       ))}
 
-      {/* ───────────── CTA — L'APP EST GRATUITE ───────────── */}
-      <WaitlistSection
-        heading="L'app est gratuite."
-        subtitle="Rejoins la liste pour être notifié·e du lancement — et réserver ton bracelet en avant-première au tarif Fondateur."
-      />
+      {/* ───────────── CTA — TÉLÉCHARGE L'APP ───────────── */}
+      <section className="py-20" style={{ backgroundColor: 'var(--color-secondary-beige-light)' }}>
+        <div className="container-custom text-center" data-aos="fade-up">
+          <h2
+            className="text-3xl md:text-5xl mb-6"
+            style={{ fontFamily: 'var(--font-syne)', fontWeight: 700, textTransform: 'uppercase', color: 'var(--color-primary-green)' }}
+          >
+            L'app est gratuite.
+          </h2>
+          <p
+            className="text-lg md:text-xl mb-8 max-w-2xl mx-auto leading-relaxed"
+            style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', lineHeight: '1.6' }}
+          >
+            Disponible sur iOS et Android. Télécharge We Are Climbers, crée ton compte et connecte ton bracelet.
+          </p>
+          <StoreButtons className="max-w-md mx-auto justify-center" />
+        </div>
+      </section>
     </main>
   )
 }

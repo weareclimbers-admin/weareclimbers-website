@@ -30,13 +30,16 @@ export interface Cta {
 
 export const CAMPAIGN = {
   /** Phase active du site. */
-  phase: 'campaign-success' as CampaignPhase,
+  phase: 'precommande-live' as CampaignPhase,
 
   ululeUrl: 'https://www.ulule.fr/we-are-climbers',
   videoYoutubeId: '0AXX5vCajP8',
 
   /** Date de clôture Ulule (conservée pour l'historique / le compte à rebours en phase ulule-live). */
   endDate: '2026-07-10T23:59:59+02:00',
+
+  /** Date de fin des pré-commandes en propre — alimente le compte à rebours du bandeau en phase 'precommande-live'. */
+  preorderEndDate: '2026-10-31T23:59:59+01:00',
 
   /**
    * Preuve sociale publique. On communique UNIQUEMENT l'atteinte de l'objectif à 100%.
@@ -85,7 +88,7 @@ export function getBannerConfig(): { text: string; cta: Cta } | null {
       };
     case 'precommande-live':
       return {
-        text: 'Les pré-commandes sont ouvertes.',
+        text: "Pré-commandes jusqu'au 31 octobre",
         cta: getPrimaryCta(),
       };
   }
