@@ -6,7 +6,7 @@ import { Metadata } from 'next'
 export const metadata: Metadata = {
   title: 'Le bracelet cardio pour l\'escalade — Polar 360 × WAC | We Are Climbers',
   description:
-    "Le capteur FC pensé pour l'escalade : ±1 BPM, 50 Hz, 29 g, sans écran, 10 jours d'autonomie. Porté à l'avant-bras pour un signal fiable même dans les surplombs. Rejoins la liste d'attente.",
+    "Le capteur FC pensé pour l'escalade : ±1 BPM, 50 Hz, 29 g, sans écran, 10 jours d'autonomie. Porté à l'avant-bras pour un signal fiable même dans les surplombs. Précommande-le dès maintenant.",
   keywords: ['bracelet cardio escalade', 'capteur FC escalade', 'capteur fréquence cardiaque grimpe', 'Polar 360 escalade', 'bracelet connecté escalade'],
   openGraph: {
     title: "Le bracelet cardio pensé pour l'escalade — Polar 360 × WAC",

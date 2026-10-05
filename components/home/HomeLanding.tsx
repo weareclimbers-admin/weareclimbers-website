@@ -9,6 +9,7 @@ import TopoLines from '@/components/TopoLines'
 import Magnetic from '@/components/Magnetic'
 import Marquee from '@/components/Marquee'
 import StickyCta from '@/components/StickyCta'
+import StoreButtons from '@/components/StoreButtons'
 import WaitlistSection from '@/components/WaitlistSection'
 import FAQItem from '@/components/FAQItem'
 import ReadyGauge from './ReadyGauge'
@@ -119,9 +120,9 @@ export default function HomeLanding() {
                 transition={{ type: 'spring', stiffness: 120, damping: 18, delay: 0.35 }}
               >
                 <Magnetic>
-                  <a href="#liste-attente" className="btn-secondary inline-block">
-                    Rejoins la liste →
-                  </a>
+                  <Link href="/boutique" className="btn-secondary inline-block">
+                    Je précommande →
+                  </Link>
                 </Magnetic>
                 <Magnetic>
                   <a href="#produit" className="btn-beige inline-block">
@@ -416,6 +417,14 @@ export default function HomeLanding() {
                       Découvre l'app en détail →
                     </Link>
                   </Magnetic>
+                </Reveal>
+
+                {/* Téléchargement direct — l'app est déjà en ligne */}
+                <Reveal delay={0.38}>
+                  <p className="mt-8 mb-3 text-sm font-bold uppercase tracking-[0.14em]" style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-secondary-orange)' }}>
+                    Déjà disponible
+                  </p>
+                  <StoreButtons className="max-w-sm" />
                 </Reveal>
               </div>
             </div>

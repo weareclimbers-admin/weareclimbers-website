@@ -67,7 +67,8 @@ export default async function MerciPrecommande({
         <MetaPurchase eventId={`purchase_${session_id}`} value={value} currency={currency} />
       )}
 
-      <Header />
+      {/* Pas de bandeau pré-commande ici : l'achat vient d'être confirmé. */}
+      <Header showCampaignBanner={false} />
 
       <main className="bg-primary-beige">
         <section

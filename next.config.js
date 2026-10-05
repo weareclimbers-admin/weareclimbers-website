@@ -11,8 +11,15 @@ const nextConfig = {
         permanent: true, // 301 redirect
       },
       {
+        // Pré-commandes en propre ouvertes : la liste d'attente n'existe plus,
+        // tout le funnel converge vers la boutique.
+        source: '/rejoins-nous',
+        destination: '/boutique',
+        permanent: true, // 301 redirect
+      },
+      {
         source: '/early-access',
-        destination: '/rejoins-nous',
+        destination: '/boutique',
         permanent: true, // 301 redirect
       },
       {

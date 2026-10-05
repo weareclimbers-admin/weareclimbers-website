@@ -2,11 +2,14 @@ import { CAMPAIGN, getBannerConfig, WAITLIST } from '@/lib/campaign'
 import CountdownTimer from './CountdownTimer'
 
 /**
- * Bandeau haut de page, piloté par la phase active (lib/campaign.ts).
- * Placé sous le Header fixe, sticky pendant le scroll.
- * - phase 'ulule-live'       : stock + compte à rebours + CTA Ulule
- * - phase 'campaign-success' : message succès + CTA liste d'attente
- * - phase 'precommande-live' : message pré-commandes + CTA checkout
+ * Bandeau d'annonce — strip compact rendu EN HAUT du Header fixe (voir Header.tsx).
+ * Piloté par la phase active (lib/campaign.ts) :
+ * - 'ulule-live'       : message stock + compte à rebours Ulule + CTA Ulule
+ * - 'campaign-success' : message succès + CTA liste d'attente (pas de compte à rebours)
+ * - 'precommande-live' : « pré-commandes jusqu'au 31 octobre » + compte à rebours + CTA boutique
+ *
+ * Hauteur volontairement contenue et contenu non-wrap : le Header grandit d'autant,
+ * et toutes les premières sections (pt-32 min) le dégagent sans chevauchement.
  */
 export default function CampaignBanner() {
   const banner = getBannerConfig()
@@ -14,6 +17,9 @@ export default function CampaignBanner() {
 
   const { text, cta } = banner
   const isUluleLive = CAMPAIGN.phase === 'ulule-live'
+  const isPreorderLive = CAMPAIGN.phase === 'precommande-live'
+  const showCountdown = isUluleLive || isPreorderLive
+  const countdownEnd = isPreorderLive ? CAMPAIGN.preorderEndDate : CAMPAIGN.endDate
 
   // Destination du CTA selon sa nature
   const href = cta.kind === 'waitlist' ? WAITLIST.anchor : cta.href ?? '#'
@@ -21,45 +27,41 @@ export default function CampaignBanner() {
 
   return (
     <div
-      className="sticky z-40 w-full shadow-md"
-      style={{
-        top: '80px',
-        backgroundColor: 'var(--color-secondary-orange)',
-        color: 'var(--color-primary-beige)',
-      }}
+      className="w-full overflow-hidden"
+      style={{ backgroundColor: 'var(--color-secondary-orange)', color: 'var(--color-primary-beige)' }}
       role="region"
       aria-label="Actualité We Are Climbers"
     >
-      <div className="container-custom py-3">
-        <div className="flex flex-col md:flex-row items-center justify-center gap-3 md:gap-6 text-center">
-          {/* Texte principal */}
-          <div
-            className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-sm md:text-base"
-            style={{ fontFamily: 'var(--font-roboto)' }}
+      <div className="container-custom py-2">
+        <div className="flex flex-nowrap items-center justify-center gap-2.5 md:gap-5 text-center">
+          {/* Texte principal — masqué sur très petit écran pour rester sur une ligne */}
+          <span
+            className="hidden sm:inline font-bold uppercase tracking-wide text-xs md:text-sm whitespace-nowrap"
+            style={{ fontFamily: 'var(--font-syne)' }}
           >
-            <span className="font-bold uppercase tracking-wide" style={{ fontFamily: 'var(--font-syne)' }}>
-              {text}
-            </span>
-            {isUluleLive && (
-              <>
-                <span className="hidden md:inline opacity-60">•</span>
-                <CountdownTimer variant="compact" />
-              </>
-            )}
-          </div>
+            {text}
+          </span>
 
-          {/* CTA */}
+          {showCountdown && (
+            <>
+              <span className="hidden sm:inline opacity-50">•</span>
+              <span className="text-xs md:text-sm whitespace-nowrap" style={{ fontFamily: 'var(--font-syne)' }}>
+                <CountdownTimer variant="compact" endDate={countdownEnd} />
+              </span>
+            </>
+          )}
+
           <a
             href={href}
             {...(isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-            className="inline-block px-5 py-2 text-sm font-bold uppercase whitespace-nowrap transition-opacity hover:opacity-90"
+            className="flex-shrink-0 px-3 py-1 text-xs md:text-sm font-bold uppercase whitespace-nowrap transition-opacity hover:opacity-90"
             style={{
               fontFamily: 'var(--font-syne)',
               backgroundColor: 'var(--color-primary-green)',
               color: 'var(--color-primary-beige)',
             }}
           >
-            {cta.label}
+            {cta.label} →
           </a>
         </div>
       </div>
