@@ -59,7 +59,7 @@ const FEATURES: {
   {
     kicker: 'Une première dans l’escalade',
     title: 'Ton cycle, pris en compte.',
-    desc: "WAC analyse tes performances selon les phases de ton cycle menstruel et adapte ses recommandations : quand pousser, quand privilégier la technique ou la récup. 100 % optionnel, chiffré, jamais partagé. Validé avec la Dr Juliana Antero (INSEP).",
+    desc: "WAC analyse tes performances selon les phases de ton cycle menstruel et adapte ses recommandations : quand pousser, quand privilégier la technique ou la récup. 100 % optionnel, chiffré, jamais partagé.",
     src: '/videos/app/cycle-app.mp4',
     placeholder: 'Suivi du cycle menstruel',
   },
