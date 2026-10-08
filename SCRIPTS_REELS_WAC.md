@@ -177,7 +177,6 @@ Voix off : "Inscris-toi sur la liste d'attente. Lien en bio."
 ```
 
 **Sources à afficher** (petit texte) :
-- Juliana Antero, INSEP
 - Études scientifiques récentes
 
 **Outils motion design** :

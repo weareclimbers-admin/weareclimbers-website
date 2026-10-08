@@ -268,7 +268,7 @@ transform: scale(1.05);
 - Éco-conception (compression images, hébergement vert)
 - Transparence (open data, RGPD exemplaire)
 - Inclusivité (cycle menstruel, 5 identités de genre)
-- Démarche scientifique (INSEP, Juliana Antero)
+- Démarche scientifique
 
 ---
 
@@ -341,7 +341,7 @@ transform: scale(1.05);
    - Le déclic (tendinite)
    - La décision (créer l'app)
    - Pourquoi le cycle menstruel
-   - La démarche scientifique (INSEP)
+   - La démarche scientifique
    - L'éco-conception
    - La communauté
    - Le crowdfunding (Mai 2026)
@@ -556,7 +556,7 @@ Chaque section importante suit ce pattern :
 1. **Notoriété** : Faire connaître We Are Climbers
 2. **Liste d'attente** : Collecter emails pour crowdfunding Mai 2026
 3. **Storytelling** : Humaniser la marque avec l'histoire de Julien
-4. **Crédibilité** : Montrer la démarche scientifique (INSEP)
+4. **Crédibilité** : Montrer la démarche scientifique
 5. **Différenciation** : Cycle menstruel + éco-conception
 
 ### KPIs à Suivre (Post-Lancement)
@@ -641,7 +641,6 @@ Chaque section importante suit ce pattern :
 ### Sources Scientifiques (Cycle Menstruel)
 
 - Juliette Bergmann : [Entraînement au féminin](https://juliettebergmanescalade.fr/)
-- Juliana Antero (INSEP) : Projet Empow'her
 - Articles scientifiques sur cycle hormonal et performance
 
 ### Outils Utilisés
@@ -681,7 +680,7 @@ Chaque section importante suit ce pattern :
 **Responsabilités** :
 - Valider les contenus liés à son histoire personnelle
 - Décider des priorités de développement
-- Relations INSEP / scientifiques
+- Relations scientifiques
 - Validation design et UX
 
 ---

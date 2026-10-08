@@ -331,20 +331,15 @@ export default function HistoireLanding() {
 
               <Reveal delay={0.2}>
                 <p>
-                  Et aujourd'hui, <strong>je suis en train de me rapprocher de l'INSEP et de Juliana Antero</strong>, qui a développé le projet <strong>Empow'her</strong> (recherche sur l'impact hormonal sur la performance chez les femmes).
-                </p>
-              </Reveal>
-              <Reveal delay={0.25}>
-                <p>
                   Mon objectif : faire valider scientifiquement mes hypothèses et collaborer avec des laboratoires de recherche pour <strong>vraiment</strong> améliorer la compréhension de ce sujet.
                 </p>
               </Reveal>
-              <Reveal delay={0.3}>
+              <Reveal delay={0.25}>
                 <p className="text-2xl font-bold text-center py-4" style={{ fontFamily: 'var(--font-syne)' }}>
                   Parce que je suis pas là pour faire du greenwashing scientifique.
                 </p>
               </Reveal>
-              <Reveal delay={0.35}><p className="text-xl text-center">Je suis là pour aider. Vraiment.</p></Reveal>
+              <Reveal delay={0.3}><p className="text-xl text-center">Je suis là pour aider. Vraiment.</p></Reveal>
             </div>
           </div>
         </div>

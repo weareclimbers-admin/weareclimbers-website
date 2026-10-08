@@ -43,6 +43,6 @@ export const faqItems: FAQItem[] = [
   {
     id: '8',
     question: "L'analyse des cycles menstruels, comment ça marche ?",
-    answer: "Tu renseignes (de manière optionnelle et privée) tes dates de cycle dans l'app. WAC analyse ensuite tes performances selon les phases de ton cycle (folliculaire, ovulatoire, lutéale).\n\nTu reçois des graphiques dédiés et des recommandations adaptées :\n- Quand pousser plus fort (pic de forme naturel)\n- Quand privilégier la technique ou la récup\n- Comment adapter ton entraînement pour progresser avec ton corps, pas contre lui\n\nValidé scientifiquement par Dr Juliana Antero (INSEP), spécialiste de l'impact des cycles menstruels sur la performance athlétique.\n\nC'est 100% optionnel. Si tu ne veux pas renseigner ces infos, l'app fonctionne normalement."
+    answer: "Tu renseignes (de manière optionnelle et privée) tes dates de cycle dans l'app. WAC analyse ensuite tes performances selon les phases de ton cycle (folliculaire, ovulatoire, lutéale).\n\nTu reçois des graphiques dédiés et des recommandations adaptées :\n- Quand pousser plus fort (pic de forme naturel)\n- Quand privilégier la technique ou la récup\n- Comment adapter ton entraînement pour progresser avec ton corps, pas contre lui\n\nC'est 100% optionnel. Si tu ne veux pas renseigner ces infos, l'app fonctionne normalement."
   }
 ]

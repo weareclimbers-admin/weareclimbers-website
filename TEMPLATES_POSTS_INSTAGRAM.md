@@ -466,7 +466,7 @@ Alors pourquoi aucune app d'escalade n'en parle ?
 
 Les faits :
 
-📊 Phase folliculaire (J1-J14) : +15% de force maximale (Juliana Antero, INSEP)
+📊 Phase folliculaire (J1-J14) : +15% de force maximale
 📊 Phase lutéale (J15-J28) : +48% risque blessure ligamentaire
 📊 Adapter son training selon son cycle = progression + saine
 

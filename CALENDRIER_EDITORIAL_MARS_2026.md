@@ -172,9 +172,7 @@ Texte vert foncé (#265335) :
 → C'est LE moment de :
 • Tester tes projets limites
 • Pousser l'intensité
-• Grimper tes voies dures
-
-Source : Juliana Antero, INSEP"
+• Grimper tes voies dures"
 ```
 
 **Slide 3 :**
@@ -191,9 +189,7 @@ Texte :
 • Baisser le volume
 • Travailler la technique
 • Privilégier la récup
-• Écouter ton corps
-
-Source : Juliana Antero, INSEP"
+• Écouter ton corps"
 ```
 
 **Slide 4 :**
@@ -244,7 +240,7 @@ Alors pourquoi AUCUNE app d'escalade n'en parle ?
 
 Parce que la tech sportive est pensée par des hommes, pour des hommes.
 
-LES FAITS (recherches INSEP, Juliana Antero) :
+LES FAITS :
 
 📊 Phase folliculaire (J1-J14) :
 → +15% de force maximale
@@ -557,7 +553,7 @@ Pourquoi ?
 
 Parce que la tech sportive est pensée par des hommes, pour des hommes.
 
-Les faits (recherches INSEP) :
+Les faits :
 📊 +15% de force en phase folliculaire
 📊 +48% de risque blessure en phase lutéale
 

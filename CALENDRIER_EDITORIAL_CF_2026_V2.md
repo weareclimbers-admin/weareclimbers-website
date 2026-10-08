@@ -320,8 +320,7 @@ Un jour, ma compagne me dit :
 
 J'ai creusé.
 
-J'ai lu les recherches de Juliana Antero (INSEP).
-Les travaux de Juliette Bergmann.
+J'ai lu les travaux de Juliette Bergmann.
 
 Les faits sont là :
 - +15% de force en phase folliculaire
@@ -1268,9 +1267,7 @@ Texte :
 C'est LE moment de :
 ✅ Tester tes projets limites
 ✅ Pousser l'intensité
-✅ Grimper fort
-
-Source : Juliana Antero, INSEP"
+✅ Grimper fort"
 ```
 
 **Slide 3 :**
@@ -1283,9 +1280,7 @@ Texte :
 C'est LE moment de :
 ✅ Baisser le volume
 ✅ Travailler la technique
-✅ Privilégier la récup
-
-Source : Juliana Antero, INSEP"
+✅ Privilégier la récup"
 ```
 
 **Slide 4 :**
@@ -1316,7 +1311,7 @@ Alors pourquoi aucune app d'escalade n'en parle ?
 
 Parce que la tech sportive est pensée par des hommes, pour des hommes.
 
-Les faits (recherches INSEP, Juliana Antero) :
+Les faits :
 
 📊 Phase folliculaire (J1-J14) : +15% de force maximale
 → C'est le moment de pousser, de tester tes projets limites
