@@ -13,6 +13,7 @@ import CountdownTimer from '@/components/CountdownTimer'
 import { DERNIER_ARTICLE } from '@/lib/press'
 import { PREORDER_PACK, SHIPPING_ZONES, PREORDER_END_DATE, PREORDER_END_LABEL, cheapestShipping } from '@/lib/preorder'
 import { CREATOR_STORAGE_KEY, detectCreator } from '@/lib/creator'
+import { OFFER_STORAGE_KEY, getPartnerOffer } from '@/lib/offers'
 import { trackShopEvent, SHOP_CONTENT, newEventId, hasMarketingConsent } from '@/lib/meta-pixel'
 import type { ParcelPoint } from '@boxtal/parcel-point-map'
 
@@ -189,14 +190,25 @@ export default function ShopLanding() {
   const [mapReady, setMapReady] = useState(false)
   const [mapFailed, setMapFailed] = useState(false)
 
-  // Attribution créateur UGC capturée à l'atterrissage (UtmCapture → sessionStorage),
-  // relue au montage : affiche la contrepartie premium et voyage vers les metadata
-  // Stripe au checkout. sessionStorage indisponible → paiement normal sans créateur.
-  const [attribution, setAttribution] = useState<{ creator: string; utm: Record<string, string> }>({
+  // Attribution créateur UGC et offre partenaire capturées à l'atterrissage
+  // (UtmCapture → sessionStorage), relues au montage : affichent la contrepartie
+  // (premium, tarif négocié) et voyagent vers /api/checkout, qui revérifie tout.
+  // sessionStorage indisponible → paiement normal sans attribution.
+  const [attribution, setAttribution] = useState<{ creator: string; utm: Record<string, string>; offer: string }>({
     creator: '',
     utm: {},
+    offer: '',
   })
   const creatorDetected = detectCreator(attribution.creator, attribution.utm)
+  const offer = getPartnerOffer(attribution.offer)
+  // Prix unitaire réellement payé (le serveur applique la remise de l'offre).
+  const unitPrice = offer ? offer.priceTtc : PREORDER_PACK.priceTtc
+  // Offre partenaire = 1 bracelet par commande (remise et premium par personne).
+  const maxQuantity = offer ? 1 : PREORDER_PACK.maxQuantity
+
+  useEffect(() => {
+    setQuantity((q) => Math.min(q, maxQuantity))
+  }, [maxQuantity])
 
   useEffect(() => {
     try {
@@ -204,6 +216,7 @@ export default function ShopLanding() {
       setAttribution({
         creator: sessionStorage.getItem(CREATOR_STORAGE_KEY) ?? '',
         utm: typeof rawUtm === 'object' && rawUtm !== null ? rawUtm : {},
+        offer: sessionStorage.getItem(OFFER_STORAGE_KEY) ?? '',
       })
     } catch {
       /* capture illisible : paiement sans attribution */
@@ -365,7 +378,7 @@ export default function ShopLanding() {
       // Meta Pixel — InitiateCheckout : départ vers le paiement Stripe.
       // No-op sans consentement. Le même event_id est transmis au serveur
       // (metaEventId) pour que la CAPI dédoublonne l'event serveur.
-      const price = PREORDER_PACK.priceTtc
+      const price = unitPrice
       const checkoutEventId = newEventId()
       trackShopEvent(
         'InitiateCheckout',
@@ -386,6 +399,7 @@ export default function ShopLanding() {
           quantity,
           creator: attribution.creator,
           utm: attribution.utm,
+          offer: offer?.slug,
           relay: selectedRelay
             ? {
                 id: selectedRelay.id,
@@ -402,6 +416,16 @@ export default function ShopLanding() {
         }),
       })
       const data = await res.json().catch(() => null)
+      if (data?.offerUnavailable) {
+        // Places épuisées / offre terminée : on retire l'offre (le clic suivant
+        // part au tarif normal) et on affiche l'explication du serveur.
+        try {
+          sessionStorage.removeItem(OFFER_STORAGE_KEY)
+        } catch {
+          /* non bloquant */
+        }
+        setAttribution((a) => ({ ...a, offer: '' }))
+      }
       if (!res.ok || !data?.url) {
         throw new Error(data?.error || 'Une erreur est survenue. Réessaye dans quelques instants.')
       }
@@ -573,14 +597,22 @@ export default function ShopLanding() {
               />
 
               {/* Prix */}
-              {PREORDER_PACK.priceTtc !== null ? (
+              {unitPrice !== null ? (
                 <p className="mb-2">
                   <span
                     className="text-4xl md:text-5xl font-bold"
                     style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-primary-green)' }}
                   >
-                    {formatPrice(PREORDER_PACK.priceTtc)}
+                    {formatPrice(unitPrice)}
                   </span>
+                  {offer && PREORDER_PACK.priceTtc !== null && (
+                    <s
+                      className="ml-3 text-xl md:text-2xl font-bold"
+                      style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-primary-green)', opacity: 0.45 }}
+                    >
+                      {formatPrice(PREORDER_PACK.priceTtc)}
+                    </s>
+                  )}
                   <span className="ml-2 text-sm font-bold uppercase" style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-primary-green)', opacity: 0.7 }}>
                     TTC
                   </span>
@@ -880,17 +912,39 @@ export default function ShopLanding() {
                 </div>
               )}
 
-              {creatorDetected && (
-                <p
-                  className="mb-4 px-4 py-3 text-sm font-bold rounded-lg"
+              {offer ? (
+                <div
+                  className="mb-4 px-4 py-3 text-sm rounded-lg"
                   style={{
                     fontFamily: 'var(--font-roboto)',
                     color: 'var(--color-primary-beige)',
                     backgroundColor: 'var(--color-secondary-orange)',
                   }}
                 >
-                  3 mois d&apos;abonnement premium offerts
-                </p>
+                  <p className="font-bold uppercase" style={{ fontFamily: 'var(--font-syne)', letterSpacing: '0.05em' }}>
+                    Offre {offer.label}
+                  </p>
+                  <p className="font-bold mt-1">
+                    {formatPrice(offer.priceTtc)} au lieu de {formatPrice(PREORDER_PACK.priceTtc ?? 0)} +{' '}
+                    {offer.grantPremiumMonths} mois d&apos;abonnement premium offerts
+                  </p>
+                  <p className="text-xs mt-1" style={{ opacity: 0.9 }}>
+                    Remise appliquée automatiquement au paiement · 1 bracelet par commande
+                  </p>
+                </div>
+              ) : (
+                creatorDetected && (
+                  <p
+                    className="mb-4 px-4 py-3 text-sm font-bold rounded-lg"
+                    style={{
+                      fontFamily: 'var(--font-roboto)',
+                      color: 'var(--color-primary-beige)',
+                      backgroundColor: 'var(--color-secondary-orange)',
+                    }}
+                  >
+                    3 mois d&apos;abonnement premium offerts
+                  </p>
+                )
               )}
 
               {/* Quantité + CTA */}
@@ -915,8 +969,8 @@ export default function ShopLanding() {
                   </span>
                   <button
                     type="button"
-                    onClick={() => setQuantity((q) => Math.min(PREORDER_PACK.maxQuantity, q + 1))}
-                    disabled={quantity >= PREORDER_PACK.maxQuantity}
+                    onClick={() => setQuantity((q) => Math.min(maxQuantity, q + 1))}
+                    disabled={quantity >= maxQuantity}
                     aria-label="Augmenter la quantité"
                     className="w-11 self-stretch text-xl font-bold disabled:opacity-30"
                     style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-primary-green)' }}
@@ -948,8 +1002,12 @@ export default function ShopLanding() {
               )}
 
               <p className="text-xs" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', opacity: 0.7, lineHeight: 1.6 }}>
-                Paiement sécurisé Stripe · Facture envoyée par email · Rétractation 14 jours après réception ·
-                Inscrit·e à la liste d&apos;attente ? Ton code s&apos;applique au moment du paiement.
+                Paiement sécurisé Stripe · Facture envoyée par email · Rétractation 14 jours après réception
+                {offer ? '.' : (
+                  <>
+                    {' '}· Inscrit·e à la liste d&apos;attente ? Ton code s&apos;applique au moment du paiement.
+                  </>
+                )}
               </p>
 
               <p className="text-xs mt-2" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', opacity: 0.7, lineHeight: 1.6 }}>
@@ -1330,9 +1388,9 @@ export default function ShopLanding() {
       >
         <div className="flex items-center justify-between gap-4 px-5 py-3">
           <div>
-            {PREORDER_PACK.priceTtc !== null && (
+            {unitPrice !== null && (
               <p className="text-lg font-bold leading-tight" style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-primary-green)' }}>
-                {formatPrice(PREORDER_PACK.priceTtc)} <span className="text-xs">TTC</span>
+                {formatPrice(unitPrice)} <span className="text-xs">TTC</span>
               </p>
             )}
             <p className="text-[11px]" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', opacity: 0.7 }}>

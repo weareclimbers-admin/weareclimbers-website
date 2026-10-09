@@ -147,6 +147,9 @@ async function notifyNewPreorder(
       ['Téléphone', session.customer_details?.phone || '—'],
       ['Commande', extras.quantityLabel],
       ['Total payé', formatEur(session.amount_total)],
+      ...(session.metadata?.partner_offer
+        ? ([['Offre partenaire', session.metadata.partner_offer]] as [string, string][])
+        : []),
       ['Zone', session.metadata?.shipping_mode ? `${zone} · ${session.metadata.shipping_mode}` : zone],
       ...(relayLabel ? ([['Point relais', relayLabel]] as [string, string][]) : []),
       ['Adresse', formatAddress(session)],

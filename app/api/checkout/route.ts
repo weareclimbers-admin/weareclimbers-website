@@ -3,6 +3,7 @@ import type Stripe from 'stripe'
 import { getStripe } from '@/lib/stripe'
 import { PREORDER_FLOW, PREORDER_PACK, getZone, getMode } from '@/lib/preorder'
 import { detectCreator, type CapturedUtm } from '@/lib/creator'
+import { getPartnerOffer, type PartnerOffer } from '@/lib/offers'
 import { sendCapiEvent, readClientSignals } from '@/lib/meta-capi'
 import { SHOP_CONTENT } from '@/lib/meta-content'
 
@@ -32,6 +33,34 @@ async function assertPriceInclusive(stripe: Stripe, priceId: string): Promise<vo
     )
   }
   verifiedInclusivePrices.add(priceId)
+}
+
+/**
+ * Offre partenaire (lib/offers.ts) : le coupon doit être encore valide dans
+ * Stripe (`valid` passe à false quand max_redemptions ou redeem_by est atteint)
+ * ET cohérent avec le prix annoncé sur la boutique (price − remise = priceTtc).
+ * Coupon introuvable ou incohérent = erreur de config, loggée.
+ */
+async function isPartnerCouponUsable(stripe: Stripe, offer: PartnerOffer, priceId: string): Promise<boolean> {
+  try {
+    const [coupon, price] = await Promise.all([
+      stripe.coupons.retrieve(offer.couponId),
+      stripe.prices.retrieve(priceId),
+    ])
+    if (!coupon.valid) return false
+    const expected = (price.unit_amount ?? 0) - offer.priceTtc * 100
+    if (coupon.currency !== 'eur' || coupon.amount_off !== expected) {
+      console.error(
+        `checkout: coupon ${offer.couponId} incohérent avec l'offre « ${offer.slug} » ` +
+          `(remise ${coupon.amount_off} ${coupon.currency}, attendu ${expected} eur)`,
+      )
+      return false
+    }
+    return true
+  } catch (error) {
+    console.error(`checkout: coupon ${offer.couponId} illisible (offre « ${offer.slug} »)`, error)
+    return false
+  }
 }
 
 interface RelayInput {
@@ -81,10 +110,16 @@ export async function POST(request: NextRequest) {
       relayShipping = { name: relay.name, line1: relay.name, zip: relay.zip, city: relay.city, country: relay.country }
     }
 
+    // Offre partenaire (lien ?offre=) : 1 bracelet par commande — remise fixe
+    // appliquée une fois par commande, premium rattaché à l'email du paiement.
+    const offer = getPartnerOffer(body?.offer)
+
     const requestedQty = Number(body?.quantity ?? 1)
-    const quantity = Number.isInteger(requestedQty)
-      ? Math.min(Math.max(requestedQty, 1), PREORDER_PACK.maxQuantity)
-      : 1
+    const quantity = offer
+      ? 1
+      : Number.isInteger(requestedQty)
+        ? Math.min(Math.max(requestedQty, 1), PREORDER_PACK.maxQuantity)
+        : 1
 
     const priceId = process.env.STRIPE_PRICE_PREORDER
     const shippingRateId = process.env[mode.shippingRateEnv]
@@ -98,6 +133,21 @@ export async function POST(request: NextRequest) {
     const stripe = getStripe()
     await assertPriceInclusive(stripe, priceId)
 
+    // Places épuisées / offre terminée : on le dit au client (la boutique retire
+    // l'offre et il peut précommander au tarif normal) plutôt que de facturer
+    // en silence un autre prix que celui affiché.
+    if (offer && !(await isPartnerCouponUsable(stripe, offer, priceId))) {
+      return NextResponse.json(
+        {
+          error:
+            "L'offre partenaire n'est plus disponible (toutes les places sont parties ou l'offre est terminée). " +
+            'Tu peux toujours précommander au tarif normal.',
+          offerUnavailable: true,
+        },
+        { status: 409 },
+      )
+    }
+
     // Fallback sur l'origine de la requête : en dev, Stripe redirige bien vers
     // localhost (sinon → 404 sur le site prod, vécu le 14/08) ; en prod l'origine
     // EST le domaine public.
@@ -109,6 +159,7 @@ export async function POST(request: NextRequest) {
       typeof body?.utm === 'object' && body.utm !== null ? (body.utm as CapturedUtm) : {}
     const utmValue = (v: unknown) => (typeof v === 'string' ? v.trim().slice(0, 200) : '')
     const creator = detectCreator(body?.creator, utm)
+    const premiumMonths = Math.max(creator ? 3 : 0, offer?.grantPremiumMonths ?? 0)
 
     // Meta CAPI (phase 2) : consentement marketing + event_id du pixel
     // InitiateCheckout + signaux navigateur (_fbp/_fbc/IP/UA) pour le dédup.
@@ -125,12 +176,13 @@ export async function POST(request: NextRequest) {
       zone: zone.id,
       shipping_mode: mode.id,
       creator,
-      grant_premium_months: creator ? '3' : '0',
+      grant_premium_months: String(premiumMonths),
       utm_source: utmValue(utm.utm_source),
       utm_medium: utmValue(utm.utm_medium),
       utm_campaign: utmValue(utm.utm_campaign),
       utm_content: utmValue(utm.utm_content),
     }
+    if (offer) metadata.partner_offer = offer.slug
     if (relay && relayShipping) {
       metadata.relay_point_code = relay.id
       metadata.relay_name = relayShipping.name
@@ -158,7 +210,9 @@ export async function POST(request: NextRequest) {
         {
           price: priceId,
           quantity,
-          adjustable_quantity: { enabled: true, minimum: 1, maximum: PREORDER_PACK.maxQuantity },
+          ...(offer
+            ? {}
+            : { adjustable_quantity: { enabled: true, minimum: 1, maximum: PREORDER_PACK.maxQuantity } }),
         },
       ],
       automatic_tax: { enabled: true },
@@ -176,7 +230,10 @@ export async function POST(request: NextRequest) {
           }),
       shipping_options: [{ shipping_rate: shippingRateId }],
       phone_number_collection: { enabled: true }, // requis par les transporteurs
-      allow_promotion_codes: true, // code « liste d'attente » diffusé via Brevo
+      // Offre partenaire : coupon appliqué d'office (pas de champ code promo —
+      // Stripe interdit de combiner `discounts` et `allow_promotion_codes`).
+      // Sinon : champ code promo (code « liste d'attente » diffusé via Brevo).
+      ...(offer ? { discounts: [{ coupon: offer.couponId }] } : { allow_promotion_codes: true }),
       customer_creation: 'always', // les acheteurs restent visibles dans Stripe > Customers
       metadata,
       // NB : impossible de poser le relais en `payment_intent_data.shipping` —
@@ -217,7 +274,7 @@ export async function POST(request: NextRequest) {
     // consentement ni event_id (dédup impossible). Pas d'email/nom à ce stade :
     // l'appariement repose sur _fbp/_fbc + IP + user-agent.
     if (marketingConsent && metaEventId) {
-      const price = PREORDER_PACK.priceTtc
+      const price = offer ? offer.priceTtc : PREORDER_PACK.priceTtc
       await sendCapiEvent({
         eventName: 'InitiateCheckout',
         eventId: metaEventId,

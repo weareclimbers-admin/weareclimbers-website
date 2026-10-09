@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react'
 import { CREATOR_STORAGE_KEY } from '@/lib/creator'
+import { OFFER_STORAGE_KEY } from '@/lib/offers'
 
 const UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content'] as const
 
@@ -13,6 +14,8 @@ const UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content'] as 
  *   boutique → metadata Stripe.
  * - `wac_creator` (?creator=) : identifiant créateur UGC explicite, capturé
  *   même sans structure UTM complète (lib/creator.ts).
+ * - `wac_offer` (?offre=) : offre partenaire (tarif négocié + premium,
+ *   lib/offers.ts), revérifiée côté serveur au checkout.
  * Un nouvel atterrissage avec paramètres écrase la capture précédente.
  */
 export default function UtmCapture() {
@@ -26,6 +29,10 @@ export default function UtmCapture() {
       const creator = params.get('creator')?.trim()
       if (creator) {
         sessionStorage.setItem(CREATOR_STORAGE_KEY, creator.toLowerCase())
+      }
+      const offer = params.get('offre')?.trim()
+      if (offer) {
+        sessionStorage.setItem(OFFER_STORAGE_KEY, offer.toLowerCase())
       }
     } catch {
       /* sessionStorage indisponible (navigation privée stricte) : non bloquant */
