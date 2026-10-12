@@ -5,8 +5,8 @@
  *   - Paiement intégral à la commande (pas d'acompte)
  *   - Pack unique : bracelet Polar 360 + app WAC
  *   - Livraison par zones : France métropolitaine / Belgique-Luxembourg / Suisse / Outre-mer
- *   - Prix : 179 € TTC hors promotion ; ports TTC : FR relais 4,99 ou domicile 5,99 (au choix),
- *     BE-LU relais 6,99, CH domicile 6,99, DOM domicile 9,99
+ *   - Prix : 179 € TTC hors promotion ; ports TTC (grille du 12/10/2026) : France offerte
+ *     (relais ou domicile), BE-LU et CH 1,99, Outre-mer 4,99
  *   - Promo liste d'attente : −10 % (≈161,10 € TTC, parité tarif Ulule sans la commission)
  *   - Codes promo activés (code « liste d'attente » diffusé via Brevo, liste #11)
  *
@@ -53,6 +53,11 @@ export interface PreorderPack {
    * (art. L216-1 Code conso : date ou délai de livraison affiché avant l'achat).
    */
   deliveryWindow: string | null
+  /**
+   * Livraison estimée affichée avant paiement (boutique + message au-dessus du
+   * bouton de paiement Stripe). Doit rester dans la fenêtre des CGV (§4.2).
+   */
+  estimatedDelivery: string
 }
 
 export const PREORDER_PACK: PreorderPack = {
@@ -69,6 +74,7 @@ export const PREORDER_PACK: PreorderPack = {
   ],
   maxQuantity: 5, // TODO(Julien) : à valider
   deliveryWindow: 'novembre 2026', // confirmé par Julien le 14/08/2026 (mention légale)
+  estimatedDelivery: 'semaine du 16 novembre 2026', // annoncé par Julien le 12/10/2026
 }
 
 export interface ShippingZone {
@@ -108,9 +114,10 @@ export interface ShippingMode {
 
 /**
  * Zones + modes (maj 28/09/2026, migration Boxtal) : France au CHOIX point relais
- * Chronopost Shop2Shop (4,99 €) ou domicile Colissimo signature (5,99 €) ; BE-LU
- * domicile Colissimo International (6,99 €) ; CH (6,99 €) et Outre-mer (9,99 €) à
- * domicile (douane, traités à la main en v1). Shipping rates Stripe avec
+ * Chronopost Shop2Shop ou domicile Colissimo signature, tous deux offerts ; BE-LU
+ * domicile Colissimo International (1,99 €) ; CH (1,99 €) et Outre-mer (4,99 €) à
+ * domicile (douane, traités à la main en v1). Grille du 12/10/2026 (ancienne :
+ * 4,99 / 5,99 / 6,99 / 6,99 / 9,99). Shipping rates Stripe avec
  * tax_code 'txcd_92010001' (le port suit la TVA du bien — PAS txcd_00000000).
  *
  * TVA (gérée par Stripe Tax, prix inclusifs — le client paie toujours le même TTC) :
@@ -132,14 +139,14 @@ export const SHIPPING_ZONES: ShippingZone[] = [
         id: 'relais',
         label: 'En point relais Chronopost',
         relay: true,
-        shippingTtc: 4.99,
+        shippingTtc: 0, // offerte (12/10/2026)
         shippingRateEnv: 'STRIPE_SHIPPING_RATE_FR',
       },
       {
         id: 'domicile',
         label: 'À domicile',
         relay: false,
-        shippingTtc: 5.99, // acté par Julien le 14/08
+        shippingTtc: 0, // offerte (12/10/2026)
         shippingRateEnv: 'STRIPE_SHIPPING_RATE_FR_DOMICILE',
       },
     ],
@@ -155,7 +162,7 @@ export const SHIPPING_ZONES: ShippingZone[] = [
         id: 'domicile',
         label: 'À domicile',
         relay: false,
-        shippingTtc: 6.99, // inchangé (décision « absorber » 28/09)
+        shippingTtc: 1.99, // 12/10/2026
         shippingRateEnv: 'STRIPE_SHIPPING_RATE_BE_LU',
       },
     ],
@@ -170,7 +177,7 @@ export const SHIPPING_ZONES: ShippingZone[] = [
         id: 'domicile',
         label: 'À domicile',
         relay: false,
-        shippingTtc: 6.99,
+        shippingTtc: 1.99, // 12/10/2026
         shippingRateEnv: 'STRIPE_SHIPPING_RATE_CH',
       },
     ],
@@ -187,7 +194,7 @@ export const SHIPPING_ZONES: ShippingZone[] = [
         id: 'domicile',
         label: 'À domicile',
         relay: false,
-        shippingTtc: 9.99,
+        shippingTtc: 4.99, // 12/10/2026
         shippingRateEnv: 'STRIPE_SHIPPING_RATE_DOM_TOM',
       },
     ],

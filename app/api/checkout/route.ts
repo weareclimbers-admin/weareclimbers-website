@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import type Stripe from 'stripe'
 import { getStripe } from '@/lib/stripe'
-import { PREORDER_FLOW, PREORDER_PACK, getZone, getMode } from '@/lib/preorder'
+import { PREORDER_FLOW, PREORDER_PACK, PREORDER_END_LABEL, getZone, getMode } from '@/lib/preorder'
 import { detectCreator, type CapturedUtm } from '@/lib/creator'
 import { getPartnerOffer, type PartnerOffer } from '@/lib/offers'
 import { sendCapiEvent, readClientSignals } from '@/lib/meta-capi'
@@ -181,6 +181,11 @@ export async function POST(request: NextRequest) {
       utm_medium: utmValue(utm.utm_medium),
       utm_campaign: utmValue(utm.utm_campaign),
       utm_content: utmValue(utm.utm_content),
+      utm_term: utmValue(utm.utm_term),
+      // Identifiant de clic Meta (?fbclid=), capturé à l'atterrissage comme les
+      // utm_* : attribution interne uniquement (la CAPI n'utilise que fb_fbc,
+      // gaté par le consentement). Tronqué à 200 caractères.
+      fbclid: utmValue(body?.fbclid),
     }
     if (offer) metadata.partner_offer = offer.slug
     if (relay && relayShipping) {
@@ -202,6 +207,12 @@ export async function POST(request: NextRequest) {
       if (signals.clientIp) metadata.fb_client_ip = signals.clientIp
       if (signals.userAgent) metadata.fb_client_ua = signals.userAgent.slice(0, 500)
     }
+
+    // Rappel pré-commande affiché juste au-dessus du bouton de paiement Stripe.
+    const preorderMessage =
+      `C'est une pré-commande : on commande les bracelets à Polar à la clôture (${PREORDER_END_LABEL}), ` +
+      `puis on te les expédie nous-mêmes. Livraison estimée la ${PREORDER_PACK.estimatedDelivery}.` +
+      (zone.id === 'dom-tom' ? " Pour l'Outre-mer, compte quelques jours d'acheminement en plus." : '')
 
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
@@ -235,6 +246,13 @@ export async function POST(request: NextRequest) {
       // Sinon : champ code promo (code « liste d'attente » diffusé via Brevo).
       ...(offer ? { discounts: [{ coupon: offer.couponId }] } : { allow_promotion_codes: true }),
       customer_creation: 'always', // les acheteurs restent visibles dans Stripe > Customers
+      // Paniers abandonnés : à l'expiration (24 h), Stripe joint une URL de reprise
+      // (valable 30 j) à l'event checkout.session.expired — l'email de relance
+      // reste à envoyer de notre côté. consent_collection.promotions n'est PAS
+      // posé : Stripe le refuse hors US (« not available in your country »,
+      // testé le 12/10/2026) et ferait échouer tout le checkout.
+      after_expiration: { recovery: { enabled: true, allow_promotion_codes: false } },
+      custom_text: { submit: { message: preorderMessage } },
       metadata,
       // NB : impossible de poser le relais en `payment_intent_data.shipping` —
       // incompatible avec automatic_tax (erreur Stripe vérifiée le 14/08). Le

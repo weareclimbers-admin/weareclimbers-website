@@ -14,6 +14,7 @@ import { DERNIER_ARTICLE } from '@/lib/press'
 import { PREORDER_PACK, SHIPPING_ZONES, PREORDER_END_DATE, PREORDER_END_LABEL, cheapestShipping } from '@/lib/preorder'
 import { CREATOR_STORAGE_KEY, detectCreator } from '@/lib/creator'
 import { OFFER_STORAGE_KEY, getPartnerOffer } from '@/lib/offers'
+import { readCampaignParams } from '@/lib/attribution'
 import { trackShopEvent, SHOP_CONTENT, newEventId, hasMarketingConsent } from '@/lib/meta-pixel'
 import type { ParcelPoint } from '@boxtal/parcel-point-map'
 
@@ -151,6 +152,11 @@ function formatPrice(value: number): string {
   }).format(value)
 }
 
+/** Frais de port affichés : 0 € → « Offerte ». */
+function formatShipping(value: number): string {
+  return value === 0 ? 'Offerte' : formatPrice(value)
+}
+
 /** Point relais tel que renvoyé par /api/relay-points (miroir de la réponse Boxtal serveur). */
 interface RelayPointLite {
   id: string
@@ -190,14 +196,20 @@ export default function ShopLanding() {
   const [mapReady, setMapReady] = useState(false)
   const [mapFailed, setMapFailed] = useState(false)
 
-  // Attribution créateur UGC et offre partenaire capturées à l'atterrissage
-  // (UtmCapture → sessionStorage), relues au montage : affichent la contrepartie
-  // (premium, tarif négocié) et voyagent vers /api/checkout, qui revérifie tout.
-  // sessionStorage indisponible → paiement normal sans attribution.
-  const [attribution, setAttribution] = useState<{ creator: string; utm: Record<string, string>; offer: string }>({
+  // Attribution créateur UGC et offre partenaire (UtmCapture → sessionStorage),
+  // UTM + fbclid (cookies, lib/attribution.ts), relues au montage : affichent la
+  // contrepartie (premium, tarif négocié) et voyagent vers /api/checkout, qui
+  // revérifie tout. Stockage indisponible → paiement normal sans attribution.
+  const [attribution, setAttribution] = useState<{
+    creator: string
+    utm: Record<string, string>
+    offer: string
+    fbclid: string
+  }>({
     creator: '',
     utm: {},
     offer: '',
+    fbclid: '',
   })
   const creatorDetected = detectCreator(attribution.creator, attribution.utm)
   const offer = getPartnerOffer(attribution.offer)
@@ -212,11 +224,12 @@ export default function ShopLanding() {
 
   useEffect(() => {
     try {
-      const rawUtm = JSON.parse(sessionStorage.getItem('wac_utm') ?? '{}')
+      const { utm, fbclid } = readCampaignParams()
       setAttribution({
         creator: sessionStorage.getItem(CREATOR_STORAGE_KEY) ?? '',
-        utm: typeof rawUtm === 'object' && rawUtm !== null ? rawUtm : {},
+        utm,
         offer: sessionStorage.getItem(OFFER_STORAGE_KEY) ?? '',
+        fbclid,
       })
     } catch {
       /* capture illisible : paiement sans attribution */
@@ -399,6 +412,7 @@ export default function ShopLanding() {
           quantity,
           creator: attribution.creator,
           utm: attribution.utm,
+          fbclid: attribution.fbclid,
           offer: offer?.slug,
           relay: selectedRelay
             ? {
@@ -631,11 +645,9 @@ export default function ShopLanding() {
                 </p>
               )}
               <p className="text-sm mb-6" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', opacity: 0.75 }}>
-                Frais de livraison calculés selon ta zone, affichés avant paiement.
+                <strong>Pré-commande</strong> : livraison estimée la {PREORDER_PACK.estimatedDelivery}.
                 {' '}
-                {PREORDER_PACK.deliveryWindow
-                  ? `Expédition estimée : ${PREORDER_PACK.deliveryWindow}.`
-                  : 'Fenêtre de livraison annoncée à l’ouverture des pré-commandes.'}
+                Frais de livraison calculés selon ta zone, affichés avant paiement.
               </p>
 
               {/* Contenu du pack */}
@@ -693,8 +705,8 @@ export default function ShopLanding() {
                               className="flex-none text-sm font-bold"
                               style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-secondary-orange)' }}
                             >
-                              {z.modes.length > 1 ? 'dès ' : ''}
-                              {formatPrice(cheapestShipping(z) as number)}
+                              {z.modes.length > 1 && (cheapestShipping(z) as number) > 0 ? 'dès ' : ''}
+                              {formatShipping(cheapestShipping(z) as number)}
                             </span>
                           )}
                         </span>
@@ -751,7 +763,7 @@ export default function ShopLanding() {
                               className="flex-none text-sm font-bold"
                               style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-secondary-orange)' }}
                             >
-                              {formatPrice(m.shippingTtc)}
+                              {formatShipping(m.shippingTtc)}
                             </span>
                           )}
                         </span>

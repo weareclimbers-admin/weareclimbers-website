@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { readCampaignParams } from '@/lib/attribution'
 
 interface NewsletterFormProps {
   variant?: 'hero' | 'footer'
@@ -23,13 +24,8 @@ export default function NewsletterForm({
     setStatus('loading')
     setMessage('')
 
-    // UTM capturés à l'atterrissage par UtmCapture (sessionStorage `wac_utm`)
-    let utm: Record<string, string> = {}
-    try {
-      utm = JSON.parse(sessionStorage.getItem('wac_utm') ?? '{}')
-    } catch {
-      /* capture illisible : on soumet sans attribution */
-    }
+    // UTM capturés à l'atterrissage par UtmCapture (cookie `wac_utm`)
+    const { utm } = readCampaignParams()
 
     try {
       const response = await fetch('/api/newsletter', {

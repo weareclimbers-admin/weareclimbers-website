@@ -20,6 +20,7 @@ export interface CapturedUtm {
   utm_medium?: unknown
   utm_campaign?: unknown
   utm_content?: unknown
+  utm_term?: unknown
 }
 
 function clean(value: unknown): string {
