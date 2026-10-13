@@ -5,6 +5,7 @@ import { Metadata } from 'next'
 import { getStripe } from '@/lib/stripe'
 import { PREORDER_FLOW } from '@/lib/preorder'
 import MetaPurchase from '@/components/boutique/MetaPurchase'
+import UmamiPurchase from '@/components/boutique/UmamiPurchase'
 
 // Success URL du checkout Stripe (?session_id=...). Hors sitemap, noindex :
 // on n'y arrive que depuis Stripe.
@@ -64,7 +65,10 @@ export default async function MerciPrecommande({
           dérivé du session_id → dédup avec la CAPI (phase 2) + idempotent au
           refresh. On ne le monte pas sans montant (Purchase exige une valeur). */}
       {session_id && value !== null && (
-        <MetaPurchase eventId={`purchase_${session_id}`} value={value} currency={currency} />
+        <>
+          <MetaPurchase eventId={`purchase_${session_id}`} value={value} currency={currency} />
+          <UmamiPurchase sessionId={session_id} value={value} currency={currency} />
+        </>
       )}
 
       {/* Pas de bandeau pré-commande ici : l'achat vient d'être confirmé. */}

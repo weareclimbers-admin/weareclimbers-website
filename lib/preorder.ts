@@ -67,10 +67,10 @@ export const PREORDER_PACK: PreorderPack = {
     "Le bracelet Polar 360 haute précision (±1 BPM) associé à l'app WAC : analyse physiologique en temps réel, prévention des blessures et suivi de récupération.",
   priceTtc: 179, // acté 14/08/2026 : « 179 € TTC hors promotion » (aligné flux bracelet coach) — doit matcher la price Stripe
   perks: [
-    // TODO(Julien) : contenu exact du pack à valider
     'Bracelet Polar 360 haute précision (±1 BPM)',
-    "L'app WAC et ton État de Forme",
-    'Livraison prioritaire pour les inscrits à la liste d’attente',
+    // Périmètre gratuit précisé par Julien le 13/10/2026 (premium = option)
+    "L'app WAC sans abonnement obligatoire : État de Forme, séances, récupération",
+    'Livraison offerte en France métropolitaine',
   ],
   maxQuantity: 5, // TODO(Julien) : à valider
   deliveryWindow: 'novembre 2026', // confirmé par Julien le 14/08/2026 (mention légale)

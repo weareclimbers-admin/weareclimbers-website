@@ -9,7 +9,8 @@ export {}
 declare global {
   interface Window {
     umami?: {
-      track(event: string, data?: Record<string, string | number | boolean>): void
+      // Le tracker renvoie la promesse de l'envoi (attendue avant une redirection, lib/umami.ts).
+      track(event: string, data?: Record<string, string | number | boolean>): void | Promise<unknown>
     }
   }
 }

@@ -3,9 +3,8 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
-import { motion } from 'motion/react'
 import PhoneShot from '@/components/PhoneShot'
-import { Reveal, TitleReveal } from '@/components/Reveal'
+import { Reveal } from '@/components/Reveal'
 import TopoLines from '@/components/TopoLines'
 import Magnetic from '@/components/Magnetic'
 import PressFeature from '@/components/PressFeature'
@@ -16,6 +15,7 @@ import { detectCreator } from '@/lib/creator'
 import { getPartnerOffer } from '@/lib/offers'
 import { readAttribution, clearPartnerOffer } from '@/lib/attribution'
 import { trackShopEvent, SHOP_CONTENT, newEventId, hasMarketingConsent } from '@/lib/meta-pixel'
+import { trackShop, trackShopBeforeLeaving } from '@/lib/umami'
 import type { ParcelPoint } from '@boxtal/parcel-point-map'
 
 /**
@@ -32,7 +32,7 @@ import type { ParcelPoint } from '@boxtal/parcel-point-map'
 const GALLERY = [
   { src: '/téléchargement (1).png', alt: 'Bracelet Polar 360 We Are Climbers — vue produit' },
   { src: '/images/rejoins-nous/bracelet-polar360.webp', alt: "Le bracelet Polar 360 porté à l'avant-bras" },
-  { src: '/hero-capteurs.webp', alt: 'Le bracelet Polar 360 en situation de grimpe' },
+  { src: '/hero-capteurs.webp', alt: 'Les capteurs optiques du bracelet Polar 360' },
 ]
 
 const METRIC_CHIPS = ['±1 BPM', '29 g', '10 jours d’autonomie']
@@ -58,15 +58,15 @@ const STEPS: { title: string; text: string }[] = [
   },
 ]
 
-// TODO(Julien) : FAQ à valider (notamment la politique d'annulation avant expédition).
+// Gratuit / premium : périmètre et tarifs donnés par Julien le 13/10/2026.
 const FAQ: { q: string; a: string }[] = [
   {
-    q: 'Quand est-ce que je serai livré·e ?',
-    a: 'La fenêtre de livraison est affichée sur cette page avant ton achat, et rappelée dans ton email de confirmation. On te tient au courant de chaque étape par email.',
+    q: 'Faut-il payer un abonnement ?',
+    a: 'Non. Avec ton bracelet, l’app WAC gratuite te donne tout ce qu’il faut pour éviter la surcharge d’entraînement : ton État de Forme chaque matin, l’analyse de tes séances, tes graphiques de suivi, ta récupération nocturne et le suivi de ton cycle. Le premium (9,99 €/mois ou 99 €/an) est une option pour aller plus loin : séances de renforcement et mixtes grimpe + renfo, analyses avancées, analyses IA illimitées en fin de séance et connexion à un coach.',
   },
   {
-    q: "J'ai un code de la liste d'attente, où l'utiliser ?",
-    a: 'Au moment du paiement : un champ « Code promotionnel » est disponible sur la page de paiement sécurisée. Ton tarif préférentiel s’applique immédiatement.',
+    q: 'Quand est-ce que je serai livré·e ?',
+    a: `Livraison estimée la ${PREORDER_PACK.estimatedDelivery} (quelques jours de plus pour l’Outre-mer). On commande les bracelets à Polar à la clôture des pré-commandes, le ${PREORDER_END_LABEL}, puis on t’expédie le tien nous-mêmes, avec un email à chaque étape.`,
   },
   {
     q: 'Le paiement est-il sécurisé ?',
@@ -309,6 +309,7 @@ export default function ShopLanding() {
     setModeId(zone.modes[0].id)
     setRelayCountry(zone.relayCountries?.[0]?.code ?? 'FR')
     resetRelay()
+    trackShop('choix-livraison', { zone: zone.id, mode: zone.modes[0].id })
   }
 
   async function searchRelays() {
@@ -367,6 +368,7 @@ export default function ShopLanding() {
             distanceMeters: null,
           })
           setError(null)
+          trackShop('point-relais-choisi', { pays: pp.location.country })
         },
       )
     } else {
@@ -375,12 +377,16 @@ export default function ShopLanding() {
   }
 
   async function handleCheckout() {
+    trackShop('clic-precommande', { emplacement: 'fiche' })
     if (currentMode.relay && !selectedRelay) {
+      trackShop('erreur-paiement', { raison: 'relais-manquant' })
       setError('Choisis ton point relais Chronopost avant de continuer.')
       return
     }
     setLoading(true)
     setError(null)
+    // Raison remontée à Umami si le départ au paiement échoue.
+    let failure = 'reseau'
     try {
       // Meta Pixel — InitiateCheckout : départ vers le paiement Stripe.
       // No-op sans consentement. Le même event_id est transmis au serveur
@@ -424,6 +430,7 @@ export default function ShopLanding() {
         }),
       })
       const data = await res.json().catch(() => null)
+      failure = data?.offerUnavailable ? 'offre-indisponible' : `serveur-${res.status}`
       if (data?.offerUnavailable) {
         // Places épuisées / offre terminée : on retire l'offre (le clic suivant
         // part au tarif normal) et on affiche l'explication du serveur.
@@ -437,8 +444,10 @@ export default function ShopLanding() {
       if (!res.ok || !data?.url) {
         throw new Error(data?.error || 'Une erreur est survenue. Réessaye dans quelques instants.')
       }
+      await trackShopBeforeLeaving('depart-paiement', { zone: zoneId, mode: currentMode.id, quantite: quantity })
       window.location.href = data.url // redirection vers le checkout hébergé Stripe
     } catch (err) {
+      trackShop('erreur-paiement', { raison: failure })
       setError(err instanceof Error ? err.message : 'Une erreur est survenue. Réessaye.')
       setLoading(false)
     }
@@ -446,67 +455,63 @@ export default function ShopLanding() {
 
   return (
     <main style={{ backgroundColor: 'var(--color-primary-beige)' }}>
-      {/* ───────────── TITRE + COMPTE À REBOURS ───────────── */}
-      <section className="relative overflow-hidden pt-36 pb-10 md:pt-44 md:pb-14">
+      {/* ───────────── TITRE : LE BÉNÉFICE D'ABORD ─────────────
+          Rendu visible dès le HTML serveur (pas d'animation d'entrée au-dessus
+          de la ligne de flottaison) : sur mobile, dans le navigateur Instagram,
+          le haut de page ne doit jamais rester vide pendant le chargement. */}
+      <section className="relative overflow-hidden pt-32 pb-8 md:pt-44 md:pb-12">
         <TopoLines opacity={0.06} drift={false} color="var(--color-primary-green)" />
         <div className="container-custom relative z-10">
           <div className="max-w-4xl mx-auto text-center">
-            <TitleReveal
-              lines={['Les pré-commandes', 'sont ouvertes.']}
-              as="h1"
-              className="text-4xl md:text-6xl lg:text-7xl mb-8"
+            <p
+              className="text-xs md:text-sm mb-5 font-bold uppercase"
+              style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-secondary-orange)', letterSpacing: '0.15em' }}
+            >
+              Pré-commandes ouvertes
+            </p>
+            <h1
+              className="text-4xl md:text-6xl lg:text-7xl mb-6"
               style={{
                 fontFamily: 'var(--font-syne)',
                 fontWeight: 700,
                 textTransform: 'uppercase',
                 color: 'var(--color-primary-green)',
                 lineHeight: '1.08',
+                textWrap: 'balance',
               }}
-            />
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ type: 'spring', stiffness: 120, damping: 18, delay: 0.25 }}
             >
-              <div style={{ color: 'var(--color-primary-green)' }}>
-                <CountdownTimer
-                  endDate={PREORDER_END_DATE}
-                  endedLabel="Les pré-commandes sont terminées."
-                />
-              </div>
-              <p
-                className="text-xs md:text-sm mt-3 font-bold uppercase"
-                style={{
-                  fontFamily: 'var(--font-syne)',
-                  color: 'var(--color-secondary-orange)',
-                  letterSpacing: '0.15em',
-                }}
-              >
-                Fin des pré-commandes le {PREORDER_END_LABEL}
-              </p>
-            </motion.div>
-
-            <motion.p
-              className="text-lg md:text-xl mt-8 max-w-3xl mx-auto"
+              Projet ou récup&nbsp;?
+              <br />
+              Ton corps te&nbsp;le&nbsp;dit.
+            </h1>
+            <p
+              className="text-lg md:text-xl max-w-3xl mx-auto"
               style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', lineHeight: '1.6' }}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ type: 'spring', stiffness: 120, damping: 18, delay: 0.35 }}
             >
-              Après le succès de notre{' '}
+              Le bracelet Polar 360 mesure ton corps à ±1&nbsp;BPM. Chaque matin, l&apos;app WAC en tire ton
+              État de Forme : tu sais si c&apos;est un jour pour ton projet ou un jour pour récupérer, et
+              tu repères la surcharge d&apos;entraînement avant qu&apos;elle ne te blesse.
+            </p>
+
+            <div className="mt-8 flex flex-col items-center gap-3">
               <a
-                href="https://fr.ulule.com/we-are-climbers/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-bold underline underline-offset-4 transition-opacity hover:opacity-70"
-                style={{ color: 'var(--color-secondary-orange)' }}
+                href="#achat"
+                data-umami-event="clic-precommande"
+                data-umami-event-emplacement="haut-de-page"
+                className="btn-secondary inline-block"
               >
-                campagne sur Ulule
+                Je précommande{unitPrice !== null ? ` — ${formatPrice(unitPrice)}` : ''}
               </a>
-              , on a décidé de lancer une nouvelle campagne de pré-commandes directement sur notre
-              site internet.
-            </motion.p>
+              <p
+                className="text-xs md:text-sm font-bold uppercase"
+                style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-primary-green)', letterSpacing: '0.1em', textWrap: 'balance' }}
+              >
+                <span style={{ color: 'var(--color-secondary-orange)' }}>
+                  <CountdownTimer variant="compact" endDate={PREORDER_END_DATE} />
+                </span>
+                {' '}· Fin des pré-commandes le {PREORDER_END_LABEL}
+              </p>
+            </div>
           </div>
         </div>
       </section>
@@ -521,11 +526,7 @@ export default function ShopLanding() {
         <div className="container-custom relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
             {/* Galerie */}
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ type: 'spring', stiffness: 120, damping: 18 }}
-            >
+            <div>
               <div
                 className="relative flex items-center justify-center p-8 md:p-12 rounded-[20px] overflow-hidden"
                 style={{ backgroundColor: 'var(--color-secondary-beige-light)', border: '2px solid var(--color-primary-green)' }}
@@ -575,15 +576,10 @@ export default function ShopLanding() {
                   </span>
                 ))}
               </div>
-            </motion.div>
+            </div>
 
-            {/* Panneau d'achat */}
-            <motion.div
-              className="lg:sticky lg:top-28"
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ type: 'spring', stiffness: 120, damping: 18, delay: 0.15 }}
-            >
+            {/* Panneau d'achat — cible des boutons « Je précommande » (#achat) */}
+            <div id="achat" className="lg:sticky lg:top-28 scroll-mt-28">
               <p
                 className="text-sm md:text-base mb-4 font-bold uppercase tracking-[0.15em]"
                 style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-secondary-orange)' }}
@@ -591,9 +587,7 @@ export default function ShopLanding() {
                 Pré-commande
               </p>
 
-              <TitleReveal
-                lines={['Bracelet Polar 360', '+ App WAC.']}
-                as="h2"
+              <h2
                 className="text-3xl md:text-4xl lg:text-5xl mb-5"
                 style={{
                   fontFamily: 'var(--font-syne)',
@@ -602,7 +596,10 @@ export default function ShopLanding() {
                   color: 'var(--color-primary-green)',
                   lineHeight: '1.08',
                 }}
-              />
+              >
+                Bracelet Polar 360
+                <br />+ App WAC.
+              </h2>
 
               {/* Prix */}
               {unitPrice !== null ? (
@@ -742,6 +739,7 @@ export default function ShopLanding() {
                           onChange={() => {
                             setModeId(m.id)
                             resetRelay()
+                            trackShop('choix-livraison', { zone: zoneId, mode: m.id })
                           }}
                           style={{ accentColor: 'var(--color-secondary-orange)' }}
                         />
@@ -870,6 +868,7 @@ export default function ShopLanding() {
                             onChange={() => {
                               setSelectedRelay(p)
                               setError(null)
+                              trackShop('point-relais-choisi', { pays: p.country })
                             }}
                             className="mt-1"
                             style={{ accentColor: 'var(--color-secondary-orange)' }}
@@ -1008,12 +1007,7 @@ export default function ShopLanding() {
               )}
 
               <p className="text-xs" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', opacity: 0.7, lineHeight: 1.6 }}>
-                Paiement sécurisé Stripe · Facture envoyée par email · Rétractation 14 jours après réception
-                {offer ? '.' : (
-                  <>
-                    {' '}· Inscrit·e à la liste d&apos;attente ? Ton code s&apos;applique au moment du paiement.
-                  </>
-                )}
+                Paiement sécurisé Stripe · Facture envoyée par email · Rétractation 14 jours après réception.
               </p>
 
               <p className="text-xs mt-2" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', opacity: 0.7, lineHeight: 1.6 }}>
@@ -1035,7 +1029,7 @@ export default function ShopLanding() {
                   Tout sur l&apos;app
                 </Link>
               </p>
-            </motion.div>
+            </div>
           </div>
         </div>
       </section>
@@ -1060,11 +1054,11 @@ export default function ShopLanding() {
               },
               {
                 title: 'L’app WAC',
-                text: 'Ton État de Forme calculé sur 6 signaux physiologiques : récupération, charge, système nerveux, ressenti, phase du cycle. Chaque matin, tu sais où tu en es.',
+                text: 'Ton État de Forme calculé chaque matin sur 6 signaux physiologiques, l’analyse de tes séances, ta récupération nocturne et le suivi de ton cycle. Gratuite, sans abonnement obligatoire.',
               },
               {
-                title: 'La suite, en priorité',
-                text: 'Livraison prioritaire pour la liste d’attente, guide de démarrage inclus, et un email à chaque étape de ta commande jusqu’à la livraison.',
+                title: 'Livraison offerte en France',
+                text: 'En point relais Chronopost ou à domicile, avec ton guide de démarrage et un email à chaque étape jusqu’à la livraison.',
               },
             ].map((card, i) => (
               <Reveal key={card.title} delay={i * 0.12}>
@@ -1375,7 +1369,12 @@ export default function ShopLanding() {
               Prêt·e à grimper avec nous ?
             </h2>
             <Magnetic>
-              <a href="#commande" className="btn-secondary inline-block">
+              <a
+                href="#achat"
+                data-umami-event="clic-precommande"
+                data-umami-event-emplacement="bas-de-page"
+                className="btn-secondary inline-block"
+              >
                 Je précommande →
               </a>
             </Magnetic>
@@ -1403,7 +1402,12 @@ export default function ShopLanding() {
               Fin des pré-commandes le {PREORDER_END_LABEL}
             </p>
           </div>
-          <a href="#commande" className="btn-secondary text-sm whitespace-nowrap">
+          <a
+            href="#achat"
+            data-umami-event="clic-precommande"
+            data-umami-event-emplacement="barre-mobile"
+            className="btn-secondary text-sm whitespace-nowrap"
+          >
             Je précommande
           </a>
         </div>

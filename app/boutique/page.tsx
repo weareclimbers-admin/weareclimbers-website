@@ -26,7 +26,9 @@ export const metadata: Metadata = {
 export default function Boutique() {
   return (
     <>
-      <Header />
+      {/* Pas de bandeau pré-commande ici : la page porte déjà son compte à
+          rebours, et le bandeau ne ferait que renvoyer… vers cette page. */}
+      <Header showCampaignBanner={false} />
       <ShopLanding />
       <Footer />
     </>
