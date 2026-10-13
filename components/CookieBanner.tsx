@@ -147,15 +147,82 @@ export default function CookieBanner() {
 
   if (!showBanner) return null
 
+  // Barre compacte par défaut (13/10/2026) : un premier visiteur, souvent sur
+  // mobile depuis Instagram, doit voir la page et pouvoir la parcourir. Le choix
+  // reste à un geste, refuser exactement aussi simple qu'accepter (CNIL) ; rien
+  // n'est chargé tant qu'il n'a pas répondu.
+  if (!showDetails) {
+    return (
+      <div
+        role="dialog"
+        aria-label="Choix des cookies"
+        className="fixed bottom-0 left-0 right-0 z-50 animate-slide-up"
+        style={{
+          backgroundColor: 'var(--color-primary-beige)',
+          borderTop: '2px solid var(--color-primary-green)',
+          boxShadow: '0 -8px 24px rgba(38, 83, 53, 0.12)',
+          paddingBottom: 'env(safe-area-inset-bottom)',
+        }}
+      >
+        <div className="container-custom py-3 md:py-4 flex flex-col md:flex-row md:items-center gap-3 md:gap-8">
+          <p className="flex-1 font-roboto text-sm text-primary-green" style={{ lineHeight: 1.5 }}>
+            <strong>On respecte ta vie privée.</strong> Avec ton accord, on mesure l&apos;audience du site
+            (Umami) et nos campagnes (Meta).{' '}
+            <button
+              onClick={() => setShowDetails(true)}
+              className="font-bold underline underline-offset-2 text-secondary-orange hover:opacity-70"
+            >
+              Personnaliser
+            </button>
+            {' · '}
+            <a href="/cookies" className="underline underline-offset-2 hover:opacity-70 whitespace-nowrap">
+              En savoir plus
+            </a>
+          </p>
+          <div className="grid grid-cols-2 gap-3 md:flex md:flex-none">
+            <button
+              onClick={refuseAll}
+              className="btn-secondary-small"
+              style={{
+                backgroundColor: 'transparent',
+                color: 'var(--color-primary-green)',
+                boxShadow: 'inset 0 0 0 2px var(--color-primary-green)',
+              }}
+            >
+              Tout refuser
+            </button>
+            <button onClick={acceptAll} className="btn-secondary-small">
+              Tout accepter
+            </button>
+          </div>
+        </div>
+
+        <style jsx>{`
+          @keyframes slide-up {
+            from {
+              transform: translateY(100%);
+            }
+            to {
+              transform: translateY(0);
+            }
+          }
+          .animate-slide-up {
+            animation: slide-up 0.4s ease-out;
+          }
+        `}</style>
+      </div>
+    )
+  }
+
   return (
     <>
-      {/* Overlay */}
+      {/* Overlay — uniquement pour la fenêtre « Personnaliser » */}
       <div
         className="fixed inset-0 bg-black/50 z-40"
         style={{ backdropFilter: 'blur(2px)' }}
       />
 
-      {/* Banner */}
+      {/* Fenêtre des choix détaillés */}
       <div className="fixed bottom-0 left-0 right-0 z-50 animate-slide-up max-h-[90vh] md:max-h-[85vh] overflow-y-auto">
         <div className="container-custom py-4 md:py-6">
           <div
@@ -184,84 +251,55 @@ export default function CookieBanner() {
                 We Are Climbers utilise des cookies pour améliorer ton expérience sur le site. Tu peux tout accepter, tout refuser, ou choisir précisément ce que tu autorises.
               </p>
 
-              {!showDetails ? (
-                <div className="space-y-3 font-roboto text-primary-green">
-                  <div className="flex items-start">
-                    <svg className="w-5 h-5 mr-2 mt-0.5 flex-shrink-0 text-secondary-orange" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
-                    </svg>
-                    <p>
-                      <strong>Cookies essentiels</strong> (obligatoires) : Sécurité et fonctionnement du site
-                    </p>
-                  </div>
-                  <div className="flex items-start">
-                    <svg className="w-5 h-5 mr-2 mt-0.5 flex-shrink-0 text-primary-green" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd"/>
-                    </svg>
-                    <p>
-                      <strong>Cookies analytics</strong> (optionnels) : Comprendre l'usage pour améliorer le site (Umami, sans cookie tiers)
-                    </p>
-                  </div>
-                  <div className="flex items-start">
-                    <svg className="w-5 h-5 mr-2 mt-0.5 flex-shrink-0 text-primary-green" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd"/>
-                    </svg>
-                    <p>
-                      <strong>Cookies marketing</strong> (optionnels) : Mesure de nos campagnes publicitaires (Meta Pixel / Facebook)
-                    </p>
-                  </div>
+              <div className="max-h-[40vh] overflow-y-auto space-y-4 font-roboto text-primary-green text-sm bg-secondary-beige-light p-4 rounded">
+                <div>
+                  <h4 className="font-bold mb-2">🔒 Cookies Essentiels (obligatoires)</h4>
+                  <p className="mb-2">Ces cookies sont nécessaires au fonctionnement du site :</p>
+                  <ul className="list-disc pl-6 space-y-1">
+                    <li>Mémorisation de ton choix de cookies (13 mois)</li>
+                    <li>Sécurité et fonctionnement des formulaires</li>
+                  </ul>
                 </div>
-              ) : (
-                <div className="max-h-[40vh] overflow-y-auto space-y-4 font-roboto text-primary-green text-sm bg-secondary-beige-light p-4 rounded">
-                  <div>
-                    <h4 className="font-bold mb-2">🔒 Cookies Essentiels (obligatoires)</h4>
-                    <p className="mb-2">Ces cookies sont nécessaires au fonctionnement du site :</p>
-                    <ul className="list-disc pl-6 space-y-1">
-                      <li>Mémorisation de ton choix de cookies (13 mois)</li>
-                      <li>Sécurité et fonctionnement des formulaires</li>
-                    </ul>
-                  </div>
-                  <div>
-                    <label className="flex items-start gap-3 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={analyticsChecked}
-                        onChange={(e) => setAnalyticsChecked(e.target.checked)}
-                        className="mt-1 w-4 h-4 accent-secondary-orange"
-                      />
-                      <span>
-                        <span className="font-bold block mb-1">📊 Cookies Analytics (optionnels)</span>
-                        Avec <strong>Umami Cloud EU</strong> (solution européenne, respectueuse de la vie privée, sans cookie tiers) : pages visitées, type d'appareil et navigateur (anonymisé), pays de provenance, durée de visite. Aucune donnée personnelle identifiable, données hébergées dans l'Union Européenne.
-                      </span>
-                    </label>
-                  </div>
-                  <div>
-                    <label className="flex items-start gap-3 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={marketingChecked}
-                        onChange={(e) => setMarketingChecked(e.target.checked)}
-                        className="mt-1 w-4 h-4 accent-secondary-orange"
-                      />
-                      <span>
-                        <span className="font-bold block mb-1">🎯 Cookies Marketing (optionnels)</span>
-                        Avec le <strong>Meta Pixel (Facebook)</strong> : mesure de la performance de nos campagnes publicitaires et remarketing. Ces cookies tiers déposés par Meta permettent un suivi cross-site. Le pixel n'est chargé <strong>que si tu l'acceptes ici</strong>. Un transfert de données vers les États-Unis (Meta Platforms) peut avoir lieu, encadré par les Clauses Contractuelles Types et le Data Privacy Framework.
-                      </span>
-                    </label>
-                  </div>
-                  <div className="pt-2 border-t border-secondary-beige">
-                    <p className="text-xs">
-                      <strong>Nous n'utilisons PAS :</strong> Google Analytics ni cookies tiers autres que ceux listés ci-dessus. Les cookies analytics et marketing sont désactivés par défaut : rien n'est chargé sans ton accord.
-                    </p>
-                  </div>
+                <div>
+                  <label className="flex items-start gap-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={analyticsChecked}
+                      onChange={(e) => setAnalyticsChecked(e.target.checked)}
+                      className="mt-1 w-4 h-4 accent-secondary-orange"
+                    />
+                    <span>
+                      <span className="font-bold block mb-1">📊 Cookies Analytics (optionnels)</span>
+                      Avec <strong>Umami Cloud EU</strong> (solution européenne, respectueuse de la vie privée, sans cookie tiers) : pages visitées, type d'appareil et navigateur (anonymisé), pays de provenance, durée de visite. Aucune donnée personnelle identifiable, données hébergées dans l'Union Européenne.
+                    </span>
+                  </label>
                 </div>
-              )}
+                <div>
+                  <label className="flex items-start gap-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={marketingChecked}
+                      onChange={(e) => setMarketingChecked(e.target.checked)}
+                      className="mt-1 w-4 h-4 accent-secondary-orange"
+                    />
+                    <span>
+                      <span className="font-bold block mb-1">🎯 Cookies Marketing (optionnels)</span>
+                      Avec le <strong>Meta Pixel (Facebook)</strong> : mesure de la performance de nos campagnes publicitaires et remarketing. Ces cookies tiers déposés par Meta permettent un suivi cross-site. Le pixel n'est chargé <strong>que si tu l'acceptes ici</strong>. Un transfert de données vers les États-Unis (Meta Platforms) peut avoir lieu, encadré par les Clauses Contractuelles Types et le Data Privacy Framework.
+                    </span>
+                  </label>
+                </div>
+                <div className="pt-2 border-t border-secondary-beige">
+                  <p className="text-xs">
+                    <strong>Nous n'utilisons PAS :</strong> Google Analytics ni cookies tiers autres que ceux listés ci-dessus. Les cookies analytics et marketing sont désactivés par défaut : rien n'est chargé sans ton accord.
+                  </p>
+                </div>
+              </div>
 
               <button
-                onClick={() => setShowDetails(!showDetails)}
+                onClick={() => setShowDetails(false)}
                 className="mt-4 text-secondary-orange hover:underline font-roboto text-sm font-bold"
               >
-                {showDetails ? '▲ Masquer les détails' : '▼ Personnaliser mes choix'}
+                ▲ Masquer les détails
               </button>
             </div>
 
@@ -276,17 +314,17 @@ export default function CookieBanner() {
               <button
                 onClick={refuseAll}
                 className="btn-beige flex-1 sm:flex-initial"
+                style={{ boxShadow: 'inset 0 0 0 2px var(--color-primary-green)' }}
               >
                 Tout refuser
               </button>
-              {showDetails && (
-                <button
-                  onClick={saveChoices}
-                  className="btn-beige flex-1 sm:flex-initial"
-                >
-                  Enregistrer mes choix
-                </button>
-              )}
+              <button
+                onClick={saveChoices}
+                className="btn-beige flex-1 sm:flex-initial"
+                style={{ boxShadow: 'inset 0 0 0 2px var(--color-primary-green)' }}
+              >
+                Enregistrer mes choix
+              </button>
             </div>
 
             {/* Footer Links */}
