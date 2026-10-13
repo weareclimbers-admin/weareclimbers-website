@@ -215,3 +215,17 @@ export function cheapestShipping(zone: ShippingZone): number | null {
   const prices = zone.modes.map((m) => m.shippingTtc).filter((p): p is number => p !== null)
   return prices.length ? Math.min(...prices) : null
 }
+
+/** Prix affiché en euros, sans décimales s'il est rond (179 €, 180,99 €). */
+export function formatPrice(value: number): string {
+  return new Intl.NumberFormat('fr-FR', {
+    style: 'currency',
+    currency: 'EUR',
+    minimumFractionDigits: Number.isInteger(value) ? 0 : 2,
+  }).format(value)
+}
+
+/** Frais de port affichés : 0 € → « Offerte ». */
+export function formatShipping(value: number): string {
+  return value === 0 ? 'Offerte' : formatPrice(value)
+}

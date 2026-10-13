@@ -2,38 +2,43 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import PhoneShot from '@/components/PhoneShot'
 import { Reveal } from '@/components/Reveal'
 import TopoLines from '@/components/TopoLines'
 import Magnetic from '@/components/Magnetic'
 import PressFeature from '@/components/PressFeature'
 import CountdownTimer from '@/components/CountdownTimer'
+import OrderForm, { type Attribution } from '@/components/boutique/OrderForm'
 import { DERNIER_ARTICLE } from '@/lib/press'
-import { PREORDER_PACK, SHIPPING_ZONES, PREORDER_END_DATE, PREORDER_END_LABEL, cheapestShipping } from '@/lib/preorder'
+import { PREORDER_PACK, PREORDER_END_DATE, PREORDER_END_LABEL, formatPrice } from '@/lib/preorder'
+import { APP_PROOF, STORE_REVIEWS } from '@/lib/proof'
 import { detectCreator } from '@/lib/creator'
 import { getPartnerOffer } from '@/lib/offers'
 import { readAttribution, clearPartnerOffer } from '@/lib/attribution'
-import { trackShopEvent, SHOP_CONTENT, newEventId, hasMarketingConsent } from '@/lib/meta-pixel'
-import { trackShop, trackShopBeforeLeaving } from '@/lib/umami'
-import type { ParcelPoint } from '@boxtal/parcel-point-map'
+import { trackShopEvent, SHOP_CONTENT, newEventId } from '@/lib/meta-pixel'
+import { trackShop } from '@/lib/umami'
 
 /**
- * Boutique pré-commande V2 — vraie page e-commerce (galerie + panneau d'achat
- * sticky + sélecteur de zone + quantité → checkout Stripe hébergé).
- * EN LIGNE sur /boutique depuis le 01/10/2026 (anciennement en préparation sur
- * /boutique2, qui redirige désormais ici).
+ * Boutique pré-commande V2 — fiche produit + formulaire de commande (OrderForm)
+ * → checkout Stripe hébergé. EN LIGNE sur /boutique depuis le 01/10/2026.
  *
- * TODO(Julien) : packshots provisoires (réutilisés des autres pages) — à
- * remplacer par les vrais visuels boutique. FAQ et copy à valider.
+ * Refonte conversion (13/10/2026) : bénéfice d'abord, preuves sociales juste
+ * sous le titre, et une commande accessible de partout — chaque bouton
+ * « Je précommande » ouvre le formulaire (panneau mobile / fiche sur ordinateur).
+ *
+ * TODO(Julien) : packshots provisoires — à remplacer par les vrais visuels boutique.
  */
 
 // Galerie produit — la 1re image est l'image principale par défaut.
+// (bracelet-polar360.webp et hero-capteurs.webp sont le MÊME fichier : un seul ici.)
 const GALLERY = [
   { src: '/téléchargement (1).png', alt: 'Bracelet Polar 360 We Are Climbers — vue produit' },
-  { src: '/images/rejoins-nous/bracelet-polar360.webp', alt: "Le bracelet Polar 360 porté à l'avant-bras" },
   { src: '/hero-capteurs.webp', alt: 'Les capteurs optiques du bracelet Polar 360' },
 ]
+
+/** Largeur « ordinateur » (lg) : le formulaire vit dans la fiche, pas dans le panneau mobile. */
+const DESKTOP_QUERY = '(min-width: 1024px)'
 
 const METRIC_CHIPS = ['±1 BPM', '29 g', '10 jours d’autonomie']
 
@@ -135,77 +140,26 @@ const PILIERS_APP = [
   'Phase du cycle',
 ]
 
-/** Piliers de confiance — uniquement des faits déjà publiés sur le site. */
-const CONFIANCE: { big: string; small: string }[] = [
-  { big: '±1 BPM', small: 'précision validée sur le terrain' },
-  { big: '102', small: 'grimpeurs déjà équipés' },
-  { big: '9', small: 'coachs embarqués' },
-  { big: '2 ans', small: 'garantie constructeur Polar' },
-  { big: 'FFME NA', small: 'Équipementier Officiel' },
-]
-
-function formatPrice(value: number): string {
-  return new Intl.NumberFormat('fr-FR', {
-    style: 'currency',
-    currency: 'EUR',
-    minimumFractionDigits: Number.isInteger(value) ? 0 : 2,
-  }).format(value)
-}
-
-/** Frais de port affichés : 0 € → « Offerte ». */
-function formatShipping(value: number): string {
-  return value === 0 ? 'Offerte' : formatPrice(value)
-}
-
-/** Point relais tel que renvoyé par /api/relay-points (miroir de la réponse Boxtal serveur). */
-interface RelayPointLite {
-  id: string
-  name: string
-  address: string
-  zip: string
-  city: string
-  country: string
-  distanceMeters: number | null
-}
-
-export default function ShopLanding() {
+export default function ShopLanding({
+  climbersCount,
+}: {
+  /** 102 (Ulule) + précommandes payées, calculé côté serveur (lib/preorder-count.ts) ; null si Stripe injoignable. */
+  climbersCount: number | null
+}) {
   const [mainImage, setMainImage] = useState(0)
-  const [zoneId, setZoneId] = useState(SHIPPING_ZONES[0].id)
-  const [modeId, setModeId] = useState(SHIPPING_ZONES[0].modes[0].id)
-  const [quantity, setQuantity] = useState(1)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
 
-  // Sélection du point relais Chronopost Shop2Shop (modes « relais »)
-  const [relayCountry, setRelayCountry] = useState('FR')
-  const [relayZip, setRelayZip] = useState('')
-  const [relayPoints, setRelayPoints] = useState<RelayPointLite[] | null>(null)
-  const [relaySearching, setRelaySearching] = useState(false)
-  const [relayError, setRelayError] = useState<string | null>(null)
-  const [selectedRelay, setSelectedRelay] = useState<RelayPointLite | null>(null)
-
-  // Carte interactive Boxtal (choix visuel du point Shop2Shop). Fallback recherche
-  // manuelle (liste) si la clé manque, si le module échoue, ou si la carte ne charge pas.
-  const mapRef = useRef<null | {
-    searchParcelPoints: (
-      address: { country: string; zipCode: string; city: string },
-      cb: (pp: ParcelPoint) => void,
-    ) => void
-  }>(null)
-  const mapLoadedRef = useRef(false)
-  const [mapReady, setMapReady] = useState(false)
-  const [mapFailed, setMapFailed] = useState(false)
+  // Formulaire de commande : en ligne dans la fiche sur ordinateur, dans un
+  // panneau qui monte du bas de l'écran sur mobile, ouvert par n'importe quel
+  // bouton « Je précommande ». Une seule instance d'OrderForm (une seule carte).
+  const [sheetOpen, setSheetOpen] = useState(false)
+  const [sheetOpened, setSheetOpened] = useState(false)
+  const [isDesktop, setIsDesktop] = useState(false)
 
   // Attribution capturée à l'atterrissage (UtmCapture → cookies 30 jours,
   // lib/attribution.ts), relue au montage : créateur UGC et offre partenaire
   // affichent la contrepartie (premium, tarif négocié) ; tout voyage vers
   // /api/checkout, qui revérifie. Cookies indisponibles → paiement normal.
-  const [attribution, setAttribution] = useState<{
-    creator: string
-    utm: Record<string, string>
-    offer: string
-    fbclid: string
-  }>({
+  const [attribution, setAttribution] = useState<Attribution>({
     creator: '',
     utm: {},
     offer: '',
@@ -215,12 +169,6 @@ export default function ShopLanding() {
   const offer = getPartnerOffer(attribution.offer)
   // Prix unitaire réellement payé (le serveur applique la remise de l'offre).
   const unitPrice = offer ? offer.priceTtc : PREORDER_PACK.priceTtc
-  // Offre partenaire = 1 bracelet par commande (remise et premium par personne).
-  const maxQuantity = offer ? 1 : PREORDER_PACK.maxQuantity
-
-  useEffect(() => {
-    setQuantity((q) => Math.min(q, maxQuantity))
-  }, [maxQuantity])
 
   useEffect(() => {
     try {
@@ -246,212 +194,73 @@ export default function ShopLanding() {
     )
   }, [])
 
-  const currentZone = SHIPPING_ZONES.find((z) => z.id === zoneId) ?? SHIPPING_ZONES[0]
-  const currentMode = currentZone.modes.find((m) => m.id === modeId) ?? currentZone.modes[0]
-
-  // Monte la carte Boxtal quand le mode relais est actif ; bascule en recherche
-  // manuelle si le token échoue, si le module échoue, ou si la carte ne charge pas (8 s).
   useEffect(() => {
-    if (!currentMode.relay) return
-    let cancelled = false
-    mapLoadedRef.current = false
-    setMapReady(false)
-    setMapFailed(false)
-    const timeout = setTimeout(() => {
-      if (!cancelled && !mapLoadedRef.current) setMapFailed(true)
-    }, 8000)
-    void (async () => {
-      try {
-        // Token JWT généré côté serveur (la clé secrète carte ne fuite pas au client).
-        const [{ BoxtalParcelPointMap }, tokRes] = await Promise.all([
-          import('@boxtal/parcel-point-map'),
-          fetch('/api/boxtal-map-token'),
-        ])
-        const tok = await tokRes.json().catch(() => null)
-        if (!tokRes.ok || !tok?.accessToken) throw new Error('token carte indisponible')
-        if (cancelled) return
-        mapRef.current = new BoxtalParcelPointMap({
-          domToLoadMap: '#boxtal-parcel-map',
-          accessToken: tok.accessToken,
-          config: {
-            locale: 'fr',
-            parcelPointNetworks: [{ code: 'CHRP_NETWORK' }],
-            options: { autoSelectNearestParcelPoint: false, primaryColor: '#265335' },
-          },
-          onMapLoaded: () => {
-            if (cancelled) return
-            mapLoadedRef.current = true
-            setMapReady(true)
-          },
-        })
-      } catch {
-        if (!cancelled) setMapFailed(true)
-      }
-    })()
+    const mq = window.matchMedia(DESKTOP_QUERY)
+    const update = () => {
+      setIsDesktop(mq.matches)
+      // Repassé en largeur ordinateur : le formulaire est dans la fiche.
+      if (mq.matches) setSheetOpen(false)
+    }
+    update()
+    mq.addEventListener('change', update)
+    return () => mq.removeEventListener('change', update)
+  }, [])
+
+  // Panneau mobile ouvert : page figée derrière, Échap pour fermer.
+  useEffect(() => {
+    if (!sheetOpen) return
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setSheetOpen(false)
+    }
+    window.addEventListener('keydown', onKey)
     return () => {
-      cancelled = true
-      clearTimeout(timeout)
-      mapRef.current = null
+      document.body.style.overflow = previousOverflow
+      window.removeEventListener('keydown', onKey)
     }
-  }, [currentMode.relay])
+  }, [sheetOpen])
 
-  function resetRelay() {
-    setRelayZip('')
-    setRelayPoints(null)
-    setRelayError(null)
-    setSelectedRelay(null)
-    setError(null)
-  }
-
-  function selectZone(id: string) {
-    const zone = SHIPPING_ZONES.find((z) => z.id === id) ?? SHIPPING_ZONES[0]
-    setZoneId(zone.id)
-    setModeId(zone.modes[0].id)
-    setRelayCountry(zone.relayCountries?.[0]?.code ?? 'FR')
-    resetRelay()
-    trackShop('choix-livraison', { zone: zone.id, mode: zone.modes[0].id })
-  }
-
-  async function searchRelays() {
-    setRelaySearching(true)
-    setRelayError(null)
-    setRelayPoints(null)
-    setSelectedRelay(null)
-    try {
-      const params = new URLSearchParams({ zone: zoneId, country: relayCountry, zip: relayZip.trim() })
-      const res = await fetch(`/api/relay-points?${params}`)
-      const data = await res.json().catch(() => null)
-      if (!res.ok || !Array.isArray(data?.points)) {
-        throw new Error(data?.error || 'Recherche indisponible. Réessaye dans quelques instants.')
-      }
-      if (data.points.length === 0) {
-        setRelayError('Aucun point relais trouvé autour de ce code postal.')
-      } else {
-        setRelayPoints(data.points)
-      }
-    } catch (err) {
-      setRelayError(err instanceof Error ? err.message : 'Recherche indisponible. Réessaye.')
-    } finally {
-      setRelaySearching(false)
-    }
-  }
-
-  // Recherche pilotée par le code postal : via la carte si dispo, sinon la liste.
-  async function onRelaySearch() {
-    const zip = relayZip.trim()
-    if (zip.length < 4) return
-    setError(null)
-    if (mapRef.current && !mapFailed) {
-      setRelayError(null)
-      // La carte hébergée géocode l'adresse pour se centrer → il lui faut une ville.
-      // On la résout depuis le code postal via l'API publique gouv (sans clé).
-      let city = ''
-      try {
-        const r = await fetch(
-          `https://geo.api.gouv.fr/communes?codePostal=${encodeURIComponent(zip)}&fields=nom&format=json`,
-        )
-        const communes = await r.json()
-        city = Array.isArray(communes) && communes[0]?.nom ? String(communes[0].nom) : ''
-      } catch {
-        /* on tente quand même sans ville */
-      }
-      mapRef.current.searchParcelPoints(
-        { country: relayCountry, zipCode: zip, city },
-        (pp) => {
-          setSelectedRelay({
-            id: pp.code,
-            name: pp.name,
-            address: pp.location.street ?? '',
-            zip: pp.location.zipCode,
-            city: pp.location.city,
-            country: pp.location.country,
-            distanceMeters: null,
-          })
-          setError(null)
-          trackShop('point-relais-choisi', { pays: pp.location.country })
-        },
-      )
+  /** Tous les boutons « Je précommande » : panneau sur mobile, formulaire de la fiche sur ordinateur. */
+  function openOrder(emplacement: string) {
+    trackShop('clic-precommande', { emplacement })
+    if (window.matchMedia(DESKTOP_QUERY).matches) {
+      document.getElementById('achat')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
     } else {
-      searchRelays()
+      setSheetOpen(true)
+      setSheetOpened(true)
     }
   }
 
-  async function handleCheckout() {
-    trackShop('clic-precommande', { emplacement: 'fiche' })
-    if (currentMode.relay && !selectedRelay) {
-      trackShop('erreur-paiement', { raison: 'relais-manquant' })
-      setError('Choisis ton point relais Chronopost avant de continuer.')
-      return
+  /** Lien « Je précommande » : ancre #achat sans JavaScript, panneau avec. */
+  function preorderLinkProps(emplacement: string) {
+    return {
+      href: '#achat',
+      onClick: (e: React.MouseEvent) => {
+        e.preventDefault()
+        openOrder(emplacement)
+      },
     }
-    setLoading(true)
-    setError(null)
-    // Raison remontée à Umami si le départ au paiement échoue.
-    let failure = 'reseau'
+  }
+
+  function onOfferUnavailable() {
     try {
-      // Meta Pixel — InitiateCheckout : départ vers le paiement Stripe.
-      // No-op sans consentement. Le même event_id est transmis au serveur
-      // (metaEventId) pour que la CAPI dédoublonne l'event serveur.
-      const price = unitPrice
-      const checkoutEventId = newEventId()
-      trackShopEvent(
-        'InitiateCheckout',
-        {
-          ...SHOP_CONTENT,
-          num_items: quantity,
-          ...(price !== null ? { value: price * quantity, currency: 'EUR' } : {}),
-        },
-        checkoutEventId,
-      )
-
-      const res = await fetch('/api/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          zone: zoneId,
-          mode: currentMode.id,
-          quantity,
-          creator: attribution.creator,
-          utm: attribution.utm,
-          fbclid: attribution.fbclid,
-          offer: offer?.slug,
-          relay: selectedRelay
-            ? {
-                id: selectedRelay.id,
-                name: selectedRelay.name,
-                zip: selectedRelay.zip,
-                city: selectedRelay.city,
-                country: selectedRelay.country,
-              }
-            : undefined,
-          // Meta CAPI (phase 2) : dédup InitiateCheckout serveur (même event_id)
-          // et gating consentement pour le Purchase serveur (via metadata Stripe).
-          metaEventId: checkoutEventId,
-          marketingConsent: hasMarketingConsent(),
-        }),
-      })
-      const data = await res.json().catch(() => null)
-      failure = data?.offerUnavailable ? 'offre-indisponible' : `serveur-${res.status}`
-      if (data?.offerUnavailable) {
-        // Places épuisées / offre terminée : on retire l'offre (le clic suivant
-        // part au tarif normal) et on affiche l'explication du serveur.
-        try {
-          clearPartnerOffer()
-        } catch {
-          /* non bloquant */
-        }
-        setAttribution((a) => ({ ...a, offer: '' }))
-      }
-      if (!res.ok || !data?.url) {
-        throw new Error(data?.error || 'Une erreur est survenue. Réessaye dans quelques instants.')
-      }
-      await trackShopBeforeLeaving('depart-paiement', { zone: zoneId, mode: currentMode.id, quantite: quantity })
-      window.location.href = data.url // redirection vers le checkout hébergé Stripe
-    } catch (err) {
-      trackShop('erreur-paiement', { raison: failure })
-      setError(err instanceof Error ? err.message : 'Une erreur est survenue. Réessaye.')
-      setLoading(false)
+      clearPartnerOffer()
+    } catch {
+      /* non bloquant */
     }
+    setAttribution((a) => ({ ...a, offer: '' }))
   }
+
+  // Bande de preuves — compteur automatique (Ulule + précommandes payées) et
+  // chiffres vérifiés (lib/proof.ts). Sans Stripe : libellé sans chiffre exact.
+  const proofs: { big: string; small: string }[] = [
+    { big: climbersCount !== null ? String(climbersCount) : '100+', small: 'grimpeurs ont déjà choisi WAC' },
+    { big: APP_PROOF.storeRating, small: 'note de l’app sur l’App Store et Google Play' },
+    { big: APP_PROOF.activeUsers, small: 'grimpeurs actifs sur l’app' },
+    { big: APP_PROOF.sessions, small: 'séances déjà enregistrées' },
+    { big: 'FFME NA', small: 'Équipementier officiel' },
+  ]
 
   return (
     <main style={{ backgroundColor: 'var(--color-primary-beige)' }}>
@@ -494,14 +303,12 @@ export default function ShopLanding() {
             </p>
 
             <div className="mt-8 flex flex-col items-center gap-3">
-              <a
-                href="#achat"
-                data-umami-event="clic-precommande"
-                data-umami-event-emplacement="haut-de-page"
-                className="btn-secondary inline-block"
-              >
+              <a {...preorderLinkProps('haut-de-page')} className="btn-secondary inline-block">
                 Je précommande{unitPrice !== null ? ` — ${formatPrice(unitPrice)}` : ''}
               </a>
+              <p className="text-sm" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', opacity: 0.8 }}>
+                Livraison offerte en France, estimée la {PREORDER_PACK.estimatedDelivery}
+              </p>
               <p
                 className="text-xs md:text-sm font-bold uppercase"
                 style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-primary-green)', letterSpacing: '0.1em', textWrap: 'balance' }}
@@ -516,14 +323,40 @@ export default function ShopLanding() {
         </div>
       </section>
 
+      {/* ───────────── PREUVES (juste sous le titre) ───────────── */}
+      <section className="py-8 md:py-10" style={{ backgroundColor: 'var(--color-secondary-beige-light)' }}>
+        <div className="container-custom">
+          <ul className="grid grid-cols-2 md:grid-cols-5 gap-x-6 gap-y-6 max-w-6xl mx-auto">
+            {proofs.map((item, i) => (
+              <li key={item.small} className={`text-center ${i === 0 ? 'col-span-2 md:col-span-1' : ''}`}>
+                <p
+                  className={`${i === 0 ? 'text-4xl' : 'text-2xl'} md:text-3xl font-bold mb-1`}
+                  style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-secondary-orange)' }}
+                >
+                  {item.big}
+                </p>
+                <p
+                  className="text-xs uppercase font-bold"
+                  style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-primary-green)', letterSpacing: '0.08em', lineHeight: 1.5 }}
+                >
+                  {item.small}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
       {/* Cible des liens de campagne déjà diffusés vers /boutique#liste-attente :
           une fois cette page en prod, ils doivent atterrir sur la commande
           (la prévente remplace la liste d'attente). Ne pas supprimer cet id. */}
       <span id="liste-attente" aria-hidden className="block scroll-mt-32" />
 
       {/* ───────────── FICHE PRODUIT ───────────── */}
+      {/* ⚠️ Pas de z-index sur cette section ni son conteneur : il enfermerait le
+          panneau de commande mobile (fixed) sous l'en-tête et la barre d'achat. */}
       <section id="commande" className="relative overflow-hidden pt-6 pb-16 md:pt-10 md:pb-24">
-        <div className="container-custom relative z-10">
+        <div className="container-custom">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
             {/* Galerie */}
             <div>
@@ -542,7 +375,7 @@ export default function ShopLanding() {
                 />
               </div>
 
-              <div className="grid grid-cols-3 gap-3 mt-3">
+              <div className="grid grid-cols-4 gap-3 mt-3">
                 {GALLERY.map((img, i) => (
                   <button
                     key={img.src}
@@ -637,8 +470,6 @@ export default function ShopLanding() {
               )}
               <p className="text-sm mb-6" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', opacity: 0.75 }}>
                 <strong>Pré-commande</strong> : livraison estimée la {PREORDER_PACK.estimatedDelivery}.
-                {' '}
-                Frais de livraison calculés selon ta zone, affichés avant paiement.
               </p>
 
               {/* Contenu du pack */}
@@ -655,267 +486,6 @@ export default function ShopLanding() {
                   </li>
                 ))}
               </ul>
-
-              {/* Zone de livraison */}
-              <fieldset className="mb-6">
-                <legend
-                  className="text-sm font-bold uppercase mb-3"
-                  style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-primary-green)', letterSpacing: '0.1em' }}
-                >
-                  Où doit-on te livrer ?
-                </legend>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {SHIPPING_ZONES.map((z) => (
-                    <label
-                      key={z.id}
-                      className="flex items-start gap-3 p-3.5 cursor-pointer transition-colors rounded-xl"
-                      style={{
-                        border: `2px solid ${zoneId === z.id ? 'var(--color-secondary-orange)' : 'var(--color-primary-green)'}`,
-                        backgroundColor: zoneId === z.id ? 'var(--color-secondary-beige-light)' : 'transparent',
-                      }}
-                    >
-                      <input
-                        type="radio"
-                        name="zone"
-                        value={z.id}
-                        checked={zoneId === z.id}
-                        onChange={() => selectZone(z.id)}
-                        className="mt-1"
-                        style={{ accentColor: 'var(--color-secondary-orange)' }}
-                      />
-                      <span className="flex-1">
-                        <span className="flex items-baseline justify-between gap-2">
-                          <span
-                            className="text-sm font-bold uppercase"
-                            style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-primary-green)' }}
-                          >
-                            {z.label}
-                          </span>
-                          {cheapestShipping(z) !== null && (
-                            <span
-                              className="flex-none text-sm font-bold"
-                              style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-secondary-orange)' }}
-                            >
-                              {z.modes.length > 1 && (cheapestShipping(z) as number) > 0 ? 'dès ' : ''}
-                              {formatShipping(cheapestShipping(z) as number)}
-                            </span>
-                          )}
-                        </span>
-                        {z.note && (
-                          <span className="block text-xs mt-1" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', opacity: 0.7 }}>
-                            {z.note}
-                          </span>
-                        )}
-                      </span>
-                    </label>
-                  ))}
-                </div>
-              </fieldset>
-
-              {/* Mode de livraison (si la zone en propose plusieurs — France : relais ou domicile) */}
-              {currentZone.modes.length > 1 && (
-                <fieldset className="mb-6">
-                  <legend
-                    className="text-sm font-bold uppercase mb-3"
-                    style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-primary-green)', letterSpacing: '0.1em' }}
-                  >
-                    Comment veux-tu être livré·e ?
-                  </legend>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {currentZone.modes.map((m) => (
-                      <label
-                        key={m.id}
-                        className="flex items-center gap-3 p-3.5 cursor-pointer transition-colors rounded-xl"
-                        style={{
-                          border: `2px solid ${currentMode.id === m.id ? 'var(--color-secondary-orange)' : 'var(--color-primary-green)'}`,
-                          backgroundColor: currentMode.id === m.id ? 'var(--color-secondary-beige-light)' : 'transparent',
-                        }}
-                      >
-                        <input
-                          type="radio"
-                          name="mode"
-                          value={m.id}
-                          checked={currentMode.id === m.id}
-                          onChange={() => {
-                            setModeId(m.id)
-                            resetRelay()
-                            trackShop('choix-livraison', { zone: zoneId, mode: m.id })
-                          }}
-                          style={{ accentColor: 'var(--color-secondary-orange)' }}
-                        />
-                        <span className="flex-1 flex items-baseline justify-between gap-2">
-                          <span
-                            className="text-sm font-bold uppercase"
-                            style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-primary-green)' }}
-                          >
-                            {m.label}
-                          </span>
-                          {m.shippingTtc !== null && (
-                            <span
-                              className="flex-none text-sm font-bold"
-                              style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-secondary-orange)' }}
-                            >
-                              {formatShipping(m.shippingTtc)}
-                            </span>
-                          )}
-                        </span>
-                      </label>
-                    ))}
-                  </div>
-                </fieldset>
-              )}
-
-              {/* Point relais Chronopost Shop2Shop (modes « relais ») */}
-              {currentMode.relay && (
-                <div className="mb-6">
-                  <p
-                    className="text-sm font-bold uppercase mb-3"
-                    style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-primary-green)', letterSpacing: '0.1em' }}
-                  >
-                    Ton point relais Chronopost
-                  </p>
-
-                  <div className="flex flex-wrap items-stretch gap-2">
-                    {(currentZone.relayCountries ?? []).length > 1 && (
-                      <div className="flex rounded-lg overflow-hidden" style={{ border: '2px solid var(--color-primary-green)' }}>
-                        {(currentZone.relayCountries ?? []).map((c) => (
-                          <button
-                            key={c.code}
-                            type="button"
-                            onClick={() => {
-                              setRelayCountry(c.code)
-                              setRelayPoints(null)
-                              setSelectedRelay(null)
-                              setRelayError(null)
-                            }}
-                            className="px-3 text-xs font-bold uppercase"
-                            style={{
-                              fontFamily: 'var(--font-syne)',
-                              backgroundColor: relayCountry === c.code ? 'var(--color-primary-green)' : 'transparent',
-                              color: relayCountry === c.code ? 'var(--color-primary-beige)' : 'var(--color-primary-green)',
-                            }}
-                          >
-                            {c.label}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                    <input
-                      type="text"
-                      inputMode="numeric"
-                      value={relayZip}
-                      onChange={(e) => setRelayZip(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          e.preventDefault()
-                          onRelaySearch()
-                        }
-                      }}
-                      placeholder={relayCountry === 'FR' ? 'Code postal (ex. 64100)' : 'Code postal'}
-                      aria-label="Code postal pour la recherche de point relais"
-                      className="flex-1 min-w-[140px] px-3 py-2.5 text-sm bg-transparent outline-none rounded-lg"
-                      style={{
-                        fontFamily: 'var(--font-roboto)',
-                        color: 'var(--color-primary-green)',
-                        border: '2px solid var(--color-primary-green)',
-                      }}
-                    />
-                    <button
-                      type="button"
-                      onClick={onRelaySearch}
-                      disabled={relaySearching || relayZip.trim().length < 4 || (!mapFailed && !mapReady)}
-                      className="px-4 py-2.5 text-sm font-bold uppercase disabled:opacity-40 transition-opacity rounded-lg"
-                      style={{
-                        fontFamily: 'var(--font-syne)',
-                        backgroundColor: 'var(--color-primary-green)',
-                        color: 'var(--color-primary-beige)',
-                      }}
-                    >
-                      {!mapFailed && !mapReady ? 'Carte…' : relaySearching ? 'Recherche…' : 'Chercher'}
-                    </button>
-                  </div>
-
-                  {/* Carte interactive (choix visuel) ; masquée si fallback manuel */}
-                  {!mapFailed && (
-                    <div
-                      id="boxtal-parcel-map"
-                      className="mt-3 rounded-lg overflow-hidden"
-                      style={{ height: 340, border: '2px solid var(--color-primary-green)' }}
-                    />
-                  )}
-
-                  {relayError && (
-                    <p className="mt-3 text-sm font-bold" style={{ fontFamily: 'var(--font-roboto)', color: '#8C2B1E' }}>
-                      {relayError}
-                    </p>
-                  )}
-
-                  {mapFailed && relayPoints && (
-                    <div className="mt-3 max-h-64 overflow-y-auto space-y-2 pr-1">
-                      {relayPoints.map((p) => (
-                        <label
-                          key={p.id}
-                          className="flex items-start gap-3 p-3 cursor-pointer transition-colors rounded-lg"
-                          style={{
-                            border: `2px solid ${selectedRelay?.id === p.id ? 'var(--color-secondary-orange)' : 'rgba(38,83,53,0.35)'}`,
-                            backgroundColor: selectedRelay?.id === p.id ? 'var(--color-secondary-beige-light)' : 'transparent',
-                          }}
-                        >
-                          <input
-                            type="radio"
-                            name="relay"
-                            checked={selectedRelay?.id === p.id}
-                            onChange={() => {
-                              setSelectedRelay(p)
-                              setError(null)
-                              trackShop('point-relais-choisi', { pays: p.country })
-                            }}
-                            className="mt-1"
-                            style={{ accentColor: 'var(--color-secondary-orange)' }}
-                          />
-                          <span className="flex-1">
-                            <span className="flex items-baseline justify-between gap-2">
-                              <span className="text-sm font-bold" style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-primary-green)' }}>
-                                {p.name}
-                              </span>
-                              {p.distanceMeters !== null && (
-                                <span className="flex-none text-xs font-bold" style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-secondary-orange)' }}>
-                                  {p.distanceMeters < 1000 ? `${p.distanceMeters} m` : `${(p.distanceMeters / 1000).toFixed(1)} km`}
-                                </span>
-                              )}
-                            </span>
-                            <span className="block text-xs mt-0.5" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', opacity: 0.75 }}>
-                              {p.address && `${p.address}, `}
-                              {p.zip} {p.city}
-                            </span>
-                          </span>
-                        </label>
-                      ))}
-                    </div>
-                  )}
-
-                  {selectedRelay && (
-                    <div
-                      className="mt-3 p-3 rounded-lg"
-                      style={{ border: '2px solid var(--color-secondary-orange)', backgroundColor: 'var(--color-secondary-beige-light)' }}
-                    >
-                      <span className="text-sm font-bold" style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-primary-green)' }}>
-                        ✓ {selectedRelay.name}
-                      </span>
-                      <span className="block text-xs mt-0.5" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', opacity: 0.75 }}>
-                        {selectedRelay.address && `${selectedRelay.address}, `}
-                        {selectedRelay.zip} {selectedRelay.city}
-                      </span>
-                    </div>
-                  )}
-
-                  <p className="mt-3 text-xs" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', opacity: 0.65, lineHeight: 1.5 }}>
-                    Ton colis sera livré dans le point relais choisi — c&apos;est lui qui apparaîtra
-                    comme adresse de livraison sur ta facture. Au paiement, seule ton adresse de
-                    facturation te sera demandée.
-                  </p>
-                </div>
-              )}
 
               {offer ? (
                 <div
@@ -952,71 +522,68 @@ export default function ShopLanding() {
                 )
               )}
 
-              {/* Quantité + CTA */}
-              <div className="flex items-stretch gap-4 mb-4">
-                <div className="flex items-center rounded-lg overflow-hidden" style={{ border: '2px solid var(--color-primary-green)' }}>
-                  <button
-                    type="button"
-                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                    disabled={quantity <= 1}
-                    aria-label="Réduire la quantité"
-                    className="w-11 self-stretch text-xl font-bold disabled:opacity-30"
-                    style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-primary-green)' }}
-                  >
-                    −
-                  </button>
-                  <span
-                    className="w-10 text-center text-lg font-bold"
-                    style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-primary-green)' }}
-                    aria-live="polite"
-                  >
-                    {quantity}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => setQuantity((q) => Math.min(maxQuantity, q + 1))}
-                    disabled={quantity >= maxQuantity}
-                    aria-label="Augmenter la quantité"
-                    className="w-11 self-stretch text-xl font-bold disabled:opacity-30"
-                    style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-primary-green)' }}
-                  >
-                    +
-                  </button>
-                </div>
+              {/* Mobile : ouvre le panneau de commande */}
+              <button
+                type="button"
+                onClick={() => openOrder('fiche')}
+                className="btn-secondary w-full mb-4 lg:hidden"
+              >
+                Je précommande{unitPrice !== null ? ` — ${formatPrice(unitPrice)}` : ''}
+              </button>
 
-                <Magnetic className="flex-1">
-                  <button
-                    type="button"
-                    onClick={handleCheckout}
-                    disabled={loading}
-                    className="btn-secondary w-full disabled:opacity-60 disabled:cursor-wait"
-                  >
-                    {loading ? 'Redirection vers le paiement…' : 'Je précommande →'}
-                  </button>
-                </Magnetic>
-              </div>
-
-              {error && (
-                <p
-                  role="alert"
-                  className="mb-4 px-4 py-3 text-sm font-bold rounded-lg"
-                  style={{ fontFamily: 'var(--font-roboto)', color: '#8C2B1E', backgroundColor: '#FDE8E2', border: '2px solid #8C2B1E' }}
+              {/* Formulaire de commande : en ligne dans la fiche sur ordinateur, panneau
+                  qui monte du bas de l'écran sur mobile (ouvert par les boutons
+                  « Je précommande »). Une seule instance → une seule carte Boxtal. */}
+              <div
+                className={`${sheetOpen ? 'fixed inset-0 z-[60] flex flex-col justify-end' : 'hidden'} lg:static lg:z-auto lg:block`}
+                role={sheetOpen ? 'dialog' : undefined}
+                aria-modal={sheetOpen ? true : undefined}
+                aria-label={sheetOpen ? 'Ta pré-commande' : undefined}
+              >
+                <div aria-hidden className="absolute inset-0 bg-black/50 lg:hidden" onClick={() => setSheetOpen(false)} />
+                <div
+                  className="relative max-h-[90dvh] overflow-y-auto rounded-t-[20px] px-5 pt-5 lg:max-h-none lg:overflow-visible lg:rounded-none lg:p-0"
+                  style={{
+                    backgroundColor: 'var(--color-primary-beige)',
+                    paddingBottom: sheetOpen ? 'calc(1.25rem + env(safe-area-inset-bottom))' : undefined,
+                  }}
                 >
-                  {error}
-                </p>
-              )}
+                  <div className="flex items-start justify-between gap-4 mb-5 lg:hidden">
+                    <div>
+                      <p
+                        className="text-xs font-bold uppercase mb-1"
+                        style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-secondary-orange)', letterSpacing: '0.15em' }}
+                      >
+                        Pré-commande
+                      </p>
+                      <p className="text-lg font-bold uppercase" style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-primary-green)', lineHeight: 1.2 }}>
+                        Bracelet Polar 360 + App WAC
+                      </p>
+                      <p className="text-xs mt-1" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', opacity: 0.75 }}>
+                        Livraison estimée la {PREORDER_PACK.estimatedDelivery}.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setSheetOpen(false)}
+                      aria-label="Fermer"
+                      className="flex-none w-10 h-10 flex items-center justify-center text-xl font-bold rounded-full"
+                      style={{ color: 'var(--color-primary-green)', border: '2px solid var(--color-primary-green)' }}
+                    >
+                      ✕
+                    </button>
+                  </div>
 
-              <p className="text-xs" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', opacity: 0.7, lineHeight: 1.6 }}>
-                Paiement sécurisé Stripe · Facture envoyée par email · Rétractation 14 jours après réception.
-              </p>
-
-              <p className="text-xs mt-2" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', opacity: 0.7, lineHeight: 1.6 }}>
-                En précommandant, tu acceptes nos{' '}
-                <Link href="/cgv" target="_blank" className="underline underline-offset-2 font-bold hover:opacity-70 transition-opacity">
-                  Conditions Générales de Vente
-                </Link>
-                .
-              </p>
+                  <OrderForm
+                    active={isDesktop || sheetOpened}
+                    inSheet={sheetOpen}
+                    unitPrice={unitPrice}
+                    attribution={attribution}
+                    offer={offer}
+                    onOfferUnavailable={onOfferUnavailable}
+                  />
+                </div>
+              </div>
 
               {/* Découverte pour qui arrive directement ici (pattern fiche produit Polar) */}
               <p className="text-sm mt-4" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)' }}>
@@ -1030,6 +597,55 @@ export default function ShopLanding() {
                 </Link>
               </p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ───────────── AVIS (stores, texte non retouché — lib/proof.ts) ───────────── */}
+      <section className="py-16 md:py-20" style={{ backgroundColor: 'var(--color-secondary-beige-light)' }}>
+        <div className="container-custom">
+          <Reveal>
+            <h2
+              className="text-3xl md:text-5xl mb-3 text-center"
+              style={{ fontFamily: 'var(--font-syne)', fontWeight: 700, textTransform: 'uppercase', color: 'var(--color-primary-green)' }}
+            >
+              Ils grimpent déjà avec l&apos;app.
+            </h2>
+            <p
+              className="text-center mb-10 text-sm md:text-base"
+              style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', opacity: 0.8 }}
+            >
+              Avis publiés sur l&apos;App Store et Google Play · l&apos;app est notée {APP_PROOF.storeRating}
+            </p>
+          </Reveal>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-6xl mx-auto">
+            {STORE_REVIEWS.map((review, i) => (
+              <Reveal key={review.author} delay={i * 0.08}>
+                <figure
+                  className="h-full flex flex-col p-6 rounded-[20px]"
+                  style={{ backgroundColor: 'var(--color-primary-beige)', border: '2px solid var(--color-primary-green)' }}
+                >
+                  <p aria-label="5 étoiles sur 5" className="mb-3 text-lg tracking-[0.15em]" style={{ color: 'var(--color-secondary-orange)' }}>
+                    ★★★★★
+                  </p>
+                  <blockquote
+                    className="flex-1 mb-5"
+                    style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', lineHeight: 1.6 }}
+                  >
+                    « {review.text} »
+                  </blockquote>
+                  <figcaption className="text-xs" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', opacity: 0.75 }}>
+                    <strong className="text-sm" style={{ fontFamily: 'var(--font-syne)', opacity: 1 }}>
+                      {review.author}
+                    </strong>
+                    <br />
+                    Avis {review.source} · {review.date}
+                    {review.excerpt ? ' · Extrait' : ''}
+                  </figcaption>
+                </figure>
+              </Reveal>
+            ))}
           </div>
         </div>
       </section>
@@ -1289,32 +905,6 @@ export default function ShopLanding() {
         </div>
       </section>
 
-      {/* ───────────── CONFIANCE (pattern « Science & Fiabilité » Polar) ───────────── */}
-      <section className="py-14" style={{ backgroundColor: 'var(--color-primary-beige)' }}>
-        <div className="container-custom">
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-8 max-w-5xl mx-auto">
-            {CONFIANCE.map((item, i) => (
-              <Reveal key={item.big} delay={i * 0.06}>
-                <div className="text-center">
-                  <p
-                    className="text-2xl md:text-3xl font-bold mb-1"
-                    style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-secondary-orange)' }}
-                  >
-                    {item.big}
-                  </p>
-                  <p
-                    className="text-xs uppercase font-bold"
-                    style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-primary-green)', letterSpacing: '0.08em', lineHeight: 1.5 }}
-                  >
-                    {item.small}
-                  </p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ───────────── FAQ ───────────── */}
       <section className="py-20" style={{ backgroundColor: 'var(--color-primary-beige)' }}>
         <div className="container-custom">
@@ -1369,12 +959,7 @@ export default function ShopLanding() {
               Prêt·e à grimper avec nous ?
             </h2>
             <Magnetic>
-              <a
-                href="#achat"
-                data-umami-event="clic-precommande"
-                data-umami-event-emplacement="bas-de-page"
-                className="btn-secondary inline-block"
-              >
+              <a {...preorderLinkProps('bas-de-page')} className="btn-secondary inline-block">
                 Je précommande →
               </a>
             </Magnetic>
@@ -1402,12 +987,7 @@ export default function ShopLanding() {
               Fin des pré-commandes le {PREORDER_END_LABEL}
             </p>
           </div>
-          <a
-            href="#achat"
-            data-umami-event="clic-precommande"
-            data-umami-event-emplacement="barre-mobile"
-            className="btn-secondary text-sm whitespace-nowrap"
-          >
+          <a {...preorderLinkProps('barre-mobile')} className="btn-secondary text-sm whitespace-nowrap">
             Je précommande
           </a>
         </div>

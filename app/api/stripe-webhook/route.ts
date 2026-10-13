@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import type Stripe from 'stripe'
 import nodemailer from 'nodemailer'
 import type Mail from 'nodemailer/lib/mailer'
@@ -404,6 +405,12 @@ async function handlePaidPreorder(session: Stripe.Checkout.Session) {
   await sendCustomerConfirmation(session, extras)
   await addToBrevoPreorderList(session)
   await sendPurchaseCapi(session)
+  // Compteur « grimpeurs ont déjà choisi WAC » de la boutique : à jour dès l'achat.
+  try {
+    revalidatePath('/boutique')
+  } catch (err) {
+    console.error('stripe-webhook: revalidation /boutique impossible', err)
+  }
   // NB : l'expédition n'est PAS créée ici. Modèle « carnet de commandes » : les
   // étiquettes Boxtal sont générées en lot via scripts/create-boxtal-shipments.mjs.
 }
