@@ -9,11 +9,9 @@
  * l'offre premium.
  *
  * Importé par ShopLanding (affichage) ET /api/checkout (metadata) : une seule
- * source de vérité pour les deux.
+ * source de vérité pour les deux. Le `?creator=` est capturé à l'atterrissage
+ * en cookie 30 jours (lib/attribution.ts).
  */
-
-/** Clé sessionStorage du `?creator=` capturé à l'atterrissage (UtmCapture). */
-export const CREATOR_STORAGE_KEY = 'wac_creator'
 
 export interface CapturedUtm {
   utm_source?: unknown

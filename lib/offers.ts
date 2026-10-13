@@ -26,9 +26,6 @@
  */
 import { PREORDER_END_DATE } from '@/lib/preorder'
 
-/** Clé sessionStorage du `?offre=` capturé à l'atterrissage (UtmCapture). */
-export const OFFER_STORAGE_KEY = 'wac_offer'
-
 export interface PartnerOffer {
   /** Valeur du paramètre `?offre=` du lien partenaire (minuscules). */
   slug: string

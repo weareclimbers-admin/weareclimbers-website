@@ -12,9 +12,9 @@ import PressFeature from '@/components/PressFeature'
 import CountdownTimer from '@/components/CountdownTimer'
 import { DERNIER_ARTICLE } from '@/lib/press'
 import { PREORDER_PACK, SHIPPING_ZONES, PREORDER_END_DATE, PREORDER_END_LABEL, cheapestShipping } from '@/lib/preorder'
-import { CREATOR_STORAGE_KEY, detectCreator } from '@/lib/creator'
-import { OFFER_STORAGE_KEY, getPartnerOffer } from '@/lib/offers'
-import { readCampaignParams } from '@/lib/attribution'
+import { detectCreator } from '@/lib/creator'
+import { getPartnerOffer } from '@/lib/offers'
+import { readAttribution, clearPartnerOffer } from '@/lib/attribution'
 import { trackShopEvent, SHOP_CONTENT, newEventId, hasMarketingConsent } from '@/lib/meta-pixel'
 import type { ParcelPoint } from '@boxtal/parcel-point-map'
 
@@ -196,10 +196,10 @@ export default function ShopLanding() {
   const [mapReady, setMapReady] = useState(false)
   const [mapFailed, setMapFailed] = useState(false)
 
-  // Attribution créateur UGC et offre partenaire (UtmCapture → sessionStorage),
-  // UTM + fbclid (cookies, lib/attribution.ts), relues au montage : affichent la
-  // contrepartie (premium, tarif négocié) et voyagent vers /api/checkout, qui
-  // revérifie tout. Stockage indisponible → paiement normal sans attribution.
+  // Attribution capturée à l'atterrissage (UtmCapture → cookies 30 jours,
+  // lib/attribution.ts), relue au montage : créateur UGC et offre partenaire
+  // affichent la contrepartie (premium, tarif négocié) ; tout voyage vers
+  // /api/checkout, qui revérifie. Cookies indisponibles → paiement normal.
   const [attribution, setAttribution] = useState<{
     creator: string
     utm: Record<string, string>
@@ -224,13 +224,7 @@ export default function ShopLanding() {
 
   useEffect(() => {
     try {
-      const { utm, fbclid } = readCampaignParams()
-      setAttribution({
-        creator: sessionStorage.getItem(CREATOR_STORAGE_KEY) ?? '',
-        utm,
-        offer: sessionStorage.getItem(OFFER_STORAGE_KEY) ?? '',
-        fbclid,
-      })
+      setAttribution(readAttribution())
     } catch {
       /* capture illisible : paiement sans attribution */
     }
@@ -434,7 +428,7 @@ export default function ShopLanding() {
         // Places épuisées / offre terminée : on retire l'offre (le clic suivant
         // part au tarif normal) et on affiche l'explication du serveur.
         try {
-          sessionStorage.removeItem(OFFER_STORAGE_KEY)
+          clearPartnerOffer()
         } catch {
           /* non bloquant */
         }
