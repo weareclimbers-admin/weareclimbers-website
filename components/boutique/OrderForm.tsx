@@ -7,6 +7,7 @@ import { SHIPPING_ZONES, cheapestShipping, formatPrice, formatShipping } from '@
 import type { PartnerOffer } from '@/lib/offers'
 import { trackShopEvent, SHOP_CONTENT, newEventId, hasMarketingConsent } from '@/lib/meta-pixel'
 import { trackShop, trackShopBeforeLeaving } from '@/lib/umami'
+import Reassurance from '@/components/boutique/Reassurance'
 
 /**
  * Formulaire de commande de la boutique → checkout Stripe hébergé.
@@ -616,12 +617,13 @@ export default function OrderForm({
         </p>
       )}
 
+      <div className="mt-2 mb-5">
+        <Reassurance />
+      </div>
+
       <p className="text-xs" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', opacity: 0.7, lineHeight: 1.6 }}>
-        Paiement sécurisé Stripe, par carte ou en plusieurs fois avec Klarna · Facture envoyée par email · Rétractation 14 jours après réception
-        {offer ? '.' : ' · Quantité modifiable sur la page de paiement.'}
-      </p>
-      <p className="text-xs mt-2" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', opacity: 0.7, lineHeight: 1.6 }}>
-        En précommandant, tu acceptes nos{' '}
+        {offer ? '' : 'Quantité modifiable sur la page de paiement. '}
+        Facture envoyée par email. En précommandant, tu acceptes nos{' '}
         <Link href="/cgv" target="_blank" className="underline underline-offset-2 font-bold hover:opacity-70 transition-opacity">
           Conditions Générales de Vente
         </Link>

@@ -10,6 +10,7 @@ import Magnetic from '@/components/Magnetic'
 import PressFeature from '@/components/PressFeature'
 import CountdownTimer from '@/components/CountdownTimer'
 import OrderForm, { type Attribution } from '@/components/boutique/OrderForm'
+import Reassurance from '@/components/boutique/Reassurance'
 import { DERNIER_ARTICLE } from '@/lib/press'
 import { PREORDER_PACK, PREORDER_END_DATE, PREORDER_END_LABEL, formatPrice } from '@/lib/preorder'
 import { APP_PROOF, STORE_REVIEWS } from '@/lib/proof'
@@ -83,7 +84,7 @@ const FAQ: { q: string; a: string }[] = [
   },
   {
     q: 'Et si je change d’avis ?',
-    a: 'Tu disposes du droit de rétractation légal de 14 jours après réception de ta commande, pour un remboursement intégral. Écris-nous simplement, on s’occupe de tout.',
+    a: 'Tant que ta précommande n’est pas expédiée, tu peux l’annuler gratuitement sur simple email, et on te rembourse intégralement. Après réception, tu disposes encore du droit de rétractation légal de 14 jours. Écris-nous simplement, on s’occupe de tout.',
   },
 ]
 
@@ -535,10 +536,13 @@ export default function ShopLanding({
               <button
                 type="button"
                 onClick={() => openOrder('fiche')}
-                className="btn-secondary w-full mb-4 lg:hidden"
+                className="btn-secondary w-full mb-5 lg:hidden"
               >
                 Je précommande{unitPrice !== null ? ` — ${formatPrice(unitPrice)}` : ''}
               </button>
+              <div className="mb-6 lg:hidden">
+                <Reassurance />
+              </div>
 
               {/* Formulaire de commande : en ligne dans la fiche sur ordinateur, panneau
                   qui monte du bas de l'écran sur mobile (ouvert par les boutons
