@@ -74,6 +74,10 @@ const FAQ: { q: string; a: string }[] = [
     a: `Livraison estimée la ${PREORDER_PACK.estimatedDelivery} (quelques jours de plus pour l’Outre-mer). On commande les bracelets à Polar à la clôture des pré-commandes, le ${PREORDER_END_LABEL}, puis on t’expédie le tien nous-mêmes, avec un email à chaque étape.`,
   },
   {
+    q: 'Puis-je payer en plusieurs fois ?',
+    a: 'Oui. Sur la page de paiement sécurisée, choisis Klarna pour régler en plusieurs fois. Le nombre d’échéances et les conditions s’affichent directement chez Klarna, selon ton éligibilité.',
+  },
+  {
     q: 'Le paiement est-il sécurisé ?',
     a: 'Oui — le paiement est opéré par Stripe, leader mondial du paiement en ligne. Aucune donnée bancaire ne transite par nos serveurs. Ta facture t’est envoyée automatiquement par email.',
   },
@@ -468,6 +472,11 @@ export default function ShopLanding({
                   Prix de lancement — annoncé à l&apos;ouverture
                 </p>
               )}
+              {/* Klarna activé sur le compte Stripe (confirmé par Julien le 13/10/2026) :
+                  proposé automatiquement sur la page de paiement, selon l'éligibilité. */}
+              <p className="text-sm font-bold mb-1" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)' }}>
+                Payable en plusieurs fois avec Klarna
+              </p>
               <p className="text-sm mb-6" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', opacity: 0.75 }}>
                 <strong>Pré-commande</strong> : livraison estimée la {PREORDER_PACK.estimatedDelivery}.
               </p>

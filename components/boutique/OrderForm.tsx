@@ -41,14 +41,13 @@ interface RelayPointLite {
 }
 
 /**
- * Carte Boxtal désactivée (13/10/2026) : l'app carte hébergée par Boxtal
- * (maps.boxtal.com/app/v3) reçoit un 410 sur son propre style
- * (/api/v2/maps-style/style.json) pour tout navigateur réel — la carte restait
- * vide 8 s avant le repli. Même app dans @boxtal/parcel-point-map 0.0.10 → côté
- * Boxtal. La liste des relais les plus proches (/api/relay-points), plus simple
- * sur mobile, devient l'affichage par défaut. Repasser à true quand Boxtal a corrigé.
+ * Carte Boxtal (choix visuel du relais). Vérifiée en prod par Julien le
+ * 13/10/2026 : elle s'affiche. ⚠️ Depuis un navigateur automatisé (tests
+ * headless), le style de l'app hébergée Boxtal répond 410 → la carte n'y
+ * charge jamais et le repli « liste » prend le relais après 8 s : ce n'est pas
+ * représentatif des vrais visiteurs. false = liste des relais seule.
  */
-const USE_BOXTAL_MAP = false
+const USE_BOXTAL_MAP = true
 
 const labelStyle = {
   fontFamily: 'var(--font-syne)',
@@ -210,7 +209,8 @@ export default function OrderForm({
   // Recherche pilotée par le code postal : via la carte si dispo, sinon la liste.
   async function onRelaySearch() {
     const zip = relayZip.trim()
-    if (zip.length < 4) return
+    // Carte pas encore prête : l'effet de recherche auto relancera dès qu'elle l'est.
+    if (zip.length < 4 || (!mapReady && !mapFailed)) return
     lastSearch.current = `${relayCountry}-${zip}`
     setError(null)
     if (mapRef.current && !mapFailed) {
@@ -617,7 +617,7 @@ export default function OrderForm({
       )}
 
       <p className="text-xs" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', opacity: 0.7, lineHeight: 1.6 }}>
-        Paiement sécurisé Stripe · Facture envoyée par email · Rétractation 14 jours après réception
+        Paiement sécurisé Stripe, par carte ou en plusieurs fois avec Klarna · Facture envoyée par email · Rétractation 14 jours après réception
         {offer ? '.' : ' · Quantité modifiable sur la page de paiement.'}
       </p>
       <p className="text-xs mt-2" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', opacity: 0.7, lineHeight: 1.6 }}>
