@@ -14,7 +14,7 @@ import { COACH_VIDEOS, type CoachVideoId } from '@/lib/coachVideos'
 /* Le parcours du coach, du constat à la séance — un bénéfice par bloc.
    `video` : tuto de la webapp coach (lib/coachVideos.ts) ; s'il n'est pas (ou plus)
    publié, le bloc retombe sur `image`, sinon sur le placeholder « Démo à venir ».
-   01 garde une capture en attendant le tuto « tour rapide ». `badge` = offre minimale. */
+   01 = extrait du tuto « tour rapide » (capture en repli). `badge` = offre minimale. */
 const FEATURES: {
   index: string
   step: string
@@ -26,14 +26,17 @@ const FEATURES: {
   imageAlt?: string
   video?: CoachVideoId
   badge?: string
+  /** Relais d'appel à l'action sous le bloc (id = emplacement mesuré dans Umami) */
+  relay?: { id: string; text: string }
 }[] = [
   {
     index: '01',
     step: 'Repérer',
     title: "Sache d'un coup d'œil qui pousser et qui ménager.",
     desc: "Sommeil, récupération, charge réelle face au ressenti\u00a0: tout remonte seul du bracelet et de l'app. Ton tableau de bord te montre la forme du groupe et les grimpeurs à regarder en priorité, et un récap t'attend chaque lundi par email.",
-    label: 'État de forme',
+    label: 'Tableau de bord',
     placeholder: 'Forme du groupe et grimpeurs à regarder en priorité',
+    video: 'tour-rapide',
     image: '/images/coachs/etat-de-forme.JPG',
     imageAlt: "Capture WAC Coach\u00a0: état de forme d'un grimpeur et son évolution sur 30 jours",
   },
@@ -45,6 +48,7 @@ const FEATURES: {
     label: 'Programmation',
     placeholder: 'Calendrier, consignes, prévu face au réalisé',
     video: 'programmation',
+    relay: { id: 'relais-1', text: 'Envie de voir ça avec ton groupe\u00a0?' },
   },
   {
     index: '03',
@@ -64,6 +68,7 @@ const FEATURES: {
     label: 'Bibliothèque',
     placeholder: 'Exercices perso et modèles de séance',
     video: 'exercices-modeles',
+    relay: { id: 'relais-2', text: 'En 45\u00a0minutes, on te montre tout ça sur tes propres cas.' },
     // Exercices perso dès Essentiel, modèles en Pro
     badge: 'Modèles\u00a0: offre Pro',
   },
@@ -78,6 +83,44 @@ const FEATURES: {
     badge: 'Offre Pro',
   },
 ]
+
+const COACH_OFFERS_URL = 'https://coach.weareclimbers.fr/tarifs'
+
+/* Événements Umami de la page (noms FIGÉS, kebab-case FR) :
+   - clic-demo-coach    bouton « Réserver une démo / ma démo » (data : emplacement = hero | relais-1 | relais-2)
+   - clic-offres-coach  lien vers les offres (data : emplacement = hero | relais-1 | relais-2 | final)
+   - demande-demo-coach envoi du formulaire de démo (CoachLeadForm) */
+
+/** Relais entre deux démos : phrase + « Réserver ma démo » + accès gratuit, alignés sur les titres. */
+function DemoRelay({ id, text }: { id: string; text: string }) {
+  return (
+    <Reveal>
+      <div className="pt-2 md:pt-4">
+        <p className="text-xl md:text-2xl mb-5" style={{ fontFamily: 'var(--font-syne)', fontWeight: 700, color: 'var(--color-primary-green)' }}>
+          {text}
+        </p>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
+          <Magnetic>
+            <a href="#demo" className="btn-secondary inline-block" data-umami-event="clic-demo-coach" data-umami-event-emplacement={id}>
+              Réserver ma démo
+            </a>
+          </Magnetic>
+          <a
+            href={COACH_OFFERS_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline font-bold hover:opacity-80"
+            style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-secondary-orange)' }}
+            data-umami-event="clic-offres-coach"
+            data-umami-event-emplacement={id}
+          >
+            ou essaie-le gratuitement →
+          </a>
+        </div>
+      </div>
+    </Reveal>
+  )
+}
 
 export default function CoachLanding() {
   return (
@@ -134,14 +177,18 @@ export default function CoachLanding() {
                 transition={{ type: 'spring', stiffness: 120, damping: 18, delay: 0.35 }}
               >
                 <Magnetic>
-                  <a href="#demo" className="btn-secondary inline-block">Réserver une démo</a>
+                  <a href="#demo" className="btn-secondary inline-block" data-umami-event="clic-demo-coach" data-umami-event-emplacement="hero">
+                    Réserver une démo
+                  </a>
                 </Magnetic>
                 <Magnetic>
                   <a
-                    href="https://coach.weareclimbers.fr/tarifs"
+                    href={COACH_OFFERS_URL}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="btn-beige inline-block"
+                    data-umami-event="clic-offres-coach"
+                    data-umami-event-emplacement="hero"
                   >
                     Voir les offres
                   </a>
@@ -300,9 +347,11 @@ export default function CoachLanding() {
                   alt={f.imageAlt}
                   label={f.label}
                   placeholder={f.placeholder}
-                  tilt={i === 0}
+                  tilt={i === 0 && !clip}
                 />
               )
+
+              const relay = f.relay && <DemoRelay id={f.relay.id} text={f.relay.text} />
 
               // Démo vidéo : texte en haut à gauche, vidéo en grand dessous (lisible)
               if (clip) {
@@ -310,15 +359,19 @@ export default function CoachLanding() {
                   <div key={f.index} className="space-y-8 md:space-y-10">
                     <div className="max-w-3xl">{text}</div>
                     {visual}
+                    {relay}
                   </div>
                 )
               }
 
               // Capture : texte et visuel côte à côte
               return (
-                <div key={f.index} className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-                  <div>{text}</div>
-                  <div>{visual}</div>
+                <div key={f.index} className="space-y-8 md:space-y-10">
+                  <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+                    <div>{text}</div>
+                    <div>{visual}</div>
+                  </div>
+                  {relay}
                 </div>
               )
             })}
@@ -418,11 +471,13 @@ export default function CoachLanding() {
             <p className="mt-8 text-sm" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-beige)', opacity: 0.85 }}>
               Tu veux d'abord voir les tarifs&nbsp;?{' '}
               <a
-                href="https://coach.weareclimbers.fr/tarifs"
+                href={COACH_OFFERS_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="underline font-bold hover:opacity-80"
                 style={{ color: 'var(--color-secondary-orange)' }}
+                data-umami-event="clic-offres-coach"
+                data-umami-event-emplacement="final"
               >
                 Voir les offres →
               </a>
