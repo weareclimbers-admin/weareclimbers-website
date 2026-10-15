@@ -9,44 +9,118 @@ import Magnetic from '@/components/Magnetic'
 import CoachHeroCard from './CoachHeroCard'
 import ScreenFrame from './ScreenFrame'
 import CoachLeadForm from './CoachLeadForm'
+import { COACH_VIDEOS, type CoachVideoId } from '@/lib/coachVideos'
 
-/* Fonctionnalités — `src` : captures actuelles (.JPG), à remplacer par les vidéos
-   de démo de la webapp coach dès que Julien les dépose dans public/videos/coach/
-   (ScreenFrame détecte .mp4/.webm automatiquement, tableau = lecture en chaîne). */
-const FEATURES = [
+/* Le parcours du coach, du constat à la séance — un bénéfice par bloc.
+   `video` : tuto de la webapp coach (lib/coachVideos.ts) ; s'il n'est pas (ou plus)
+   publié, le bloc retombe sur `image`, sinon sur le placeholder « Démo à venir ».
+   01 = extrait du tuto « tour rapide » (capture en repli). `badge` = offre minimale. */
+const FEATURES: {
+  index: string
+  step: string
+  title: string
+  desc: string
+  label: string
+  placeholder: string
+  image?: string
+  imageAlt?: string
+  video?: CoachVideoId
+  badge?: string
+  /** Relais d'appel à l'action sous le bloc (id = emplacement mesuré dans Umami) */
+  relay?: { id: string; text: string }
+}[] = [
   {
     index: '01',
-    title: 'La fiche élève à 360°',
-    desc: "Sommeil, récupération cardiaque (HRV), charge réelle vs ressentie, historique de séances : tout remonte automatiquement du bracelet et de l'app. Tu vois qui est frais, qui accumule, qui décroche — sans avoir à demander.",
-    label: 'Fiche élève',
-    placeholder: 'Fiche élève : sommeil, HRV, charge, historique',
-    src: '/images/coachs/sommeil-eleve.JPG' as string | undefined,
+    step: 'Repérer',
+    title: "Sache d'un coup d'œil qui pousser et qui ménager.",
+    desc: "Sommeil, récupération, charge réelle face au ressenti\u00a0: tout remonte seul du bracelet et de l'app. Ton tableau de bord te montre la forme du groupe et les grimpeurs à regarder en priorité, et un récap t'attend chaque lundi par email.",
+    label: 'Tableau de bord',
+    placeholder: 'Forme du groupe et grimpeurs à regarder en priorité',
+    video: 'tour-rapide',
+    image: '/images/coachs/etat-de-forme.JPG',
+    imageAlt: "Capture WAC Coach\u00a0: état de forme d'un grimpeur et son évolution sur 30 jours",
   },
   {
     index: '02',
-    title: 'Le score « État de forme »',
-    desc: "Un indicateur clair qui combine récupération, sommeil, charge récente et ressenti. D'un regard : qui peut encaisser une grosse séance, et qui doit lever le pied cette semaine.",
-    label: 'État de forme',
-    placeholder: 'Score qui combine récup, sommeil, charge, ressenti',
-    src: '/images/coachs/etat-de-forme.JPG' as string | undefined,
+    step: 'Programmer',
+    title: 'Envoie ta séance. Vois ce qui a vraiment été fait.',
+    desc: "Tu programmes en quelques clics, avec tes consignes et l'effort visé\u00a0: ton grimpeur reçoit la séance directement dans son app. Une fois faite, tu compares le prévu au réalisé et tu ajustes la suite sur du concret, pas sur un «\u00a0ça allait\u00a0».",
+    label: 'Programmation',
+    placeholder: 'Calendrier, consignes, prévu face au réalisé',
+    video: 'programmation',
+    relay: { id: 'relais-1', text: 'Envie de voir ça avec ton groupe\u00a0?' },
   },
   {
     index: '03',
-    title: 'La programmation intelligente',
-    desc: "Assigne les séances en glisser-déposer. Et surtout : simule une montée en charge sur 4 à 16 semaines, compare deux plans côte à côte et vois leur impact projeté sur la forme de ton grimpeur. Tu ne devines plus, tu testes.",
-    label: 'Programmation',
-    placeholder: 'Simulation de charge sur 4 à 16 semaines',
-    src: '/images/coachs/programmation.JPG' as string | undefined,
+    step: 'Anticiper',
+    title: 'Teste ton plan sur le papier, pas sur ton grimpeur.',
+    desc: "Une compétition en vue\u00a0? Construis ton bloc semaine par semaine, jusqu'à 16 semaines, duplique-le et compare deux options. L'app projette la forme et la fraîcheur de ton grimpeur au jour\u00a0J\u00a0: tu envoies le meilleur plan en un clic, séances comprises.",
+    label: 'Scénarios',
+    placeholder: 'Deux plans comparés, forme projetée au jour\u00a0J',
+    video: 'scenarios',
+    badge: 'Offre Pro',
   },
   {
     index: '04',
-    title: 'Ton dashboard de groupe',
-    desc: "Charge cumulée, forme moyenne, séances de la semaine, et la liste des grimpeurs à surveiller en priorité. Plus un digest par email chaque lundi. Tu repères ce qui compte sans éplucher chaque profil.",
-    label: 'Dashboard groupe',
-    placeholder: 'Vue équipe + liste à surveiller + digest du lundi',
-    src: '/images/coachs/groupe.JPG' as string | undefined,
+    step: 'Gagner du temps',
+    title: 'Écris ta séance une fois. Programme-la autant que tu veux.',
+    desc: "Crée tes propres exercices et enregistre tes séances types, consignes comprises. La prochaine fois, tu les programmes en un clic au lieu de tout réécrire\u00a0: moins de temps derrière l'écran, plus de temps au pied du mur.",
+    label: 'Bibliothèque',
+    placeholder: 'Exercices perso et modèles de séance',
+    video: 'exercices-modeles',
+    relay: { id: 'relais-2', text: 'En 45\u00a0minutes, on te montre tout ça sur tes propres cas.' },
+    // Exercices perso dès Essentiel, modèles en Pro
+    badge: 'Modèles\u00a0: offre Pro',
+  },
+  {
+    index: '05',
+    step: 'Coacher à ta façon',
+    title: "Suis ce qui compte pour toi, pas ce qu'on a choisi à ta place.",
+    desc: "Chaque coach a ses repères. Construis tes propres graphiques en croisant plus de 40 métriques, du volume de grimpe à l'effort perçu. Ils s'affichent ensuite sur chaque fiche élève, calculés avec ses propres données.",
+    label: 'Mes graphiques',
+    placeholder: 'Graphiques perso sur chaque fiche élève',
+    video: 'mes-graphiques',
+    badge: 'Offre Pro',
   },
 ]
+
+const COACH_OFFERS_URL = 'https://coach.weareclimbers.fr/tarifs'
+
+/* Événements Umami de la page (noms FIGÉS, kebab-case FR) :
+   - clic-demo-coach    bouton « Réserver une démo / ma démo » (data : emplacement = hero | relais-1 | relais-2)
+   - clic-offres-coach  lien vers les offres (data : emplacement = hero | relais-1 | relais-2 | final)
+   - demande-demo-coach envoi du formulaire de démo (CoachLeadForm) */
+
+/** Relais entre deux démos : phrase + « Réserver ma démo » + accès gratuit, alignés sur les titres. */
+function DemoRelay({ id, text }: { id: string; text: string }) {
+  return (
+    <Reveal>
+      <div className="pt-2 md:pt-4">
+        <p className="text-xl md:text-2xl mb-5" style={{ fontFamily: 'var(--font-syne)', fontWeight: 700, color: 'var(--color-primary-green)' }}>
+          {text}
+        </p>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
+          <Magnetic>
+            <a href="#demo" className="btn-secondary inline-block" data-umami-event="clic-demo-coach" data-umami-event-emplacement={id}>
+              Réserver ma démo
+            </a>
+          </Magnetic>
+          <a
+            href={COACH_OFFERS_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline font-bold hover:opacity-80"
+            style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-secondary-orange)' }}
+            data-umami-event="clic-offres-coach"
+            data-umami-event-emplacement={id}
+          >
+            ou essaie-le gratuitement →
+          </a>
+        </div>
+      </div>
+    </Reveal>
+  )
+}
 
 export default function CoachLanding() {
   return (
@@ -82,7 +156,7 @@ export default function CoachLanding() {
                 Pour les coachs & les clubs d'escalade
               </motion.p>
               <TitleReveal
-                lines={['Vois enfin ce que', 'vivent tes grimpeurs', 'entre deux séances.']}
+                lines={['Vois leur forme.', 'Programme mieux.', 'Vérifie le résultat.']}
                 as="h1"
                 className="text-4xl md:text-5xl lg:text-6xl mb-7"
                 style={{ fontFamily: 'var(--font-syne)', fontWeight: 700, textTransform: 'uppercase', color: 'var(--color-primary-beige)', lineHeight: '1.08' }}
@@ -94,7 +168,7 @@ export default function CoachLanding() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ type: 'spring', stiffness: 120, damping: 18, delay: 0.25 }}
               >
-                Une semaine compte 168&nbsp;heures. Tu n'en coaches qu'une poignée — le reste (sommeil, récupération, charge réelle) décide de leur progression, et tu ne le vois pas. WAC&nbsp;Coach te le rend visible&nbsp;: du ressenti déclaré à la donnée réelle.
+                Sommeil, récupération, charge réelle&nbsp;: WAC&nbsp;Coach te montre ce que vivent tes grimpeurs entre deux séances. Tu programmes en conséquence, tu testes ton plan avant de l'envoyer, et tu vois ce qui a vraiment été fait.
               </motion.p>
               <motion.div
                 className="flex flex-col sm:flex-row gap-4"
@@ -103,14 +177,18 @@ export default function CoachLanding() {
                 transition={{ type: 'spring', stiffness: 120, damping: 18, delay: 0.35 }}
               >
                 <Magnetic>
-                  <a href="#demo" className="btn-secondary inline-block">Réserver une démo</a>
+                  <a href="#demo" className="btn-secondary inline-block" data-umami-event="clic-demo-coach" data-umami-event-emplacement="hero">
+                    Réserver une démo
+                  </a>
                 </Magnetic>
                 <Magnetic>
                   <a
-                    href="https://coach.weareclimbers.fr/tarifs"
+                    href={COACH_OFFERS_URL}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="btn-beige inline-block"
+                    data-umami-event="clic-offres-coach"
+                    data-umami-event-emplacement="hero"
                   >
                     Voir les offres
                   </a>
@@ -200,108 +278,103 @@ export default function CoachLanding() {
         </div>
       </section>
 
-      {/* ───────────── PROBLÈME ───────────── */}
-      <section className="py-20 md:py-28">
-        <div className="container-custom">
-          <div className="max-w-3xl mx-auto">
-            <Reveal>
-              <h2 className="text-3xl md:text-5xl mb-8" style={{ fontFamily: 'var(--font-syne)', fontWeight: 700, textTransform: 'uppercase', color: 'var(--color-primary-green)', lineHeight: '1.15' }}>
-                Tu coaches à l'aveugle entre deux séances.
-              </h2>
-            </Reveal>
-            <Reveal delay={0.1}>
-              <p className="text-lg md:text-xl leading-relaxed" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)' }}>
-                Tu vois ton grimpeur une heure. Puis il disparaît&nbsp;: sa nuit avant la séance, sa fatigue accumulée, ses autres entraînements, sa vraie récup — tu n'en sais rien. Tu ajustes au ressenti qu'il veut bien te livrer. Et quand la fatigue parle à ta place, c'est souvent trop tard&nbsp;: la blessure est là, la progression casse, et l'adhérent décroche.
-              </p>
-            </Reveal>
-          </div>
-        </div>
-      </section>
-
-      {/* ───────────── SOLUTION ───────────── */}
+      {/* ───────────── DU RESSENTI À LA SÉANCE ───────────── */}
       <section id="produit" className="py-20 md:py-28" style={{ backgroundColor: 'var(--color-secondary-beige-light)' }}>
         <div className="container-custom">
           <div className="max-w-3xl mx-auto text-center">
             <Reveal>
               <h2 className="text-3xl md:text-5xl mb-6" style={{ fontFamily: 'var(--font-syne)', fontWeight: 700, textTransform: 'uppercase', color: 'var(--color-primary-green)', lineHeight: '1.15' }}>
-                Relie ce qu'ils font sur le mur à ce qu'ils vivent en dehors.
+                Du ressenti à la donnée. De la donnée à la séance.
               </h2>
             </Reveal>
             <Reveal delay={0.1}>
               <p className="text-lg md:text-xl leading-relaxed" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)' }}>
-                Tes grimpeurs portent le bracelet WAC et utilisent l'app. Toi, tu retrouves tout dans ton espace coach&nbsp;: leur forme, leur charge, leur récupération — en temps réel, sans avoir à demander. Tu sais enfin qui pousser et qui laisser récupérer, <strong>avant</strong> que la fatigue ne décide pour toi.
+                Tes grimpeurs portent le bracelet WAC et utilisent l'app. Toi, tu retrouves leur forme, leur charge et leur récupération dans ton espace coach, sans avoir à leur demander. Et tu ne t'arrêtes pas au constat&nbsp;: tu programmes, tu testes et tu ajustes au même endroit.
               </p>
             </Reveal>
           </div>
         </div>
       </section>
 
-      {/* ───────────── FONCTIONNALITÉS (lignes alternées, prêtes pour screenshots réels) ───────────── */}
+      {/* ───────────── PARCOURS DU COACH (démos vidéo en grand, capture côte à côte) ───────────── */}
       <section className="py-20 md:py-28">
         <div className="container-custom">
           <Reveal>
-            <h2 className="text-3xl md:text-5xl text-center mb-20" style={{ fontFamily: 'var(--font-syne)', fontWeight: 700, textTransform: 'uppercase', color: 'var(--color-primary-green)' }}>
+            <h2 className="text-3xl md:text-5xl text-center mb-6" style={{ fontFamily: 'var(--font-syne)', fontWeight: 700, textTransform: 'uppercase', color: 'var(--color-primary-green)' }}>
               Pour piloter, pas deviner.
             </h2>
           </Reveal>
-
-          <div className="max-w-6xl mx-auto space-y-20 md:space-y-28">
-            {FEATURES.map((f, i) => (
-              <div key={f.index} className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-                {/* Texte */}
-                <div className={i % 2 === 1 ? 'lg:order-2' : ''}>
-                  <Reveal>
-                    <div className="text-5xl mb-4" style={{ fontFamily: 'var(--font-syne)', fontWeight: 700, color: 'var(--color-secondary-orange)', opacity: 0.3 }}>
-                      {f.index}
-                    </div>
-                    <h3 className="text-2xl md:text-3xl mb-4" style={{ fontFamily: 'var(--font-syne)', fontWeight: 700, color: 'var(--color-primary-green)' }}>
-                      {f.title}
-                    </h3>
-                    <p className="text-lg leading-relaxed" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)' }}>
-                      {f.desc}
-                    </p>
-                  </Reveal>
-                </div>
-
-                {/* Visuel (cadre écran — screenshot réel à venir) */}
-                <div className={i % 2 === 1 ? 'lg:order-1' : ''}>
-                  <ScreenFrame src={f.src} label={f.label} placeholder={f.placeholder} tilt={i === 0} />
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <Reveal delay={0.1}>
-            <p className="text-center mt-20 text-sm italic" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', opacity: 0.7 }}>
-              + Ta bibliothèque de séances&nbsp;: capitalise tes modèles et tes exos custom pour programmer plus vite.
+          <Reveal delay={0.05}>
+            <p className="text-lg md:text-xl text-center mb-20 max-w-2xl mx-auto" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', opacity: 0.85, lineHeight: '1.6' }}>
+              Voir la forme de tes grimpeurs, c'est le point de départ. Voici ce que tu en fais.
             </p>
           </Reveal>
-        </div>
-      </section>
 
-      {/* ───────────── BÉNÉFICES ───────────── */}
-      <section className="py-20 md:py-28" style={{ backgroundColor: 'var(--color-primary-green)' }}>
-        <div className="container-custom">
-          <div className="grid md:grid-cols-3 gap-10 max-w-5xl mx-auto">
-            {[
-              { t: 'Gagne du temps', d: 'Un écran au lieu de dix conversations. Tu repères l\'essentiel en un coup d\'œil.' },
-              { t: 'Préviens la blessure', d: 'Repère la surcharge avant la casse : moins de blessés, plus d\'adhérents qui restent.' },
-              { t: 'Coache avec crédibilité', d: 'Des décisions appuyées sur la donnée réelle, pas sur l\'intuition.' },
-            ].map((b, i) => (
-              <Reveal key={b.t} delay={i * 0.1}>
-                <motion.div
-                  className="relative h-full p-7 rounded-[20px]"
-                  style={{ border: '1px solid rgba(245,236,229,0.2)' }}
-                  whileHover={{ y: -6, borderColor: 'rgba(216,90,26,0.9)', boxShadow: '0 16px 48px rgba(216,90,26,0.18)' }}
-                  transition={{ type: 'spring', stiffness: 200, damping: 22 }}
-                >
-                  <span className="absolute top-0 right-0 w-3 h-3" style={{ backgroundColor: 'var(--color-secondary-orange)' }} />
-                  <div className="w-10 h-1 mb-5" style={{ backgroundColor: 'var(--color-secondary-orange)' }} />
-                  <h3 className="text-xl md:text-2xl mb-3" style={{ fontFamily: 'var(--font-syne)', fontWeight: 700, color: 'var(--color-primary-beige)' }}>{b.t}</h3>
-                  <p style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-beige)', opacity: 0.85, lineHeight: '1.6' }}>{b.d}</p>
-                </motion.div>
-              </Reveal>
-            ))}
+          <div className="max-w-6xl mx-auto space-y-20 md:space-y-28">
+            {FEATURES.map((f, i) => {
+              const clip = f.video ? COACH_VIDEOS[f.video] : undefined
+              const text = (
+                <Reveal>
+                  <div className="flex items-baseline gap-4 mb-4">
+                    <span className="text-5xl" style={{ fontFamily: 'var(--font-syne)', fontWeight: 700, color: 'var(--color-secondary-orange)', opacity: 0.3 }}>
+                      {f.index}
+                    </span>
+                    <span className="text-sm font-bold uppercase tracking-[0.15em]" style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-secondary-orange)' }}>
+                      {f.step}
+                    </span>
+                  </div>
+                  <h3 className="text-2xl md:text-3xl mb-4" style={{ fontFamily: 'var(--font-syne)', fontWeight: 700, color: 'var(--color-primary-green)' }}>
+                    {f.title}
+                  </h3>
+                  <p className="text-lg leading-relaxed" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)' }}>
+                    {f.desc}
+                  </p>
+                  {f.badge && (
+                    <span
+                      className="inline-flex items-center gap-2 mt-5 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.14em]"
+                      style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-secondary-orange)', border: '1px solid var(--color-secondary-orange)' }}
+                    >
+                      <span className="w-1.5 h-1.5" style={{ backgroundColor: 'var(--color-secondary-orange)' }} />
+                      {f.badge}
+                    </span>
+                  )}
+                </Reveal>
+              )
+              const visual = (
+                <ScreenFrame
+                  clips={clip ? [clip] : undefined}
+                  src={f.image}
+                  alt={f.imageAlt}
+                  label={f.label}
+                  placeholder={f.placeholder}
+                  tilt={i === 0 && !clip}
+                />
+              )
+
+              const relay = f.relay && <DemoRelay id={f.relay.id} text={f.relay.text} />
+
+              // Démo vidéo : texte en haut à gauche, vidéo en grand dessous (lisible)
+              if (clip) {
+                return (
+                  <div key={f.index} className="space-y-8 md:space-y-10">
+                    <div className="max-w-3xl">{text}</div>
+                    {visual}
+                    {relay}
+                  </div>
+                )
+              }
+
+              // Capture : texte et visuel côte à côte
+              return (
+                <div key={f.index} className="space-y-8 md:space-y-10">
+                  <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+                    <div>{text}</div>
+                    <div>{visual}</div>
+                  </div>
+                  {relay}
+                </div>
+              )
+            })}
           </div>
         </div>
       </section>
@@ -317,8 +390,8 @@ export default function CoachLanding() {
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {[
               { n: '1', t: 'Ton grimpeur s\'équipe', d: 'Il porte le bracelet WAC et utilise l\'app au quotidien.' },
-              { n: '2', t: 'Ses données remontent', d: 'Sommeil, récup, charge — tout se synchronise automatiquement.' },
-              { n: '3', t: 'Tu pilotes', d: 'Depuis ton espace coach, tu suis, tu programmes, tu ajustes.' },
+              { n: '2', t: 'Ses données remontent', d: 'Sommeil, récup, charge\u00a0: tout se synchronise tout seul, sans saisie de ta part.' },
+              { n: '3', t: 'Tu programmes, il reçoit', d: 'Ta séance arrive dans son app avec tes consignes. Il la fait, tu vois le résultat, tu ajustes.' },
             ].map((s, i) => (
               <Reveal key={s.n} delay={i * 0.1}>
                 <div className="text-center">
@@ -383,12 +456,12 @@ export default function CoachLanding() {
         <div className="container-custom relative z-10 text-center">
           <Reveal>
             <h2 className="text-3xl md:text-5xl mb-4" style={{ fontFamily: 'var(--font-syne)', fontWeight: 700, textTransform: 'uppercase', color: 'var(--color-primary-beige)' }}>
-              WAC Coach ouvre bientôt. Sois dans les premiers.
+              Essaie-le avec un de tes grimpeurs.
             </h2>
           </Reveal>
           <Reveal delay={0.1}>
             <p className="text-lg md:text-xl mb-10 max-w-2xl mx-auto" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-beige)', opacity: 0.9, lineHeight: '1.6' }}>
-              Réserve ta démo et découvre l'espace coach en avant-première. Choisis ton créneau en 2 minutes.
+              Réserve ta démo&nbsp;: on regarde ensemble comment l'adapter à ton groupe. Tu préfères tester seul&nbsp;? L'offre Découverte est gratuite, sans limite de durée, et ta première programmation est offerte.
             </p>
           </Reveal>
           <Reveal delay={0.15}>
@@ -398,11 +471,13 @@ export default function CoachLanding() {
             <p className="mt-8 text-sm" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-beige)', opacity: 0.85 }}>
               Tu veux d'abord voir les tarifs&nbsp;?{' '}
               <a
-                href="https://coach.weareclimbers.fr/tarifs"
+                href={COACH_OFFERS_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="underline font-bold hover:opacity-80"
                 style={{ color: 'var(--color-secondary-orange)' }}
+                data-umami-event="clic-offres-coach"
+                data-umami-event-emplacement="final"
               >
                 Voir les offres →
               </a>

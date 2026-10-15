@@ -4,13 +4,13 @@ import CoachLanding from '@/components/coachs/CoachLanding'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'WAC Coach — le suivi physiologique de tes grimpeurs | We Are Climbers',
+  title: "WAC Coach — suis et programme l'entraînement de tes grimpeurs | We Are Climbers",
   description:
-    "Vois ce que vivent tes grimpeurs entre deux séances : sommeil, récupération, charge réelle. Le logiciel de suivi pour coachs et clubs d'escalade. Demande ta démo.",
+    "Vois la forme réelle de tes grimpeurs, programme en conséquence et teste tes plans avant la compète. Le logiciel des coachs et clubs d'escalade.",
   openGraph: {
-    title: 'WAC Coach — le suivi physiologique de tes grimpeurs',
+    title: "WAC Coach — suis et programme l'entraînement de tes grimpeurs",
     description:
-      "Passe du ressenti déclaré à la donnée réelle. Le logiciel de suivi pour coachs et clubs d'escalade. Demande ta démo en avant-première.",
+      "Du ressenti à la donnée, de la donnée à la séance. Le logiciel des coachs et clubs d'escalade. Réserve ta démo ou essaie-le gratuitement.",
     url: 'https://www.weareclimbers.fr/coachs',
   },
 }
@@ -23,7 +23,7 @@ export default function CoachsPage() {
     applicationCategory: 'SportsApplication',
     operatingSystem: 'Web',
     description:
-      "Espace coach de We Are Climbers : suivi physiologique des grimpeurs (sommeil, récupération, charge d'entraînement), score d'état de forme, programmation intelligente et dashboard de groupe pour coachs et clubs d'escalade.",
+      "Espace coach de We Are Climbers : suivi physiologique des grimpeurs (sommeil, récupération, charge d'entraînement), état de forme et tableau de bord de groupe, programmation de séances envoyées dans l'app de l'élève, scénarios d'entraînement comparés avant une compétition, bibliothèque d'exercices et de modèles de séance, graphiques personnalisés. Pour coachs et clubs d'escalade.",
     offers: {
       '@type': 'Offer',
       category: 'B2B',
