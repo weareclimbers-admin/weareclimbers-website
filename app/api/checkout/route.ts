@@ -158,7 +158,8 @@ export async function POST(request: NextRequest) {
     const utm: CapturedUtm =
       typeof body?.utm === 'object' && body.utm !== null ? (body.utm as CapturedUtm) : {}
     const utmValue = (v: unknown) => (typeof v === 'string' ? v.trim().slice(0, 200) : '')
-    const creator = detectCreator(body?.creator, utm)
+    // 3 mois premium : uniquement via un lien créateur explicite (?creator=).
+    const creator = detectCreator(body?.creator)
     const premiumMonths = Math.max(creator ? 3 : 0, offer?.grantPremiumMonths ?? 0)
 
     // Meta CAPI (phase 2) : consentement marketing + event_id du pixel

@@ -2,11 +2,13 @@
  * Détection du créateur UGC partenaire (3 mois d'abonnement premium offerts,
  * octroyés par les Cloud Functions Firebase via les metadata Stripe).
  *
- * Règle : le paramètre explicite `?creator=` gagne toujours ; sinon on ne
- * déduit un créateur des UTM QUE si le lien porte `utm_medium=ugc` (convention
- * liens créateurs figée le 20/08) — jamais depuis un utm_source nu, sinon tout
- * le trafic tagué de la campagne (utm_source=brevo, instagram…) déclencherait
- * l'offre premium.
+ * Règle (resserrée le 19/10/2026) : SEUL le paramètre explicite `?creator=`
+ * donne droit aux 3 mois — les 3 mois sont réservés aux liens créateurs.
+ * L'ancien repli sur `utm_medium=ugc` est supprimé : n'importe quel lien tagué
+ * « ugc » (une pub Meta réutilisant un contenu créateur, par exemple) affichait
+ * le bandeau et accordait réellement les 3 mois. Tous les liens créateurs
+ * fournis depuis le 21/08 portent `&creator=`. Les UTM restent de la pure
+ * attribution (metadata utm_*), sans effet sur l'offre.
  *
  * Importé par ShopLanding (affichage) ET /api/checkout (metadata) : une seule
  * source de vérité pour les deux. Le `?creator=` est capturé à l'atterrissage
@@ -25,10 +27,7 @@ function clean(value: unknown): string {
   return typeof value === 'string' ? value.trim().toLowerCase().slice(0, 100) : ''
 }
 
-/** Renvoie le pseudo du créateur (minuscules), ou '' si l'achat n'en vient pas. */
-export function detectCreator(creator: unknown, utm: CapturedUtm | null | undefined): string {
-  const explicit = clean(creator)
-  if (explicit) return explicit
-  if (clean(utm?.utm_medium) !== 'ugc') return ''
-  return clean(utm?.utm_content) || clean(utm?.utm_source)
+/** Renvoie le pseudo du créateur (minuscules), ou '' si l'achat ne vient pas d'un lien créateur. */
+export function detectCreator(creator: unknown): string {
+  return clean(creator)
 }

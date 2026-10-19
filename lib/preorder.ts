@@ -101,6 +101,8 @@ export interface ShippingZone {
 export interface ShippingMode {
   id: 'relais' | 'domicile'
   label: string
+  /** Précision courte sous le mode, quand la zone en propose plusieurs. */
+  hint?: string
   /** true = le client doit choisir un point relais Chronopost Shop2Shop avant paiement. */
   relay: boolean
   /**
@@ -134,20 +136,25 @@ export const SHIPPING_ZONES: ShippingZone[] = [
     label: 'France métropolitaine',
     allowedCountries: ['FR', 'MC'],
     relayCountries: [{ code: 'FR', label: 'France' }],
+    // Ordre = ordre d'affichage ; le 1er mode est celui présélectionné. Domicile
+    // par défaut depuis le 19/10/2026 (décision Julien, conversion) : aucune étape
+    // avant le paiement, l'adresse est demandée par Stripe. Le relais reste à un clic.
     modes: [
-      {
-        id: 'relais',
-        label: 'En point relais Chronopost',
-        relay: true,
-        shippingTtc: 0, // offerte (12/10/2026)
-        shippingRateEnv: 'STRIPE_SHIPPING_RATE_FR',
-      },
       {
         id: 'domicile',
         label: 'À domicile',
+        hint: 'Adresse demandée au paiement',
         relay: false,
         shippingTtc: 0, // offerte (12/10/2026)
         shippingRateEnv: 'STRIPE_SHIPPING_RATE_FR_DOMICILE',
+      },
+      {
+        id: 'relais',
+        label: 'En point relais Chronopost',
+        hint: 'Choisis ton relais juste en dessous',
+        relay: true,
+        shippingTtc: 0, // offerte (12/10/2026)
+        shippingRateEnv: 'STRIPE_SHIPPING_RATE_FR',
       },
     ],
   },

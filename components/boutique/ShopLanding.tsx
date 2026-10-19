@@ -170,7 +170,7 @@ export default function ShopLanding({
     offer: '',
     fbclid: '',
   })
-  const creatorDetected = detectCreator(attribution.creator, attribution.utm)
+  const creatorDetected = detectCreator(attribution.creator)
   const offer = getPartnerOffer(attribution.offer)
   // Prix unitaire réellement payé (le serveur applique la remise de l'offre).
   const unitPrice = offer ? offer.priceTtc : PREORDER_PACK.priceTtc
@@ -304,7 +304,7 @@ export default function ShopLanding({
             >
               Le bracelet Polar 360 mesure ton corps à ±1&nbsp;BPM. Chaque matin, l&apos;app WAC en tire ton
               État de Forme : tu sais si c&apos;est un jour pour ton projet ou un jour pour récupérer, et
-              tu repères la surcharge d&apos;entraînement avant qu&apos;elle ne te blesse.
+              tu repères la surcharge d&apos;entraînement avant qu&apos;elle ne s&apos;installe.
             </p>
 
             <div className="mt-8 flex flex-col items-center gap-3">

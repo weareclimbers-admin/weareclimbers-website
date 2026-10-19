@@ -12,12 +12,12 @@ import Reassurance from '@/components/boutique/Reassurance'
 /**
  * Formulaire de commande de la boutique → checkout Stripe hébergé.
  *
- * Une seule étape avant le paiement (refonte conversion, 13/10/2026) : France +
- * point relais Chronopost présélectionnés (choix de Julien : le relais coûte
- * nettement moins cher que le domicile), le visiteur tape son code postal et
- * choisit son relais. Les autres options (domicile, hors France) sont repliées
- * derrière « Modifier la livraison ». La quantité se règle sur la page Stripe
- * (adjustable_quantity, sauf offre partenaire).
+ * Aucune étape obligatoire avant le paiement (19/10/2026, après 3 erreurs
+ * « relais-manquant » et 9 abandons sur 14 clics) : France + livraison À DOMICILE
+ * présélectionnées, l'adresse est demandée par Stripe. Le point relais Chronopost
+ * est affiché à côté dès l'ouverture, à un clic (code postal → relais). Les autres
+ * pays sont repliés derrière « Changer de pays ». La quantité se règle sur la page
+ * Stripe (adjustable_quantity, sauf offre partenaire).
  *
  * UNE seule instance par page (une seule carte Boxtal, id fixe) : ShopLanding
  * l'affiche dans la fiche sur ordinateur et dans le panneau mobile.
@@ -75,7 +75,8 @@ export default function OrderForm({
 }) {
   const [zoneId, setZoneId] = useState(SHIPPING_ZONES[0].id)
   const [modeId, setModeId] = useState(SHIPPING_ZONES[0].modes[0].id)
-  const [optionsOpen, setOptionsOpen] = useState(false)
+  /** Liste des pays dépliée (France métropolitaine par défaut). */
+  const [zonesOpen, setZonesOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -262,8 +263,11 @@ export default function OrderForm({
     if (!inSheet) trackShop('clic-precommande', { emplacement: 'fiche' })
     if (currentMode.relay && !selectedRelay) {
       trackShop('erreur-paiement', { raison: 'relais-manquant' })
-      setError('Choisis ton point relais Chronopost avant de continuer.')
-      zipInputRef.current?.focus()
+      // Message juste au-dessus du bouton + retour au champ code postal (la page,
+      // ou le panneau mobile, défile jusqu'à lui).
+      setError('Choisis ton point relais Chronopost juste au-dessus, ou passe en livraison à domicile.')
+      zipInputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      zipInputRef.current?.focus({ preventScroll: true })
       return
     }
     setLoading(true)
@@ -333,126 +337,113 @@ export default function OrderForm({
 
   return (
     <div>
-      {/* ── Livraison : résumé (France + relais par défaut) ou options dépliées ── */}
-      <p className="text-sm font-bold uppercase mb-3" style={labelStyle}>
-        Livraison
-      </p>
-      {!optionsOpen ? (
-        <div className="mb-6">
-          <div
-            className="flex items-baseline justify-between gap-3 p-3.5 rounded-xl"
-            style={{ border: '2px solid var(--color-secondary-orange)', backgroundColor: 'var(--color-secondary-beige-light)' }}
-          >
-            <span>
-              <span className="block text-sm font-bold uppercase" style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-primary-green)' }}>
-                {currentZone.label}
-              </span>
-              <span className="block text-xs mt-0.5" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', opacity: 0.8 }}>
-                {currentMode.label}
-              </span>
-            </span>
-            {currentMode.shippingTtc !== null && (
-              <span className="flex-none text-sm font-bold" style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-secondary-orange)' }}>
-                {formatShipping(currentMode.shippingTtc)}
-              </span>
-            )}
-          </div>
-          <button
-            type="button"
-            onClick={() => setOptionsOpen(true)}
-            className="mt-2 text-xs font-bold underline underline-offset-2 hover:opacity-70"
-            style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)' }}
-          >
-            Modifier la livraison
-          </button>
-        </div>
-      ) : (
-        <>
-          <fieldset className="mb-5">
-            <legend className="sr-only">Zone de livraison</legend>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {SHIPPING_ZONES.map((z) => (
-                <label
-                  key={z.id}
-                  className="flex items-start gap-3 p-3.5 cursor-pointer transition-colors rounded-xl"
-                  style={{
-                    border: `2px solid ${zoneId === z.id ? 'var(--color-secondary-orange)' : 'var(--color-primary-green)'}`,
-                    backgroundColor: zoneId === z.id ? 'var(--color-secondary-beige-light)' : 'transparent',
-                  }}
-                >
-                  <input
-                    type="radio"
-                    name="zone"
-                    value={z.id}
-                    checked={zoneId === z.id}
-                    onChange={() => selectZone(z.id)}
-                    className="mt-1"
-                    style={{ accentColor: 'var(--color-secondary-orange)' }}
-                  />
-                  <span className="flex-1">
-                    <span className="flex items-baseline justify-between gap-2">
-                      <span className="text-sm font-bold uppercase" style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-primary-green)' }}>
-                        {z.label}
-                      </span>
-                      {cheapestShipping(z) !== null && (
-                        <span className="flex-none text-sm font-bold" style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-secondary-orange)' }}>
-                          {z.modes.length > 1 && (cheapestShipping(z) as number) > 0 ? 'dès ' : ''}
-                          {formatShipping(cheapestShipping(z) as number)}
-                        </span>
-                      )}
-                    </span>
-                    {z.note && (
-                      <span className="block text-xs mt-1" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', opacity: 0.7 }}>
-                        {z.note}
-                      </span>
-                    )}
-                  </span>
-                </label>
-              ))}
-            </div>
-          </fieldset>
+      {/* ── Livraison : France par défaut (autres pays repliés), modes côte à côte
+          dès l'ouverture — domicile présélectionné, relais à un clic (19/10/2026) ── */}
+      <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 mb-3">
+        <p className="text-sm font-bold uppercase" style={labelStyle}>
+          Livraison
+        </p>
+        {!zonesOpen && (
+          <p className="text-xs" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)' }}>
+            {currentZone.label} ·{' '}
+            <button
+              type="button"
+              onClick={() => setZonesOpen(true)}
+              className="font-bold underline underline-offset-2 hover:opacity-70"
+            >
+              Changer de pays
+            </button>
+          </p>
+        )}
+      </div>
 
-          {/* Mode de livraison (si la zone en propose plusieurs — France : relais ou domicile) */}
-          {currentZone.modes.length > 1 && (
-            <fieldset className="mb-6">
-              <legend className="text-sm font-bold uppercase mb-3" style={labelStyle}>
-                Comment veux-tu être livré·e ?
-              </legend>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {currentZone.modes.map((m) => (
-                  <label
-                    key={m.id}
-                    className="flex items-center gap-3 p-3.5 cursor-pointer transition-colors rounded-xl"
-                    style={{
-                      border: `2px solid ${currentMode.id === m.id ? 'var(--color-secondary-orange)' : 'var(--color-primary-green)'}`,
-                      backgroundColor: currentMode.id === m.id ? 'var(--color-secondary-beige-light)' : 'transparent',
-                    }}
-                  >
-                    <input
-                      type="radio"
-                      name="mode"
-                      value={m.id}
-                      checked={currentMode.id === m.id}
-                      onChange={() => selectMode(m.id)}
-                      style={{ accentColor: 'var(--color-secondary-orange)' }}
-                    />
-                    <span className="flex-1 flex items-baseline justify-between gap-2">
-                      <span className="text-sm font-bold uppercase" style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-primary-green)' }}>
-                        {m.label}
-                      </span>
-                      {m.shippingTtc !== null && (
-                        <span className="flex-none text-sm font-bold" style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-secondary-orange)' }}>
-                          {formatShipping(m.shippingTtc)}
-                        </span>
-                      )}
+      {zonesOpen && (
+        <fieldset className="mb-4">
+          <legend className="sr-only">Pays de livraison</legend>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {SHIPPING_ZONES.map((z) => (
+              <label
+                key={z.id}
+                className="flex items-start gap-3 p-3.5 cursor-pointer transition-colors rounded-xl"
+                style={{
+                  border: `2px solid ${zoneId === z.id ? 'var(--color-secondary-orange)' : 'var(--color-primary-green)'}`,
+                  backgroundColor: zoneId === z.id ? 'var(--color-secondary-beige-light)' : 'transparent',
+                }}
+              >
+                <input
+                  type="radio"
+                  name="zone"
+                  value={z.id}
+                  checked={zoneId === z.id}
+                  onChange={() => {
+                    selectZone(z.id)
+                    setZonesOpen(false)
+                  }}
+                  className="mt-1"
+                  style={{ accentColor: 'var(--color-secondary-orange)' }}
+                />
+                <span className="flex-1 flex items-baseline justify-between gap-2">
+                  <span className="text-sm font-bold uppercase" style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-primary-green)' }}>
+                    {z.label}
+                  </span>
+                  {cheapestShipping(z) !== null && (
+                    <span className="flex-none text-sm font-bold" style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-secondary-orange)' }}>
+                      {z.modes.length > 1 && (cheapestShipping(z) as number) > 0 ? 'dès ' : ''}
+                      {formatShipping(cheapestShipping(z) as number)}
                     </span>
-                  </label>
-                ))}
-              </div>
-            </fieldset>
-          )}
-        </>
+                  )}
+                </span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
       )}
+
+      <fieldset className="mb-6">
+        <legend className="sr-only">Mode de livraison</legend>
+        <div className={`grid gap-3 ${currentZone.modes.length > 1 ? 'grid-cols-2' : 'grid-cols-1'}`}>
+          {currentZone.modes.map((m) => (
+            <label
+              key={m.id}
+              className="flex items-start gap-2.5 p-3.5 cursor-pointer transition-colors rounded-xl"
+              style={{
+                border: `2px solid ${currentMode.id === m.id ? 'var(--color-secondary-orange)' : 'var(--color-primary-green)'}`,
+                backgroundColor: currentMode.id === m.id ? 'var(--color-secondary-beige-light)' : 'transparent',
+              }}
+            >
+              <input
+                type="radio"
+                name="mode"
+                value={m.id}
+                checked={currentMode.id === m.id}
+                onChange={() => selectMode(m.id)}
+                className="mt-1"
+                style={{ accentColor: 'var(--color-secondary-orange)' }}
+              />
+              <span className="flex-1 min-w-0">
+                <span className="block text-sm font-bold uppercase" style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-primary-green)', lineHeight: 1.25 }}>
+                  {m.label}
+                </span>
+                {m.shippingTtc !== null && (
+                  <span className="block text-sm font-bold mt-1" style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-secondary-orange)' }}>
+                    {formatShipping(m.shippingTtc)}
+                  </span>
+                )}
+                {currentZone.modes.length > 1 && m.hint && (
+                  <span className="block text-xs mt-1" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', opacity: 0.75 }}>
+                    {m.hint}
+                  </span>
+                )}
+              </span>
+            </label>
+          ))}
+        </div>
+        {currentZone.note && (
+          <p className="text-xs mt-2" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', opacity: 0.7 }}>
+            {currentZone.note}
+          </p>
+        )}
+      </fieldset>
 
       {/* ── Point relais Chronopost Shop2Shop (modes « relais ») ── */}
       {currentMode.relay && (
@@ -595,7 +586,17 @@ export default function OrderForm({
         </div>
       )}
 
-      {/* ── Paiement ── */}
+      {/* ── Paiement — message d'erreur juste au-dessus du bouton ── */}
+      {error && (
+        <p
+          role="alert"
+          className="mb-3 px-4 py-3 text-sm font-bold rounded-lg"
+          style={{ fontFamily: 'var(--font-roboto)', color: '#8C2B1E', backgroundColor: '#FDE8E2', border: '2px solid #8C2B1E' }}
+        >
+          {error}
+        </p>
+      )}
+
       <button
         type="button"
         onClick={handleCheckout}
@@ -606,16 +607,6 @@ export default function OrderForm({
           ? 'Redirection vers le paiement…'
           : `Passer au paiement${total !== null ? ` — ${formatPrice(total)}` : ''} →`}
       </button>
-
-      {error && (
-        <p
-          role="alert"
-          className="mb-4 px-4 py-3 text-sm font-bold rounded-lg"
-          style={{ fontFamily: 'var(--font-roboto)', color: '#8C2B1E', backgroundColor: '#FDE8E2', border: '2px solid #8C2B1E' }}
-        >
-          {error}
-        </p>
-      )}
 
       <div className="mt-2 mb-5">
         <Reassurance />

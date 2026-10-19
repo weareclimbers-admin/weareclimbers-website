@@ -58,7 +58,7 @@ const ITEMS: { icon: ReactNode; title: string; detail?: string; badge?: boolean 
       </StrokeIcon>
     ),
     title: 'Livraison gratuite en France',
-    detail: 'métropolitaine, en point relais ou à domicile',
+    detail: 'métropolitaine, à domicile ou en point relais',
   },
   {
     icon: (
