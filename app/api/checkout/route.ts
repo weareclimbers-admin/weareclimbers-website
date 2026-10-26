@@ -47,15 +47,18 @@ async function assertShippingRateMatches(stripe: Stripe, rateId: string, expecte
   if (expectedTtc === null || verifiedShippingRates.has(rateId)) return
   const rate = await stripe.shippingRates.retrieve(rateId)
   const expected = Math.round(expectedTtc * 100)
+  // Seul « exclusive » est refusé (port facturé HT + TVA en plus). Les tarifs
+  // créés à la main au dashboard le 12/10 sont en « unspecified » (incident du
+  // 26/10/2026 : tarif France gratuit bloqué) et facturent bien le TTC affiché.
   if (
     !rate.active ||
-    rate.tax_behavior !== 'inclusive' ||
+    rate.tax_behavior === 'exclusive' ||
     rate.fixed_amount?.currency !== 'eur' ||
     rate.fixed_amount.amount !== expected
   ) {
     throw new Error(
       `Shipping rate ${rateId} : ${rate.fixed_amount?.amount} ${rate.fixed_amount?.currency} ` +
-        `(${rate.tax_behavior}, ${rate.active ? 'actif' : 'archivé'}) au lieu de ${expected} eur inclusive. ` +
+        `(${rate.tax_behavior}, ${rate.active ? 'actif' : 'archivé'}) au lieu de ${expected} eur TTC. ` +
         `Checkout refusé — corriger la variable d'env du mode de livraison.`,
     )
   }
