@@ -64,7 +64,7 @@ export type LegalDocumentContent = Omit<LegalDocument, 'key'> & {
  */
 export const CURRENT_LEGAL_VERSIONS = {
   cgu: '1.0',
-  privacy: '1.2',
+  privacy: '1.3',
   legalNotices: '1.0',
   cookies: '1.1',
   cgv: '1.1',

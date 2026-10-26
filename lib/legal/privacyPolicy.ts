@@ -16,13 +16,18 @@ import type { LegalDocument } from './types';
  * v1.2 (2026-08-14) : §5 — chemin in-app exact (Réglages → Confidentialité &
  *   Sécurité) + renvoi vers la page dédiée /supprimer-compte (exigence Google
  *   Play « URL de suppression de compte »). Clarification sans nouveau traitement.
+ * v1.3 (2026-10-26, en vigueur le 2026-11-30) : §2.5 — le coach voit aussi le
+ *   planning de renfo si l'élève partage ses séances à venir (même sens que le
+ *   §4.6 de la politique de l'app 1.1). La 1.2 reste en ligne sur /privacy/1-2.
  */
+export const PRIVACY_POLICY_EFFECTIVE_DATE = '2026-11-30';
+
 export const PRIVACY_POLICY: LegalDocument = {
   key: 'privacy',
   title: 'Politique de Confidentialité',
   subtitle: 'RGPD — Traitement de vos données personnelles',
-  version: '1.2',
-  lastUpdated: '2026-08-14',
+  version: '1.3',
+  lastUpdated: '2026-10-26',
   preamble: `WeAreClimbers SAS attache une grande importance à la protection de vos données personnelles. La présente politique décrit les données collectées, les finalités, les bases légales, les durées de conservation, vos droits, et les modalités d'exercice de ces droits, conformément au Règlement (UE) 2016/679 (RGPD) et à la loi n° 78-17 dite « Informatique et Libertés ».`,
   sections: [
     {
@@ -72,6 +77,8 @@ Indicateurs Hooper : sensation de fatigue, sommeil, courbatures, stress (échell
 - Séances futures (par défaut : oui)
 - Historique des séances passées (par défaut : non, configurable à 1 mois / 3 mois / illimité)
 - Données de cycle menstruel (par défaut : non)
+
+Si vous partagez vos séances à venir avec votre coach, il voit aussi votre planning de renfo : les séances que vous programmez vous-même, à venir et déjà passées dans ce programme (date, nom, durée estimée, exercices, faite ou passée), et l'heure de votre rappel. Il ne peut pas le modifier.
 
 Vous pouvez modifier ces choix ou révoquer entièrement l'accès à tout moment depuis l'application mobile (Paramètres → Mon Coach).`,
         },
@@ -167,7 +174,7 @@ Lorsque des transferts hors UE sont nécessaires (États-Unis, notamment pour le
       title: '10. Modifications de la présente politique',
       content: `Toute modification substantielle vous sera notifiée par email et/ou bandeau dans l'application/webapp, et vous serez invité à la ré-accepter au prochain login.
 
-Dernière mise à jour : 14 août 2026 — Version 1.2`,
+Dernière mise à jour : 26 octobre 2026 — Version 1.3 — En vigueur à partir du 30 novembre 2026`,
     },
   ],
 };
