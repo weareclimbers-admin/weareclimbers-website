@@ -42,6 +42,19 @@ export interface LegalDocument {
   sections: LegalSection[];
 }
 
+// NB : SPÉCIFIQUE AU SITE VITRINE (comme 'cgv') — la politique de l'app mobile,
+// recopiée telle quelle (résumé en questions-réponses et pied de page compris),
+// hors des documents unifiés : pas de `key`, ne pas resynchroniser avec le coach.
+export interface LegalSummary {
+  title: string;
+  sections: { title: string; items: { question: string; answer: string }[] }[];
+}
+
+export type LegalDocumentContent = Omit<LegalDocument, 'key'> & {
+  summary?: LegalSummary;
+  footer?: string;
+};
+
 /**
  * Versions courantes des documents légaux du SITE VITRINE à l'instant T.
  *
