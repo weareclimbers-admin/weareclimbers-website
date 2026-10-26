@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import type Stripe from 'stripe'
 import { getStripe } from '@/lib/stripe'
-import { PREORDER_FLOW, PREORDER_PACK, getZone, getMode } from '@/lib/preorder'
+import { PREORDER_FLOW, PREORDER_PACK, PREORDER_END_LABEL, getZone, getMode } from '@/lib/preorder'
 import { detectCreator, type CapturedUtm } from '@/lib/creator'
 import { getPartnerOffer, type PartnerOffer } from '@/lib/offers'
 import { sendCapiEvent, readClientSignals } from '@/lib/meta-capi'
@@ -33,33 +33,6 @@ async function assertPriceInclusive(stripe: Stripe, priceId: string): Promise<vo
     )
   }
   verifiedInclusivePrices.add(priceId)
-}
-
-/**
- * Même garde-fou pour le port : le montant d'un shipping rate est immuable, donc
- * une env Vercel restée sur un ancien tarif facturerait en silence autre chose
- * que le port affiché sur la boutique (ex. 4,99 € en France au lieu de
- * « Offerte »). On compare au montant présentatif du mode (lib/preorder.ts).
- */
-const verifiedShippingRates = new Set<string>()
-
-async function assertShippingRateMatches(stripe: Stripe, rateId: string, expectedTtc: number | null): Promise<void> {
-  if (expectedTtc === null || verifiedShippingRates.has(rateId)) return
-  const rate = await stripe.shippingRates.retrieve(rateId)
-  const expected = Math.round(expectedTtc * 100)
-  if (
-    !rate.active ||
-    rate.tax_behavior !== 'inclusive' ||
-    rate.fixed_amount?.currency !== 'eur' ||
-    rate.fixed_amount.amount !== expected
-  ) {
-    throw new Error(
-      `Shipping rate ${rateId} : ${rate.fixed_amount?.amount} ${rate.fixed_amount?.currency} ` +
-        `(${rate.tax_behavior}, ${rate.active ? 'actif' : 'archivé'}) au lieu de ${expected} eur inclusive. ` +
-        `Checkout refusé — corriger la variable d'env du mode de livraison.`,
-    )
-  }
-  verifiedShippingRates.add(rateId)
 }
 
 /**
@@ -159,7 +132,6 @@ export async function POST(request: NextRequest) {
 
     const stripe = getStripe()
     await assertPriceInclusive(stripe, priceId)
-    await assertShippingRateMatches(stripe, shippingRateId, mode.shippingTtc)
 
     // Places épuisées / offre terminée : on le dit au client (la boutique retire
     // l'offre et il peut précommander au tarif normal) plutôt que de facturer
@@ -237,13 +209,11 @@ export async function POST(request: NextRequest) {
       if (signals.userAgent) metadata.fb_client_ua = signals.userAgent.slice(0, 500)
     }
 
-    // Réassurance juste au-dessus du bouton de paiement Stripe (rédaction Julien
-    // 26/10/2026). La date de livraison estimée vit dans la description du produit
-    // Stripe (scripts/update-preorder-product.mjs). Rétractation = 14 j À COMPTER
-    // DE LA RÉCEPTION (CGV §9) — ne jamais écrire « après la commande ».
-    const submitMessage =
-      "Annulation gratuite jusqu'à l'expédition · 14 jours de rétractation après réception · Bracelet garanti 2 ans" +
-      (zone.id === 'dom-tom' ? " · Pour l'Outre-mer, compte quelques jours d'acheminement en plus." : '')
+    // Rappel pré-commande affiché juste au-dessus du bouton de paiement Stripe.
+    const preorderMessage =
+      `C'est une pré-commande : on commande les bracelets à Polar à la clôture (${PREORDER_END_LABEL}), ` +
+      `puis on te les expédie nous-mêmes. Livraison estimée la ${PREORDER_PACK.estimatedDelivery}.` +
+      (zone.id === 'dom-tom' ? " Pour l'Outre-mer, compte quelques jours d'acheminement en plus." : '')
 
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
@@ -280,23 +250,10 @@ export async function POST(request: NextRequest) {
       // Paniers abandonnés : à l'expiration (24 h), Stripe joint une URL de reprise
       // (valable 30 j) à l'event checkout.session.expired — l'email de relance
       // reste à envoyer de notre côté. consent_collection.promotions n'est PAS
-      // posé : Stripe le refuse pour un compte FR (« not available in your
-      // country », re-testé le 26/10/2026) et ferait échouer tout le checkout.
-      // Code promo sur la session reprise, sauf offre partenaire (Stripe refuse
-      // de combiner `discounts` et recovery.allow_promotion_codes).
-      after_expiration: { recovery: { enabled: true, allow_promotion_codes: !offer } },
-      custom_text: {
-        submit: { message: submitMessage },
-        // Encadré du formulaire d'adresse (mode domicile uniquement) — France
-        // seulement : le port n'est offert qu'en France métropolitaine.
-        ...(zone.id === 'fr' && !relayShipping
-          ? {
-              shipping_address: {
-                message: 'Livraison offerte en France, à domicile ou en point relais Chronopost.',
-              },
-            }
-          : {}),
-      },
+      // posé : Stripe le refuse hors US (« not available in your country »,
+      // testé le 12/10/2026) et ferait échouer tout le checkout.
+      after_expiration: { recovery: { enabled: true, allow_promotion_codes: false } },
+      custom_text: { submit: { message: preorderMessage } },
       metadata,
       // NB : impossible de poser le relais en `payment_intent_data.shipping` —
       // incompatible avec automatic_tax (erreur Stripe vérifiée le 14/08). Le
