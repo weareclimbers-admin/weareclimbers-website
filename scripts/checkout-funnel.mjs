@@ -116,3 +116,26 @@ printTable('Par jour', tally(parisDay), false)
 printTable('Par source (utm_source)', tally((s) => s.metadata?.utm_source || '(direct / inconnue)'))
 printTable('Par campagne (utm_campaign)', tally((s) => s.metadata?.utm_campaign || '(aucune)'))
 printTable('Par livraison (zone / mode)', tally((s) => `${s.metadata?.zone ?? '?'} / ${s.metadata?.shipping_mode ?? '?'}`))
+
+// Port réellement facturé par zone / mode (grille du 12/10/2026 : France
+// offerte, BE-LU et CH 1,99, Outre-mer 4,99). Une session France avec un port
+// non nul = variable d'env de shipping rate restée sur un ancien tarif.
+console.log('── Port facturé (zone / mode → montants) ──')
+const ports = new Map()
+for (const s of sessions) {
+  const k = `${s.metadata?.zone ?? '?'} / ${s.metadata?.shipping_mode ?? '?'}`
+  const amount = ((s.shipping_cost?.amount_total ?? 0) / 100).toFixed(2).replace('.', ',')
+  const row = ports.get(k) ?? new Map()
+  row.set(amount, (row.get(amount) ?? 0) + 1)
+  ports.set(k, row)
+}
+for (const [k, row] of [...ports.entries()].sort()) {
+  console.log(`${k.padEnd(28)} ${[...row.entries()].map(([a, n]) => `${a} € × ${n}`).join(' · ')}`)
+}
+const frCharged = sessions.filter((s) => s.metadata?.zone === 'fr' && (s.shipping_cost?.amount_total ?? 0) > 0)
+console.log(
+  frCharged.length
+    ? `⚠️ ${frCharged.length} session(s) France avec port facturé : ${frCharged.map((s) => `${parisDay(s)} ${s.metadata?.shipping_mode} ${s.shipping_cost?.shipping_rate}`).join(', ')}`
+    : '✅ Aucune session France avec port facturé.',
+)
+console.log('')
