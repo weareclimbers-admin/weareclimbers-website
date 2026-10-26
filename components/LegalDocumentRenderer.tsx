@@ -1,7 +1,14 @@
-import type { LegalDocument } from '@/lib/legal/types'
+import Link from 'next/link'
+import type { LegalDocumentContent } from '@/lib/legal/types'
 
 interface LegalDocumentRendererProps {
-  doc: LegalDocument
+  doc: LegalDocumentContent
+  /** Date ISO d'entrée en vigueur, affichée avec la date de mise à jour */
+  effectiveDate?: string
+  /** Phrase mise en avant sous l'en-tête (ex. jusqu'à quand une archive s'applique) */
+  notice?: string
+  /** Liens vers les autres versions ou documents liés, affichés avec la phrase */
+  links?: { href: string; label: string }[]
 }
 
 function formatFrenchDate(iso: string): string {
@@ -10,14 +17,21 @@ function formatFrenchDate(iso: string): string {
       day: 'numeric',
       month: 'long',
       year: 'numeric',
+      timeZone: 'UTC',
     })
   } catch {
     return iso
   }
 }
 
-export default function LegalDocumentRenderer({ doc }: LegalDocumentRendererProps) {
+export default function LegalDocumentRenderer({
+  doc,
+  effectiveDate,
+  notice,
+  links,
+}: LegalDocumentRendererProps) {
   const formattedDate = formatFrenchDate(doc.lastUpdated)
+  const formattedEffectiveDate = effectiveDate ? formatFrenchDate(effectiveDate) : null
 
   return (
     <main className="bg-primary-beige">
@@ -32,6 +46,11 @@ export default function LegalDocumentRenderer({ doc }: LegalDocumentRendererProp
             <p className="text-sm font-roboto opacity-75 mt-4">
               Dernière mise à jour : {formattedDate} — Version {doc.version}
             </p>
+            {formattedEffectiveDate && (
+              <p className="text-sm font-roboto opacity-75 mt-1">
+                En vigueur à partir du {formattedEffectiveDate}
+              </p>
+            )}
           </div>
         </div>
       </section>
@@ -46,9 +65,39 @@ export default function LegalDocumentRenderer({ doc }: LegalDocumentRendererProp
             <div>
               <span className="font-bold">Dernière mise à jour :</span> {formattedDate}
             </div>
+            {formattedEffectiveDate && (
+              <div>
+                <span className="font-bold">En vigueur à partir du :</span> {formattedEffectiveDate}
+              </div>
+            )}
           </div>
         </div>
       </section>
+
+      {/* Notice + autres versions */}
+      {(notice || (links && links.length > 0)) && (
+        <section className="pt-12 bg-primary-beige">
+          <div className="container-custom max-w-4xl mx-auto">
+            <div className="p-6 md:p-8 bg-secondary-beige-light border-l-4 border-secondary-orange font-roboto text-primary-green">
+              {notice && <p className="font-bold leading-relaxed">{notice}</p>}
+              {links && links.length > 0 && (
+                <ul className={`space-y-2 ${notice ? 'mt-4' : ''}`}>
+                  {links.map((link) => (
+                    <li key={link.href}>
+                      <Link
+                        href={link.href}
+                        className="underline underline-offset-2 hover:text-secondary-orange transition-colors"
+                      >
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Preamble */}
       {doc.preamble && (
@@ -58,6 +107,36 @@ export default function LegalDocumentRenderer({ doc }: LegalDocumentRendererProp
               <p className="font-roboto text-primary-green whitespace-pre-wrap leading-relaxed">
                 {doc.preamble}
               </p>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Summary (politique de l'app : résumé en questions-réponses) */}
+      {doc.summary && (
+        <section className="pt-12 bg-primary-beige">
+          <div className="container-custom max-w-4xl mx-auto">
+            <div className="p-6 md:p-8 bg-secondary-beige-light">
+              <h2 className="text-2xl md:text-3xl mb-6 text-primary-green font-syne">
+                {doc.summary.title}
+              </h2>
+              <div className="space-y-6">
+                {doc.summary.sections.map((section) => (
+                  <div key={section.title} className="border-l-4 border-secondary-orange pl-4 md:pl-6">
+                    <h3 className="text-lg md:text-xl mb-3 text-secondary-orange font-syne">
+                      {section.title}
+                    </h3>
+                    <dl className="space-y-3 font-roboto text-primary-green">
+                      {section.items.map((item) => (
+                        <div key={item.question}>
+                          <dt className="font-bold">{item.question}</dt>
+                          <dd className="leading-relaxed">{item.answer}</dd>
+                        </div>
+                      ))}
+                    </dl>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </section>
@@ -130,8 +209,8 @@ export default function LegalDocumentRenderer({ doc }: LegalDocumentRendererProp
       {/* Footer note */}
       <section className="py-10 bg-secondary-beige-light">
         <div className="container-custom max-w-4xl mx-auto text-center">
-          <p className="font-roboto text-sm text-primary-green opacity-75">
-            © 2026 WeAreClimbers SAS. Tous droits réservés.
+          <p className="font-roboto text-sm text-primary-green opacity-75 whitespace-pre-wrap">
+            {doc.footer ?? '© 2026 WeAreClimbers SAS. Tous droits réservés.'}
           </p>
           <p className="font-roboto text-xs text-primary-green opacity-60 mt-2">
             Document version {doc.version} — {formattedDate}
