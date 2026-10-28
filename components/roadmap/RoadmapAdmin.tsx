@@ -3,9 +3,11 @@
 import { useCallback, useEffect, useState } from 'react'
 import {
   ALL_STATUSES,
+  CATEGORIES,
   CATEGORY_LABEL,
   STATUS_LABEL,
   type Feature,
+  type FeatureCategory,
   type FeatureStatus,
 } from '@/lib/roadmap'
 
@@ -23,6 +25,8 @@ export default function RoadmapAdmin() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [authed, setAuthed] = useState(false)
+  const [statusFilter, setStatusFilter] = useState<FeatureStatus | 'all'>('all')
+  const [categoryFilter, setCategoryFilter] = useState<FeatureCategory | 'all'>('all')
 
   useEffect(() => {
     const saved = localStorage.getItem(TOKEN_KEY)
@@ -98,8 +102,15 @@ export default function RoadmapAdmin() {
     )
   }
 
-  const pending = features.filter((f) => f.pending)
-  const live = features.filter((f) => !f.pending)
+  const filtering = statusFilter !== 'all' || categoryFilter !== 'all'
+  const visible = features.filter(
+    (f) =>
+      (statusFilter === 'all' || f.status === statusFilter) &&
+      (categoryFilter === 'all' || f.category === categoryFilter),
+  )
+  const pending = visible.filter((f) => f.pending)
+  const live = visible.filter((f) => !f.pending)
+  const noMatch = 'Aucune idée ne correspond aux filtres.'
 
   return (
     <main className="container-custom max-w-5xl py-12">
@@ -111,13 +122,59 @@ export default function RoadmapAdmin() {
       </div>
       {error && <p className="mt-4 text-red-700">{error}</p>}
 
-      <Section title={`En attente (${pending.length})`} empty="Rien à modérer.">
+      <div className="mt-6 flex flex-wrap items-center gap-3 text-sm">
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value as FeatureStatus | 'all')}
+          className="rounded-lg border border-secondary-beige bg-white px-2 py-1.5"
+          aria-label="Filtrer par statut"
+        >
+          <option value="all">Tous les statuts</option>
+          {ALL_STATUSES.map((s) => (
+            <option key={s} value={s}>
+              {STATUS_LABEL[s]}
+            </option>
+          ))}
+        </select>
+        <select
+          value={categoryFilter}
+          onChange={(e) => setCategoryFilter(e.target.value as FeatureCategory | 'all')}
+          className="rounded-lg border border-secondary-beige bg-white px-2 py-1.5"
+          aria-label="Filtrer par catégorie"
+        >
+          <option value="all">Toutes les catégories</option>
+          {CATEGORIES.map((c) => (
+            <option key={c.value} value={c.value}>
+              {c.label}
+            </option>
+          ))}
+        </select>
+        {filtering && (
+          <>
+            <span className="opacity-60">
+              {visible.length} / {features.length} idées
+            </span>
+            <button
+              type="button"
+              onClick={() => {
+                setStatusFilter('all')
+                setCategoryFilter('all')
+              }}
+              className="underline underline-offset-2"
+            >
+              Réinitialiser
+            </button>
+          </>
+        )}
+      </div>
+
+      <Section title={`En attente (${pending.length})`} empty={filtering ? noMatch : 'Rien à modérer.'}>
         {pending.map((f) => (
           <Row key={f.id} f={f} act={act} showApprove />
         ))}
       </Section>
 
-      <Section title={`Publiées (${live.length})`} empty="Aucune idée publiée.">
+      <Section title={`Publiées (${live.length})`} empty={filtering ? noMatch : 'Aucune idée publiée.'}>
         {live.map((f) => (
           <Row key={f.id} f={f} act={act} />
         ))}
