@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { isFetesSaleOver } from '@/lib/campaign'
 
 // Documentation Brevo API: https://developers.brevo.com/reference/createcontact
 
@@ -16,7 +17,11 @@ export async function POST(request: NextRequest) {
 
     // Récupération des variables d'environnement
     const apiKey = process.env.BREVO_API_KEY
-    const listId = process.env.BREVO_LIST_ID
+    // Liste d'attente : celle de la précommande des fêtes jusqu'à sa clôture
+    // (06/12/2026 23 h 59), puis bascule AUTOMATIQUE sur la liste d'après-vente
+    // si elle est configurée (BREVO_LIST_ID_APRES_FETES), sans redéploiement.
+    const listId =
+      (isFetesSaleOver() && process.env.BREVO_LIST_ID_APRES_FETES) || process.env.BREVO_LIST_ID
 
     if (!apiKey || !listId) {
       console.error('Missing BREVO_API_KEY or BREVO_LIST_ID in environment variables')
