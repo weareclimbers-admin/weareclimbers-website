@@ -6,6 +6,7 @@ import { detectCreator, type CapturedUtm } from '@/lib/creator'
 import { getPartnerOffer, type PartnerOffer } from '@/lib/offers'
 import { sendCapiEvent, readClientSignals } from '@/lib/meta-capi'
 import { SHOP_CONTENT } from '@/lib/meta-content'
+import { isCheckoutOpen } from '@/lib/campaign'
 
 // Pré-commande V2 → création d'une session Stripe Checkout (hébergé, mode payment).
 // Le client envoie sa zone de livraison (choisie sur /boutique) ; la session borne
@@ -113,6 +114,12 @@ function parseRelay(raw: unknown, allowedCountries: string[]): RelayInput | null
 }
 
 export async function POST(request: NextRequest) {
+  // Pré-commandes closes le 31/10/2026 : plus aucune session ne doit être créée,
+  // même depuis une ancienne page /boutique restée ouverte dans un onglet.
+  if (!isCheckoutOpen()) {
+    return NextResponse.json({ error: 'Les pré-commandes sont closes. Recharge la page pour t’inscrire à la vente flash de fin d’année.', closed: true }, { status: 410 })
+  }
+
   try {
     const body = await request.json().catch(() => null)
     const zone = getZone(body?.zone)

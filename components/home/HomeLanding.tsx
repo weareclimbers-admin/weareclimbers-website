@@ -15,6 +15,7 @@ import FAQItem from '@/components/FAQItem'
 import ReadyGauge from './ReadyGauge'
 import { faqItems } from '@/lib/faq'
 import { DERNIER_ARTICLE } from '@/lib/press'
+import { getPrimaryCta } from '@/lib/campaign'
 
 /** Numéro de section en filigrane orange — motif structurant WAC 2.0 */
 function SectionNum({ n }: { n: string }) {
@@ -120,8 +121,8 @@ export default function HomeLanding() {
                 transition={{ type: 'spring', stiffness: 120, damping: 18, delay: 0.35 }}
               >
                 <Magnetic>
-                  <Link href="/boutique" className="btn-secondary inline-block">
-                    Je précommande →
+                  <Link href={getPrimaryCta().href ?? '/boutique'} className="btn-secondary inline-block">
+                    {getPrimaryCta().label} →
                   </Link>
                 </Magnetic>
                 <Magnetic>

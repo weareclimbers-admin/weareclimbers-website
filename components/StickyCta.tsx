@@ -9,6 +9,7 @@ import { getPrimaryCta, WAITLIST, CAMPAIGN } from '@/lib/campaign'
  * Le libellé et la cible suivent la phase active (lib/campaign.ts) :
  *   campaign-success → "Rejoins la liste" (#liste-attente)
  *   precommande-live → "Je précommande" (/boutique)
+ *   vente-flash-attente → "Je m'inscris" (/boutique#liste-attente)
  */
 export default function StickyCta() {
   const [visible, setVisible] = useState(false)
@@ -21,8 +22,9 @@ export default function StickyCta() {
   }, [])
 
   const cta = getPrimaryCta()
-  const href = cta.kind === 'waitlist' ? WAITLIST.anchor : cta.href ?? '#'
-  const label = cta.kind === 'waitlist' ? 'Rejoins la liste' : cta.label
+  const href = cta.href ?? WAITLIST.anchor
+  const isFlashWaitlist = CAMPAIGN.phase === 'vente-flash-attente'
+  const label = cta.kind !== 'waitlist' ? cta.label : isFlashWaitlist ? 'Je m’inscris' : 'Rejoins la liste'
 
   return (
     <AnimatePresence>
@@ -50,6 +52,11 @@ export default function StickyCta() {
                 <>
                   <strong style={{ color: 'var(--color-secondary-orange)' }}>Objectif 100 % atteint.</strong>{' '}
                   Les pré-commandes arrivent — sois prévenu·e en premier.
+                </>
+              ) : isFlashWaitlist ? (
+                <>
+                  <strong style={{ color: 'var(--color-secondary-orange)' }}>Vente flash de fin d&apos;année.</strong>{' '}
+                  Quantités très limitées — sois prévenu·e en premier.
                 </>
               ) : (
                 <>Les pré-commandes sont ouvertes.</>

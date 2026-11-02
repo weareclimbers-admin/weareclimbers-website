@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import StoreButtons from '@/components/StoreButtons'
+import { getShopNavLabel } from '@/lib/campaign'
 
 export default function Footer() {
   return (
@@ -73,7 +74,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link href="/boutique" style={{ fontFamily: 'var(--font-roboto)' }} className="text-sm transition-colors hover:opacity-75">
-                  Pré-commandes
+                  {getShopNavLabel()}
                 </Link>
               </li>
               <li>

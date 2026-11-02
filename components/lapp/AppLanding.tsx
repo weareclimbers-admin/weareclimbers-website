@@ -8,6 +8,7 @@ import Magnetic from '@/components/Magnetic'
 import PhoneShot from '@/components/PhoneShot'
 import StoreButtons from '@/components/StoreButtons'
 import ReadyGauge from '@/components/home/ReadyGauge'
+import { getPrimaryCta } from '@/lib/campaign'
 
 /**
  * Landing /l-app — preuve logicielle.
@@ -121,8 +122,8 @@ export default function AppLanding() {
                 transition={{ type: 'spring', stiffness: 120, damping: 18, delay: 0.35 }}
               >
                 <Magnetic>
-                  <Link href="/boutique" className="btn-secondary inline-block">
-                    Je précommande →
+                  <Link href={getPrimaryCta().href ?? '/boutique'} className="btn-secondary inline-block">
+                    {getPrimaryCta().label} →
                   </Link>
                 </Magnetic>
                 <Magnetic>

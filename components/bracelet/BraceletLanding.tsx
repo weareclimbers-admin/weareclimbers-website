@@ -9,6 +9,7 @@ import TopoLines from '@/components/TopoLines'
 import Magnetic from '@/components/Magnetic'
 import StoreButtons from '@/components/StoreButtons'
 import WaitlistSection from '@/components/WaitlistSection'
+import { getPrimaryCta } from '@/lib/campaign'
 
 /**
  * Landing /le-bracelet — preuve matérielle.
@@ -69,8 +70,8 @@ export default function BraceletLanding() {
                 transition={{ type: 'spring', stiffness: 120, damping: 18, delay: 0.35 }}
               >
                 <Magnetic>
-                  <Link href="/boutique" className="btn-secondary inline-block">
-                    Je précommande →
+                  <Link href={getPrimaryCta().href ?? '/boutique'} className="btn-secondary inline-block">
+                    {getPrimaryCta().label} →
                   </Link>
                 </Magnetic>
                 <Magnetic>

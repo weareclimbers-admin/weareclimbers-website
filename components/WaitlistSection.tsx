@@ -1,12 +1,14 @@
 import Link from 'next/link'
 import NewsletterForm from './NewsletterForm'
-import { WAITLIST, CAMPAIGN } from '@/lib/campaign'
+import { WAITLIST, CAMPAIGN, FLASH_SALE } from '@/lib/campaign'
 
 /**
  * Section CTA de fin de page réutilisable — cible #liste-attente de tous les CTA du site.
  * Phase-aware (lib/campaign.ts) :
  *   - avant l'ouverture : formulaire liste d'attente (Brevo)
  *   - 'precommande-live' : CTA direct vers la boutique (la liste d'attente n'existe plus)
+ *   - 'vente-flash-attente' : formulaire liste d'attente de la vente flash (titre et
+ *     sous-titre forcés, comme en pré-commande)
  *
  * `heading` / `subtitle` permettent d'adapter l'accroche au contexte de la page.
  * En phase 'precommande-live', le sous-titre est forcé sur le message pré-commande
@@ -23,7 +25,13 @@ export default function WaitlistSection({
   subtitle?: string
 }) {
   const isPreorder = CAMPAIGN.phase === 'precommande-live'
-  const resolvedSubtitle = isPreorder ? PREORDER_SUBTITLE : subtitle ?? WAITLIST.formSubtitle
+  const isFlashWaitlist = CAMPAIGN.phase === 'vente-flash-attente'
+  const resolvedHeading = isFlashWaitlist ? FLASH_SALE.formTitle : heading
+  const resolvedSubtitle = isPreorder
+    ? PREORDER_SUBTITLE
+    : isFlashWaitlist
+      ? FLASH_SALE.formSubtitle
+      : subtitle ?? WAITLIST.formSubtitle
 
   return (
     <section
@@ -41,14 +49,14 @@ export default function WaitlistSection({
             color: 'var(--color-primary-beige)',
           }}
         >
-          Objectif 100 % atteint — merci à la cordée
+          {isFlashWaitlist ? `Vente flash · ${FLASH_SALE.window}` : 'Objectif 100 % atteint — merci à la cordée'}
         </span>
 
         <h2
           className="text-3xl md:text-5xl mb-6"
           style={{ fontFamily: 'var(--font-syne)', fontWeight: 700, textTransform: 'uppercase' }}
         >
-          {heading}
+          {resolvedHeading}
         </h2>
 
         <p
@@ -63,7 +71,10 @@ export default function WaitlistSection({
             Je précommande →
           </Link>
         ) : (
-          <NewsletterForm variant="footer" buttonText={WAITLIST.buttonText} />
+          <NewsletterForm
+            variant="footer"
+            buttonText={isFlashWaitlist ? FLASH_SALE.buttonText : WAITLIST.buttonText}
+          />
         )}
       </div>
     </section>

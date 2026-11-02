@@ -7,6 +7,7 @@ import CountdownTimer from './CountdownTimer'
  * - 'ulule-live'       : message stock + compte à rebours Ulule + CTA Ulule
  * - 'campaign-success' : message succès + CTA liste d'attente (pas de compte à rebours)
  * - 'precommande-live' : « pré-commandes jusqu'au 31 octobre » + compte à rebours + CTA boutique
+ * - 'vente-flash-attente' : annonce de la vente flash + CTA liste d'attente (/boutique#liste-attente)
  *
  * Hauteur volontairement contenue et contenu non-wrap : le Header grandit d'autant,
  * et toutes les premières sections (pt-32 min) le dégagent sans chevauchement.
@@ -22,7 +23,7 @@ export default function CampaignBanner() {
   const countdownEnd = isPreorderLive ? CAMPAIGN.preorderEndDate : CAMPAIGN.endDate
 
   // Destination du CTA selon sa nature
-  const href = cta.kind === 'waitlist' ? WAITLIST.anchor : cta.href ?? '#'
+  const href = cta.href ?? (cta.kind === 'waitlist' ? WAITLIST.anchor : '#')
   const isExternal = cta.kind === 'ulule'
 
   return (

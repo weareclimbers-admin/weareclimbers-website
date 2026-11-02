@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useState, useEffect } from 'react'
 import CampaignBanner from './CampaignBanner'
+import { getShopNavLabel } from '@/lib/campaign'
 
 export default function Header({ showCampaignBanner = true }: { showCampaignBanner?: boolean } = {}) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -89,7 +90,7 @@ export default function Header({ showCampaignBanner = true }: { showCampaignBann
               Espace Coach
             </Link>
             <Link href="/boutique" className="btn-secondary-small">
-              Pré-commandes
+              {getShopNavLabel()}
             </Link>
           </div>
 
@@ -154,7 +155,7 @@ export default function Header({ showCampaignBanner = true }: { showCampaignBann
                 Espace Coach
               </Link>
               <Link href="/boutique" className="btn-secondary-small inline-block text-center">
-                Pré-commandes
+                {getShopNavLabel()}
               </Link>
             </div>
           </div>

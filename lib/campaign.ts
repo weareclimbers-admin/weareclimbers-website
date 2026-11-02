@@ -3,8 +3,10 @@
  *
  * MODÈLE À PHASES — le site s'adapte automatiquement à la phase active :
  *   'ulule-live'        → campagne Accès Anticipé Ulule en cours (compte à rebours + CTA Ulule)
- *   'campaign-success'  → campagne terminée avec succès (preuve sociale + liste d'attente)   ← ACTUEL
+ *   'campaign-success'  → campagne terminée avec succès (preuve sociale + liste d'attente)
  *   'precommande-live'  → pré-commandes en propre ouvertes (checkout WAC)
+ *   'vente-flash-attente' → pré-commandes closes (31/10/2026), checkout FERMÉ, liste
+ *                         d'attente de la vente flash de fin d'année sur /boutique   ← ACTUEL
  *
  * Pour changer de phase : modifier `CAMPAIGN.phase`. Le bandeau, les CTA et le copy
  * se réalignent via les helpers (getPrimaryCta / getBannerConfig).
@@ -13,7 +15,7 @@
  * "Accès Anticipé", "Pack Fondateur/Pionnier", "haute précision / ±1 BPM".
  */
 
-export type CampaignPhase = 'ulule-live' | 'campaign-success' | 'precommande-live';
+export type CampaignPhase = 'ulule-live' | 'campaign-success' | 'precommande-live' | 'vente-flash-attente';
 
 /**
  * Nature d'un appel à l'action, pour que chaque page sache comment le rendre :
@@ -24,13 +26,13 @@ export type CampaignPhase = 'ulule-live' | 'campaign-success' | 'precommande-liv
 export interface Cta {
   label: string;
   kind: 'waitlist' | 'ulule' | 'precommande';
-  /** Destination pour les CTA de type lien (ulule / precommande). Absent pour 'waitlist'. */
+  /** Destination du CTA. Absent pour 'waitlist' = ancre #liste-attente de la page courante. */
   href?: string;
 }
 
 export const CAMPAIGN = {
   /** Phase active du site. */
-  phase: 'precommande-live' as CampaignPhase,
+  phase: 'vente-flash-attente' as CampaignPhase,
 
   ululeUrl: 'https://www.ulule.fr/we-are-climbers',
   videoYoutubeId: '0AXX5vCajP8',
@@ -61,6 +63,33 @@ export const WAITLIST = {
   buttonText: 'Préviens-moi du lancement',
 } as const;
 
+/**
+ * Vente flash de fin d'année (phase 'vente-flash-attente'). La liste d'attente vit
+ * sur /boutique (même URL que la boutique → tous les liens déjà diffusés y
+ * atterrissent). Inscriptions : NewsletterForm → /api/newsletter → liste Brevo
+ * `BREVO_LIST_ID` (à faire pointer sur la nouvelle liste « vente flash »).
+ *
+ * ⚠️ Rien de chiffré tant que l'offre n'est pas arrêtée : pas de prix, pas de
+ * date exacte, pas de promesse de livraison avant Noël.
+ */
+export const FLASH_SALE = {
+  href: '/boutique#liste-attente',
+  window: 'fin novembre – début décembre',
+  formTitle: 'Vente flash de fin d’année',
+  formSubtitle:
+    "Une semaine seulement, fin novembre – début décembre : quantités très limitées et tarif avantageux. Inscris-toi pour être prévenu·e en premier.",
+  buttonText: 'Préviens-moi',
+} as const;
+
+/**
+ * Le checkout Stripe n'accepte de nouvelles commandes que dans une phase de vente.
+ * Vérifié côté serveur par /api/checkout (la page ne suffit pas : une ancienne
+ * page restée ouverte peut encore appeler l'API).
+ */
+export function isCheckoutOpen(): boolean {
+  return CAMPAIGN.phase === 'precommande-live';
+}
+
 /** CTA principal du site selon la phase active. */
 export function getPrimaryCta(): Cta {
   switch (CAMPAIGN.phase) {
@@ -70,7 +99,14 @@ export function getPrimaryCta(): Cta {
       return { label: 'Préviens-moi du lancement', kind: 'waitlist' };
     case 'precommande-live':
       return { label: 'Je précommande', kind: 'precommande', href: '/boutique' };
+    case 'vente-flash-attente':
+      return { label: 'Je m’inscris à la vente flash', kind: 'waitlist', href: FLASH_SALE.href };
   }
+}
+
+/** Libellé du lien vers /boutique dans le header et le footer. */
+export function getShopNavLabel(): string {
+  return CAMPAIGN.phase === 'vente-flash-attente' ? 'Vente flash' : 'Pré-commandes';
 }
 
 /** Contenu du bandeau haut de page selon la phase. */
@@ -90,6 +126,11 @@ export function getBannerConfig(): { text: string; cta: Cta } | null {
       return {
         text: "Pré-commandes jusqu'au 31 octobre",
         cta: getPrimaryCta(),
+      };
+    case 'vente-flash-attente':
+      return {
+        text: `Vente flash de fin d’année · ${FLASH_SALE.window}`,
+        cta: { ...getPrimaryCta(), label: 'Je m’inscris' },
       };
   }
 }
