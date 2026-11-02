@@ -78,7 +78,7 @@ export const FLASH_SALE = {
   href: '/boutique#liste-attente',
   window: `du ${FETES_SALE.startLabel} au ${FETES_SALE.endLabel}`,
   formTitle: 'Précommande des fêtes',
-  formSubtitle: `Du ${FETES_SALE.startLabel} au ${FETES_SALE.endLabel} : ${FETES_SALE.flash.units} bracelets à ${FETES_SALE.flash.priceTtc} € au lieu de ${PREORDER_PACK.priceTtc} €, livrés avant Noël. Inscris-toi pour être prévenu·e dès l’ouverture.`,
+  formSubtitle: `Du ${FETES_SALE.startLabel} au ${FETES_SALE.endLabel} : ${FETES_SALE.flash.units} bracelets à ${FETES_SALE.flash.priceTtc} € au lieu de ${PREORDER_PACK.priceTtc} €, livrés avant Noël. Au-delà, la précommande reste ouverte au prix de ${PREORDER_PACK.priceTtc} €. Inscris-toi pour être prévenu·e dès l’ouverture.`,
   buttonText: 'Préviens-moi',
 } as const;
 

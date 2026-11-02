@@ -16,7 +16,7 @@ import { PREORDER_PACK, FETES_SALE } from '@/lib/preorder'
 const PROMISES: { title: string; text: string }[] = [
   {
     title: `${FETES_SALE.flash.units} bracelets à ${FETES_SALE.flash.priceTtc} €`,
-    text: `Au lieu de ${PREORDER_PACK.priceTtc} €, pour les ${FETES_SALE.flash.units} premiers seulement. Les inscrits sont prévenus dès l’ouverture.`,
+    text: `Au lieu de ${PREORDER_PACK.priceTtc} €, pour les ${FETES_SALE.flash.units} premiers seulement. Au-delà, la précommande reste ouverte au prix de ${PREORDER_PACK.priceTtc} €.`,
   },
   {
     title: 'Livrés avant Noël',
@@ -70,7 +70,8 @@ export default function FlashWaitlist({ climbersCount }: { climbersCount: number
               {FETES_SALE.flash.units} bracelets à {FETES_SALE.flash.priceTtc}&nbsp;€
             </strong>{' '}
             au lieu de {PREORDER_PACK.priceTtc}&nbsp;€, livrés avant Noël. Le bracelet Polar 360 et l&apos;app WAC,
-            une semaine seulement. Inscris-toi pour être prévenu·e dès l&apos;ouverture, le {FETES_SALE.startLabel} à 9&nbsp;h.
+            une semaine seulement. Au-delà des {FETES_SALE.flash.units}, la précommande reste ouverte au prix de {PREORDER_PACK.priceTtc}&nbsp;€.
+            Inscris-toi pour être prévenu·e dès l&apos;ouverture, le {FETES_SALE.startLabel} à 9&nbsp;h.
           </p>
 
           {/* Cible des liens de campagne (/boutique#liste-attente) — ne pas supprimer cet id. */}
