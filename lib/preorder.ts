@@ -66,9 +66,10 @@ export const FETES_SALE = {
     /**
      * ID personnalisé du coupon Stripe (identique sandbox / live) : remise fixe
      * 20 €, une fois, produit pré-commande, SANS « nombre max d'utilisations ».
-     * (L'ancien `fetes-2026-159`, plafonné à 10, n'est plus utilisé.)
+     * (Les anciens `fetes-2026-159` et `fetes-2026-remise-20`, plafonnés à 10,
+     * ne sont plus utilisés.)
      */
-    couponId: 'fetes-2026-remise-20',
+    couponId: 'fetes-2026-moins-20',
     delivery: 'entre le 11 et le 18 décembre',
     deliveryDeadline: '18 décembre 2026',
   },
