@@ -20,12 +20,12 @@ const EXCLUDED_SESSION_IDS: string[] = []
  * Somme des quantités des sessions de pré-commande payées. null si Stripe n'est
  * pas configuré ou injoignable : la boutique affiche alors un libellé sans chiffre exact.
  */
-export async function countPaidPreorders(): Promise<number | null> {
+export async function countPaidPreorders(since: number = PREORDERS_OPENED_AT): Promise<number | null> {
   if (!process.env.STRIPE_SECRET_KEY) return null
   try {
     let total = 0
     const sessions = getStripe().checkout.sessions.list({
-      created: { gte: PREORDERS_OPENED_AT },
+      created: { gte: since },
       status: 'complete',
       limit: 100,
       expand: ['data.line_items'],

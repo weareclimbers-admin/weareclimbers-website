@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from 'motion/react'
 import { useEffect, useState } from 'react'
-import { getPrimaryCta, WAITLIST, CAMPAIGN, FLASH_SALE } from '@/lib/campaign'
+import { getPrimaryCta, getPhase, isFetesSaleOver, WAITLIST, FLASH_SALE } from '@/lib/campaign'
 import { FETES_SALE } from '@/lib/preorder'
 
 /**
@@ -24,7 +24,8 @@ export default function StickyCta() {
 
   const cta = getPrimaryCta()
   const href = cta.href ?? WAITLIST.anchor
-  const isFlashWaitlist = CAMPAIGN.phase === 'vente-flash-attente'
+  const phase = getPhase()
+  const isFlashWaitlist = phase === 'vente-flash-attente'
   const label = cta.kind !== 'waitlist' ? cta.label : isFlashWaitlist ? 'Je m’inscris' : 'Rejoins la liste'
 
   return (
@@ -49,18 +50,23 @@ export default function StickyCta() {
               className="hidden sm:block text-sm md:text-base"
               style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-beige)' }}
             >
-              {CAMPAIGN.phase === 'campaign-success' ? (
+              {phase === 'campaign-success' ? (
                 <>
                   <strong style={{ color: 'var(--color-secondary-orange)' }}>Objectif 100 % atteint.</strong>{' '}
                   Les pré-commandes arrivent — sois prévenu·e en premier.
                 </>
+              ) : isFlashWaitlist && isFetesSaleOver() ? (
+                <>Précommande des fêtes terminée — merci à la cordée.</>
               ) : isFlashWaitlist ? (
                 <>
                   <strong style={{ color: 'var(--color-secondary-orange)' }}>Précommande des fêtes.</strong>{' '}
                   {FETES_SALE.flash.units} bracelets à {FETES_SALE.flash.priceTtc}&nbsp;€, {FLASH_SALE.window}.
                 </>
               ) : (
-                <>Les pré-commandes sont ouvertes.</>
+                <>
+                  <strong style={{ color: 'var(--color-secondary-orange)' }}>Précommande des fêtes.</strong>{' '}
+                  Jusqu&apos;au {FETES_SALE.endLabel} à 23&nbsp;h&nbsp;59.
+                </>
               )}
             </p>
             <a

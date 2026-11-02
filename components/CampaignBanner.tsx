@@ -1,4 +1,4 @@
-import { CAMPAIGN, getBannerConfig, WAITLIST } from '@/lib/campaign'
+import { CAMPAIGN, getBannerConfig, getPhase, WAITLIST } from '@/lib/campaign'
 import CountdownTimer from './CountdownTimer'
 
 /**
@@ -17,8 +17,9 @@ export default function CampaignBanner() {
   if (!banner) return null
 
   const { text, cta } = banner
-  const isUluleLive = CAMPAIGN.phase === 'ulule-live'
-  const isPreorderLive = CAMPAIGN.phase === 'precommande-live'
+  const phase = getPhase()
+  const isUluleLive = phase === 'ulule-live'
+  const isPreorderLive = phase === 'precommande-live'
   const showCountdown = isUluleLive || isPreorderLive
   const countdownEnd = isPreorderLive ? CAMPAIGN.preorderEndDate : CAMPAIGN.endDate
 

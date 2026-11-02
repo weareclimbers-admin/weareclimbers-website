@@ -21,6 +21,11 @@ const roboto = Roboto({
   display: 'swap',
 })
 
+// Pages régénérées toutes les 5 min : la phase commerciale dépend de la date
+// (ouverture / clôture automatiques de la précommande des fêtes, lib/campaign.ts),
+// le HTML statique doit donc suivre l'heure, pas la date du déploiement.
+export const revalidate = 300
+
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.weareclimbers.fr'),
   title: 'We Are Climbers — L\'analyse physiologique intelligente pour grimpeurs',

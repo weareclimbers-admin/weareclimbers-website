@@ -5,11 +5,15 @@
  *   'ulule-live'        → campagne Accès Anticipé Ulule en cours (compte à rebours + CTA Ulule)
  *   'campaign-success'  → campagne terminée avec succès (preuve sociale + liste d'attente)
  *   'precommande-live'  → pré-commandes en propre ouvertes (checkout WAC)
- *   'vente-flash-attente' → pré-commandes closes (31/10/2026), checkout FERMÉ, liste
- *                         d'attente de la vente flash de fin d'année sur /boutique   ← ACTUEL
+ *   'vente-flash-attente' → checkout FERMÉ, liste d'attente de la précommande des
+ *                         fêtes sur /boutique (avant le 30/11 9 h, et après le 06/12)
  *
- * Pour changer de phase : modifier `CAMPAIGN.phase`. Le bandeau, les CTA et le copy
- * se réalignent via les helpers (getPrimaryCta / getBannerConfig).
+ * Phase active = getPhase() : `CAMPAIGN.phase` (hors vente), SAUF pendant la
+ * précommande des fêtes (FETES_SALE, lib/preorder.ts) où elle passe TOUTE SEULE
+ * à 'precommande-live' — ouverture et fermeture automatiques, sans déploiement.
+ * Les pages sont régénérées toutes les 5 min (revalidate du layout racine) pour
+ * que le HTML suive la date. Le bandeau, les CTA et le copy se réalignent via les
+ * helpers (getPrimaryCta / getBannerConfig).
  *
  * ⚠️ Terminologie : jamais "crowdfunding" / "early access" / "médical". On dit
  * "Accès Anticipé", "Pack Fondateur/Pionnier", "haute précision / ±1 BPM".
@@ -33,7 +37,7 @@ export interface Cta {
 }
 
 export const CAMPAIGN = {
-  /** Phase active du site. */
+  /** Phase du site HORS fenêtre de vente — la phase active se lit avec getPhase(). */
   phase: 'vente-flash-attente' as CampaignPhase,
 
   ululeUrl: 'https://www.ulule.fr/we-are-climbers',
@@ -42,8 +46,8 @@ export const CAMPAIGN = {
   /** Date de clôture Ulule (conservée pour l'historique / le compte à rebours en phase ulule-live). */
   endDate: '2026-07-10T23:59:59+02:00',
 
-  /** Date de fin des pré-commandes en propre — alimente le compte à rebours du bandeau en phase 'precommande-live'. */
-  preorderEndDate: '2026-10-31T23:59:59+01:00',
+  /** Fin de la vente en cours — alimente le compte à rebours du bandeau en phase 'precommande-live'. */
+  preorderEndDate: FETES_SALE.endDate,
 
   /**
    * Preuve sociale publique. On communique UNIQUEMENT l'atteinte de l'objectif à 100%.
@@ -83,17 +87,73 @@ export const FLASH_SALE = {
 } as const;
 
 /**
+ * Horloge de la vente. Pour tester l'ouverture / la clôture avant le jour J,
+ * NEXT_PUBLIC_SALE_CLOCK (date ISO, ex. 2026-11-30T10:00:00+01:00) simule une
+ * autre date — UNIQUEMENT en local et sur les aperçus Vercel : ignorée en
+ * production (NEXT_PUBLIC_VERCEL_ENV = 'production').
+ */
+export function saleNow(): number {
+  const fake = process.env.NEXT_PUBLIC_SALE_CLOCK;
+  if (fake && process.env.NEXT_PUBLIC_VERCEL_ENV !== 'production') {
+    const t = Date.parse(fake);
+    if (!Number.isNaN(t)) return t;
+  }
+  return Date.now();
+}
+
+/** true pendant la précommande des fêtes (30/11 9 h → 06/12 23 h 59, heure de Paris). */
+export function isFetesSaleOpen(now: number = saleNow()): boolean {
+  return now >= Date.parse(FETES_SALE.startDate) && now <= Date.parse(FETES_SALE.endDate);
+}
+
+/** true une fois la précommande des fêtes close (la liste d'attente change de texte). */
+export function isFetesSaleOver(now: number = saleNow()): boolean {
+  return now > Date.parse(FETES_SALE.endDate);
+}
+
+/** Phase active du site, calculée à chaque rendu. */
+export function getPhase(now: number = saleNow()): CampaignPhase {
+  return isFetesSaleOpen(now) ? 'precommande-live' : CAMPAIGN.phase;
+}
+
+/**
+ * Textes de la liste d'attente : annonce avant l'ouverture, remerciement après
+ * la clôture (on ne promet plus une ouverture déjà passée).
+ */
+export function getWaitlistCopy(now: number = saleNow()): {
+  badge: string;
+  title: string;
+  subtitle: string;
+  buttonText: string;
+} {
+  if (isFetesSaleOver(now)) {
+    return {
+      badge: 'Merci à la cordée',
+      title: 'Précommande des fêtes terminée',
+      subtitle: 'Les précommandes sont closes. Laisse ton email pour être prévenu·e en premier de la prochaine ouverture.',
+      buttonText: 'Préviens-moi',
+    };
+  }
+  return {
+    badge: `${FLASH_SALE.window} · livrés avant Noël`,
+    title: FLASH_SALE.formTitle,
+    subtitle: FLASH_SALE.formSubtitle,
+    buttonText: FLASH_SALE.buttonText,
+  };
+}
+
+/**
  * Le checkout Stripe n'accepte de nouvelles commandes que dans une phase de vente.
  * Vérifié côté serveur par /api/checkout (la page ne suffit pas : une ancienne
  * page restée ouverte peut encore appeler l'API).
  */
-export function isCheckoutOpen(): boolean {
-  return CAMPAIGN.phase === 'precommande-live';
+export function isCheckoutOpen(now: number = saleNow()): boolean {
+  return getPhase(now) === 'precommande-live';
 }
 
 /** CTA principal du site selon la phase active. */
 export function getPrimaryCta(): Cta {
-  switch (CAMPAIGN.phase) {
+  switch (getPhase()) {
     case 'ulule-live':
       return { label: 'Je soutiens WAC sur Ulule', kind: 'ulule', href: CAMPAIGN.ululeUrl };
     case 'campaign-success':
@@ -107,12 +167,12 @@ export function getPrimaryCta(): Cta {
 
 /** Libellé du lien vers /boutique dans le header et le footer. */
 export function getShopNavLabel(): string {
-  return CAMPAIGN.phase === 'vente-flash-attente' ? 'Précommande des fêtes' : 'Pré-commandes';
+  return 'Précommande des fêtes';
 }
 
 /** Contenu du bandeau haut de page selon la phase. */
 export function getBannerConfig(): { text: string; cta: Cta } | null {
-  switch (CAMPAIGN.phase) {
+  switch (getPhase()) {
     case 'ulule-live':
       return {
         text: buildBannerStockLine(),
@@ -125,10 +185,11 @@ export function getBannerConfig(): { text: string; cta: Cta } | null {
       };
     case 'precommande-live':
       return {
-        text: "Pré-commandes jusqu'au 31 octobre",
+        text: `Précommande des fêtes jusqu'au ${FETES_SALE.endLabel}`,
         cta: getPrimaryCta(),
       };
     case 'vente-flash-attente':
+      if (isFetesSaleOver()) return null;
       return {
         text: `Précommande des fêtes · ${FETES_SALE.flash.units} bracelets à ${FETES_SALE.flash.priceTtc} € · ${FLASH_SALE.window}`,
         cta: { ...getPrimaryCta(), label: 'Je m’inscris' },

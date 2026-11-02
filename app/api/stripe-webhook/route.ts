@@ -4,7 +4,25 @@ import type Stripe from 'stripe'
 import nodemailer from 'nodemailer'
 import type Mail from 'nodemailer/lib/mailer'
 import { getStripe } from '@/lib/stripe'
-import { PREORDER_FLOW, PREORDER_PACK } from '@/lib/preorder'
+import { PREORDER_FLOW, PREORDER_PACK, FETES_SALE } from '@/lib/preorder'
+
+/**
+ * Livraison annoncée dans les emails selon la vente : précommande des fêtes
+ * (metadata price_tier, CGV §4.2) ou pré-commande d'octobre (fenêtre historique).
+ */
+function deliveryRow(session: Stripe.Checkout.Session): [string, string] | null {
+  switch (session.metadata?.price_tier) {
+    case 'flash-159':
+      return ['Livraison', `Avant Noël, ${FETES_SALE.flash.delivery}`]
+    case 'standard-179':
+      return [
+        'Livraison',
+        `${FETES_SALE.standard.delivery} Au plus tard le ${FETES_SALE.standard.deliveryDeadline}.`,
+      ]
+    default:
+      return PREORDER_PACK.deliveryWindow ? ['Expédition estimée', PREORDER_PACK.deliveryWindow] : null
+  }
+}
 import { sendCapiEvent } from '@/lib/meta-capi'
 import { SHOP_CONTENT } from '@/lib/meta-content'
 
@@ -151,6 +169,9 @@ async function notifyNewPreorder(
       ...(session.metadata?.partner_offer
         ? ([['Offre partenaire', session.metadata.partner_offer]] as [string, string][])
         : []),
+      ...(session.metadata?.price_tier
+        ? ([['Prix', session.metadata.price_tier === 'flash-159' ? `${FETES_SALE.flash.priceTtc} € (prix réduit, livraison avant Noël)` : `${PREORDER_PACK.priceTtc} €`]] as [string, string][])
+        : []),
       ['Zone', session.metadata?.shipping_mode ? `${zone} · ${session.metadata.shipping_mode}` : zone],
       ...(relayLabel ? ([['Point relais', relayLabel]] as [string, string][]) : []),
       ['Adresse', formatAddress(session)],
@@ -223,9 +244,7 @@ async function sendCustomerConfirmation(session: Stripe.Checkout.Session, extras
       ['Commande', extras.quantityLabel],
       ['Total payé', formatEur(session.amount_total)],
       ['Livraison', relayLabel || formatAddress(session)],
-      ...(PREORDER_PACK.deliveryWindow
-        ? ([['Expédition estimée', PREORDER_PACK.deliveryWindow]] as [string, string][])
-        : []),
+      ...(deliveryRow(session) ? [deliveryRow(session) as [string, string]] : []),
     ]
 
     const html = `

@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import NewsletterForm from './NewsletterForm'
-import { WAITLIST, CAMPAIGN, FLASH_SALE } from '@/lib/campaign'
+import { WAITLIST, getPhase, getWaitlistCopy } from '@/lib/campaign'
+import { FETES_SALE, PREORDER_PACK } from '@/lib/preorder'
 
 /**
  * Section CTA de fin de page réutilisable — cible #liste-attente de tous les CTA du site.
@@ -14,8 +15,7 @@ import { WAITLIST, CAMPAIGN, FLASH_SALE } from '@/lib/campaign'
  * En phase 'precommande-live', le sous-titre est forcé sur le message pré-commande
  * (les sous-titres passés par les pages sont orientés liste d'attente).
  */
-const PREORDER_SUBTITLE =
-  "Les pré-commandes sont ouvertes. Réserve ton bracelet Polar 360 + l'app au tarif de lancement, en quantités limitées."
+const PREORDER_SUBTITLE = `Précommande des fêtes ouverte jusqu'au ${FETES_SALE.endLabel} : ${FETES_SALE.flash.units} bracelets à ${FETES_SALE.flash.priceTtc} €, livrés avant Noël, puis ${PREORDER_PACK.priceTtc} €.`
 
 export default function WaitlistSection({
   heading = WAITLIST.formTitle,
@@ -24,13 +24,15 @@ export default function WaitlistSection({
   heading?: string
   subtitle?: string
 }) {
-  const isPreorder = CAMPAIGN.phase === 'precommande-live'
-  const isFlashWaitlist = CAMPAIGN.phase === 'vente-flash-attente'
-  const resolvedHeading = isFlashWaitlist ? FLASH_SALE.formTitle : heading
+  const phase = getPhase()
+  const isPreorder = phase === 'precommande-live'
+  const isFlashWaitlist = phase === 'vente-flash-attente'
+  const flashCopy = getWaitlistCopy()
+  const resolvedHeading = isFlashWaitlist ? flashCopy.title : heading
   const resolvedSubtitle = isPreorder
     ? PREORDER_SUBTITLE
     : isFlashWaitlist
-      ? FLASH_SALE.formSubtitle
+      ? flashCopy.subtitle
       : subtitle ?? WAITLIST.formSubtitle
 
   return (
@@ -49,7 +51,7 @@ export default function WaitlistSection({
             color: 'var(--color-primary-beige)',
           }}
         >
-          {isFlashWaitlist ? `${FLASH_SALE.window} · livrés avant Noël` : 'Objectif 100 % atteint — merci à la cordée'}
+          {isFlashWaitlist ? flashCopy.badge : 'Objectif 100 % atteint — merci à la cordée'}
         </span>
 
         <h2
@@ -73,7 +75,7 @@ export default function WaitlistSection({
         ) : (
           <NewsletterForm
             variant="footer"
-            buttonText={isFlashWaitlist ? FLASH_SALE.buttonText : WAITLIST.buttonText}
+            buttonText={isFlashWaitlist ? flashCopy.buttonText : WAITLIST.buttonText}
             askFullName={isFlashWaitlist}
           />
         )}

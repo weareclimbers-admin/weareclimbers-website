@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import NewsletterForm from '@/components/NewsletterForm'
-import { FLASH_SALE } from '@/lib/campaign'
+import { FLASH_SALE, getWaitlistCopy, isFetesSaleOver } from '@/lib/campaign'
 import { APP_PROOF } from '@/lib/proof'
 import { PREORDER_PACK, FETES_SALE } from '@/lib/preorder'
 
@@ -36,6 +36,10 @@ export default function FlashWaitlist({ climbersCount }: { climbersCount: number
     { big: APP_PROOF.sessions, small: 'séances déjà enregistrées' },
   ]
 
+  // Après le 06/12 : remerciement + inscription pour la prochaine ouverture.
+  const over = isFetesSaleOver()
+  const copy = getWaitlistCopy()
+
   return (
     <main>
       {/* ───────────── HAUT DE PAGE + FORMULAIRE ───────────── */}
@@ -48,7 +52,7 @@ export default function FlashWaitlist({ climbersCount }: { climbersCount: number
             className="text-xs md:text-sm mb-5 font-bold uppercase"
             style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-secondary-orange)', letterSpacing: '0.15em' }}
           >
-            Du {FETES_SALE.startLabel} au {FETES_SALE.endLabel}
+            {over ? copy.badge : `Du ${FETES_SALE.startLabel} au ${FETES_SALE.endLabel}`}
           </p>
           <h1
             className="text-4xl md:text-6xl lg:text-7xl mb-6"
@@ -60,27 +64,34 @@ export default function FlashWaitlist({ climbersCount }: { climbersCount: number
               textWrap: 'balance',
             }}
           >
-            Précommande des fêtes
+            {copy.title}
           </h1>
           <p
             className="text-lg md:text-xl max-w-3xl mx-auto mb-10"
             style={{ fontFamily: 'var(--font-roboto)', lineHeight: '1.6' }}
           >
-            <strong style={{ color: 'var(--color-secondary-orange)' }}>
-              {FETES_SALE.flash.units} bracelets à {FETES_SALE.flash.priceTtc}&nbsp;€
-            </strong>{' '}
-            au lieu de {PREORDER_PACK.priceTtc}&nbsp;€, livrés avant Noël. Le bracelet Polar 360 et l&apos;app WAC,
-            une semaine seulement. Inscris-toi pour être prévenu·e dès l&apos;ouverture, le {FETES_SALE.startLabel} à 9&nbsp;h.
+            {over ? (
+              copy.subtitle
+            ) : (
+              <>
+                <strong style={{ color: 'var(--color-secondary-orange)' }}>
+                  {FETES_SALE.flash.units} bracelets à {FETES_SALE.flash.priceTtc}&nbsp;€
+                </strong>{' '}
+                au lieu de {PREORDER_PACK.priceTtc}&nbsp;€, livrés avant Noël. Le bracelet Polar 360 et l&apos;app WAC,
+                une semaine seulement. Inscris-toi pour être prévenu·e dès l&apos;ouverture, le {FETES_SALE.startLabel} à 9&nbsp;h.
+              </>
+            )}
           </p>
 
           {/* Cible des liens de campagne (/boutique#liste-attente) — ne pas supprimer cet id. */}
           <div id="liste-attente" className="scroll-mt-32">
-            <NewsletterForm variant="footer" buttonText={FLASH_SALE.buttonText} askFullName />
+            <NewsletterForm variant="footer" buttonText={copy.buttonText} askFullName />
           </div>
         </div>
       </section>
 
-      {/* ───────────── CE QUI T'ATTEND ───────────── */}
+      {/* ───────────── CE QUI T'ATTEND (avant l'ouverture seulement) ───────────── */}
+      {!over && (
       <section className="py-14 md:py-16" style={{ backgroundColor: 'var(--color-secondary-beige-light)' }}>
         <div className="container-custom">
           <ul className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
@@ -104,6 +115,7 @@ export default function FlashWaitlist({ climbersCount }: { climbersCount: number
           </ul>
         </div>
       </section>
+      )}
 
       {/* ───────────── LE PACK ───────────── */}
       <section className="py-16 md:py-20" style={{ backgroundColor: 'var(--color-primary-beige)' }}>

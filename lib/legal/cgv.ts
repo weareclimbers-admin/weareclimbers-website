@@ -15,8 +15,8 @@ export const CGV: LegalDocument = {
   key: 'cgv',
   title: 'Conditions Générales de Vente',
   subtitle: 'Pré-commandes weareclimbers.fr',
-  version: '1.1',
-  lastUpdated: '2026-09-28',
+  version: '1.2',
+  lastUpdated: '2026-11-02',
   preamble: `Les présentes Conditions Générales de Vente (« CGV ») régissent les ventes de produits conclues sur le site weareclimbers.fr entre WeAreClimbers SAS et toute personne physique agissant en qualité de consommateur (« le Client »). Toute commande implique l'acceptation préalable et sans réserve des présentes CGV.`,
   sections: [
     {
@@ -71,12 +71,19 @@ Les photographies et visuels illustrant les produits n'ont pas de valeur contrac
           title: '4.1 Nature de la pré-commande',
           content: `Les produits sont proposés en PRÉ-COMMANDE : ils sont payés au moment de la commande mais expédiés ultérieurement, à une échéance annoncée sur la fiche produit avant la validation de la commande.
 
-La période de pré-commande est limitée dans le temps ; sa date de clôture est affichée sur la boutique. À la clôture, WeAreClimbers passe commande des bracelets auprès de son fournisseur, puis prépare et expédie les commandes dans l'ordre de leur enregistrement.`,
+La période de pré-commande est limitée dans le temps ; sa date de clôture est affichée sur la boutique. WeAreClimbers passe commande des bracelets auprès de son fournisseur, puis prépare et expédie les commandes dans l'ordre de leur enregistrement.
+
+Certaines périodes de pré-commande proposent un nombre limité de produits à prix réduit. Le nombre restant est affiché sur la boutique ; une fois ce nombre atteint, les commandes suivantes sont proposées au prix standard, affiché avant la validation de la commande.`,
         },
         {
           id: '4.2',
           title: '4.2 Date de livraison',
-          content: `Sauf indication différente portée sur la fiche produit au jour de la commande, les produits en pré-commande sont expédiés au cours du mois de novembre 2026 et livrés au plus tard le 15 décembre 2026.
+          content: `La date de livraison applicable est affichée sur la fiche produit et sur la page de paiement avant la validation de la commande. Pour la pré-commande des fêtes, ouverte du 30 novembre 2026 au 6 décembre 2026 :
+
+• produits commandés au prix réduit (dans la limite du nombre annoncé) : livraison entre le 11 et le 18 décembre 2026, et au plus tard le 18 décembre 2026 ;
+• produits commandés au prix standard : WeAreClimbers met tout en œuvre pour livrer avant les fêtes de fin d'année, sous réserve des délais d'approvisionnement de son fournisseur, et livre au plus tard le 15 janvier 2027.
+
+Pour les livraisons en Suisse et en Outre-mer, ces dates limites sont prolongées de 7 jours, en raison des délais d'acheminement et de dédouanement.
 
 Conformément aux articles L.216-1 et suivants du Code de la consommation, si le produit n'est pas livré à cette date, le Client peut enjoindre WeAreClimbers, par lettre recommandée avec accusé de réception ou par écrit sur un autre support durable, d'effectuer la livraison dans un délai supplémentaire raisonnable. À défaut de livraison dans ce nouveau délai, le Client peut résoudre le contrat par les mêmes moyens ; WeAreClimbers rembourse alors la totalité des sommes versées, au plus tard dans les 14 jours suivant la résolution.
 

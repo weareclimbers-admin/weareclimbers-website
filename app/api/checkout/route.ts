@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import type Stripe from 'stripe'
 import { getStripe } from '@/lib/stripe'
-import { PREORDER_FLOW, PREORDER_PACK, getZone, getMode } from '@/lib/preorder'
+import { PREORDER_FLOW, PREORDER_PACK, FETES_SALE, getZone, getMode, type PriceTier } from '@/lib/preorder'
 import { detectCreator, type CapturedUtm } from '@/lib/creator'
 import { getPartnerOffer, type PartnerOffer } from '@/lib/offers'
 import { sendCapiEvent, readClientSignals } from '@/lib/meta-capi'
 import { SHOP_CONTENT } from '@/lib/meta-content'
-import { isCheckoutOpen } from '@/lib/campaign'
+import { isCheckoutOpen, isFetesSaleOpen } from '@/lib/campaign'
+import { flashStockFromCoupon } from '@/lib/flash-stock'
 
 // Pré-commande V2 → création d'une session Stripe Checkout (hébergé, mode payment).
 // Le client envoie sa zone de livraison (choisie sur /boutique) ; la session borne
@@ -151,8 +152,15 @@ export async function POST(request: NextRequest) {
     // appliquée une fois par commande, premium rattaché à l'email du paiement.
     const offer = getPartnerOffer(body?.offer)
 
+    // Précommande des fêtes : le client demande le prix réduit (FETES_SALE.flash)
+    // tant que la boutique l'affiche. Revérifié ci-dessous contre le coupon Stripe.
+    // 1 bracelet par commande à ce prix : 10 personnes différentes.
+    const fetesSale = isFetesSaleOpen()
+    const wantsFlash = fetesSale && !offer && body?.tier === 'flash'
+    const priceTier: PriceTier | null = fetesSale ? (wantsFlash ? 'flash-159' : 'standard-179') : null
+
     const requestedQty = Number(body?.quantity ?? 1)
-    const quantity = offer
+    const quantity = offer || wantsFlash
       ? 1
       : Number.isInteger(requestedQty)
         ? Math.min(Math.max(requestedQty, 1), PREORDER_PACK.maxQuantity)
@@ -184,6 +192,29 @@ export async function POST(request: NextRequest) {
         },
         { status: 409 },
       )
+    }
+
+    // Bracelets à prix réduit épuisés (ou coupon incohérent) : on ne facture JAMAIS
+    // en silence le prix standard — la boutique se met à jour et le client
+    // reclique en connaissance de cause.
+    if (wantsFlash) {
+      const [coupon, price] = await Promise.all([
+        stripe.coupons.retrieve(FETES_SALE.flash.couponId).catch(() => null),
+        stripe.prices.retrieve(priceId),
+      ])
+      const stock = coupon ? flashStockFromCoupon(coupon, price.unit_amount) : { left: 0 }
+      if (!coupon) console.error(`checkout: coupon ${FETES_SALE.flash.couponId} introuvable`)
+      if (stock.left <= 0) {
+        return NextResponse.json(
+          {
+            error:
+              `Les ${FETES_SALE.flash.units} bracelets à ${FETES_SALE.flash.priceTtc} € sont partis. ` +
+              `Tu peux toujours précommander au prix de ${PREORDER_PACK.priceTtc} € jusqu'au ${FETES_SALE.endLabel}.`,
+            flashSoldOut: true,
+          },
+          { status: 409 },
+        )
+      }
     }
 
     // Fallback sur l'origine de la requête : en dev, Stripe redirige bien vers
@@ -227,6 +258,10 @@ export async function POST(request: NextRequest) {
       fbclid: utmValue(body?.fbclid),
     }
     if (offer) metadata.partner_offer = offer.slug
+    if (priceTier) {
+      metadata.sale = FETES_SALE.id
+      metadata.price_tier = priceTier
+    }
     if (relay && relayShipping) {
       metadata.relay_point_code = relay.id
       metadata.relay_name = relayShipping.name
@@ -251,9 +286,23 @@ export async function POST(request: NextRequest) {
     // 26/10/2026). La date de livraison estimée vit dans la description du produit
     // Stripe (scripts/update-preorder-product.mjs). Rétractation = 14 j À COMPTER
     // DE LA RÉCEPTION (CGV §9) — ne jamais écrire « après la commande ».
+    // Précommande des fêtes : la date de livraison dépend du prix (CGV §4.2).
+    const deliveryMessage =
+      priceTier === 'flash-159'
+        ? `Livré avant Noël, ${FETES_SALE.flash.delivery}. `
+        : priceTier === 'standard-179'
+          ? `${FETES_SALE.standard.delivery.replace(/\.$/, '')}, au plus tard le ${FETES_SALE.standard.deliveryDeadline}. `
+          : ''
     const submitMessage =
+      deliveryMessage +
       "Annulation gratuite jusqu'à l'expédition · 14 jours de rétractation après réception · Bracelet garanti 2 ans" +
       (zone.id === 'dom-tom' ? " · Pour l'Outre-mer, compte quelques jours d'acheminement en plus." : '')
+
+    // Pendant la précommande des fêtes : aucun code promo (décision Julien), et
+    // pas de lien de reprise de panier (il resterait valable 30 j, donc après la
+    // clôture du 06/12, et pourrait rejouer le prix réduit).
+    const promoCodesAllowed = !offer && !fetesSale
+    const discountCoupon = offer?.couponId ?? (wantsFlash ? FETES_SALE.flash.couponId : null)
 
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
@@ -262,7 +311,7 @@ export async function POST(request: NextRequest) {
         {
           price: priceId,
           quantity,
-          ...(offer
+          ...(offer || wantsFlash
             ? {}
             : { adjustable_quantity: { enabled: true, minimum: 1, maximum: PREORDER_PACK.maxQuantity } }),
         },
@@ -285,7 +334,12 @@ export async function POST(request: NextRequest) {
       // Offre partenaire : coupon appliqué d'office (pas de champ code promo —
       // Stripe interdit de combiner `discounts` et `allow_promotion_codes`).
       // Sinon : champ code promo (code « liste d'attente » diffusé via Brevo).
-      ...(offer ? { discounts: [{ coupon: offer.couponId }] } : { allow_promotion_codes: true }),
+      ...(discountCoupon
+        ? { discounts: [{ coupon: discountCoupon }] }
+        : { allow_promotion_codes: promoCodesAllowed }),
+      // Prix réduit : session courte (30 min, minimum Stripe) pour ne pas laisser
+      // traîner des paniers à 159 € une fois le stock parti.
+      ...(wantsFlash ? { expires_at: Math.floor(Date.now() / 1000) + 30 * 60 } : {}),
       customer_creation: 'always', // les acheteurs restent visibles dans Stripe > Customers
       // Paniers abandonnés : à l'expiration (24 h), Stripe joint une URL de reprise
       // (valable 30 j) à l'event checkout.session.expired — l'email de relance
@@ -294,7 +348,9 @@ export async function POST(request: NextRequest) {
       // country », re-testé le 26/10/2026) et ferait échouer tout le checkout.
       // Code promo sur la session reprise, sauf offre partenaire (Stripe refuse
       // de combiner `discounts` et recovery.allow_promotion_codes).
-      after_expiration: { recovery: { enabled: true, allow_promotion_codes: !offer } },
+      ...(fetesSale
+        ? {}
+        : { after_expiration: { recovery: { enabled: true, allow_promotion_codes: !offer } } }),
       custom_text: {
         submit: { message: submitMessage },
         // Encadré du formulaire d'adresse (mode domicile uniquement) — France

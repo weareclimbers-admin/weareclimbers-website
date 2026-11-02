@@ -4,7 +4,8 @@ import ShopLanding from '@/components/boutique/ShopLanding'
 import FlashWaitlist from '@/components/boutique/FlashWaitlist'
 import { isCheckoutOpen } from '@/lib/campaign'
 import { countPaidPreorders } from '@/lib/preorder-count'
-import { ULULE_BUYERS, CLIMBERS_EQUIPPED } from '@/lib/proof'
+import { CLIMBERS_EQUIPPED } from '@/lib/proof'
+import { FETES_SALE } from '@/lib/preorder'
 import { Metadata } from 'next'
 
 /**
@@ -62,8 +63,10 @@ export default async function Boutique() {
     )
   }
 
-  const paid = await countPaidPreorders()
-  const climbersCount = paid === null ? null : ULULE_BUYERS + paid
+  // Précommande des fêtes : 129 grimpeurs équipés à la clôture d'octobre + les
+  // bracelets payés depuis l'ouverture du 30/11.
+  const paid = await countPaidPreorders(Math.floor(Date.parse(FETES_SALE.startDate) / 1000))
+  const climbersCount = paid === null ? CLIMBERS_EQUIPPED : CLIMBERS_EQUIPPED + paid
 
   return (
     <>
