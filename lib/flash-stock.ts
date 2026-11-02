@@ -51,6 +51,14 @@ export function flashStockFromCoupon(coupon: Stripe.Coupon, priceUnitAmount: num
  * compteur exact (le checkout, lui, refusera proprement).
  */
 export async function getFlashStock(): Promise<FlashStock | null> {
+  // Aperçu local / preview : stock simulé (ex. FLASH_STOCK_OVERRIDE=0 pour voir
+  // l'état « épuisé »). Jamais en production.
+  const override = process.env.FLASH_STOCK_OVERRIDE
+  if (override !== undefined && process.env.VERCEL_ENV !== 'production') {
+    const left = Number.parseInt(override, 10)
+    if (Number.isInteger(left)) return { left: Math.max(0, left), total: FETES_SALE.flash.units }
+  }
+
   const priceId = process.env.STRIPE_PRICE_PREORDER
   if (!process.env.STRIPE_SECRET_KEY || !priceId) return null
   try {
