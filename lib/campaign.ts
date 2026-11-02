@@ -101,6 +101,16 @@ export function saleNow(): number {
   return Date.now();
 }
 
+/**
+ * Début du décompte des ventes (compteurs de la boutique) : l'ouverture réelle,
+ * ou 0 quand l'horloge est simulée — les paiements de test sont datés du jour
+ * du test, avant l'ouverture, et doivent compter pour vérifier les jauges.
+ */
+export function saleCountingSince(): number {
+  const simulated = Boolean(process.env.NEXT_PUBLIC_SALE_CLOCK) && process.env.NEXT_PUBLIC_VERCEL_ENV !== 'production';
+  return simulated ? 0 : Math.floor(Date.parse(FETES_SALE.startDate) / 1000);
+}
+
 /** true pendant la précommande des fêtes (30/11 9 h → 06/12 23 h 59, heure de Paris). */
 export function isFetesSaleOpen(now: number = saleNow()): boolean {
   return now >= Date.parse(FETES_SALE.startDate) && now <= Date.parse(FETES_SALE.endDate);

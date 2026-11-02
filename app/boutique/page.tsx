@@ -2,11 +2,10 @@ import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import ShopLanding from '@/components/boutique/ShopLanding'
 import FlashWaitlist from '@/components/boutique/FlashWaitlist'
-import { isCheckoutOpen } from '@/lib/campaign'
+import { isCheckoutOpen, saleCountingSince } from '@/lib/campaign'
 import { countPaidPreorders } from '@/lib/preorder-count'
 import { getFlashStock } from '@/lib/flash-stock'
 import { CLIMBERS_EQUIPPED } from '@/lib/proof'
-import { FETES_SALE } from '@/lib/preorder'
 import { Metadata } from 'next'
 
 /**
@@ -67,7 +66,7 @@ export default async function Boutique() {
   // Précommande des fêtes : 129 grimpeurs équipés à la clôture d'octobre + les
   // bracelets payés depuis l'ouverture du 30/11.
   const [paid, flashStock] = await Promise.all([
-    countPaidPreorders(Math.floor(Date.parse(FETES_SALE.startDate) / 1000)),
+    countPaidPreorders(saleCountingSince()),
     getFlashStock(),
   ])
   const climbersCount = paid === null ? CLIMBERS_EQUIPPED : CLIMBERS_EQUIPPED + paid

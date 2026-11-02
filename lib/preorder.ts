@@ -43,9 +43,11 @@ export const PREORDER_END_LABEL = '31 octobre 2026'
  *   la fermeture sont AUTOMATIQUES (lib/campaign.ts, getPhase) : rien à déployer
  *   ces jours-là.
  * - 10 bracelets à 159 € TTC au lieu de 179 € : coupon Stripe −20 € SANS code
- *   public (`flash.couponId`), plafonné à 10 utilisations par Stripe, appliqué
- *   côté serveur. La price Stripe à 179 € ne change pas. 1 bracelet par commande
- *   à ce prix (10 personnes différentes).
+ *   public et SANS plafond d'utilisations (`flash.couponId`), appliqué côté
+ *   serveur. Le stock de 10 est compté sur les commandes PAYÉES (lib/flash-stock.ts) :
+ *   Stripe consomme une utilisation de coupon dès qu'un paiement Klarna démarre,
+ *   même abandonné (vécu en test le 02/11/2026). La price à 179 € ne change pas.
+ *   1 bracelet par commande à ce prix (10 personnes différentes).
  * - Ensuite précommande standard à 179 € jusqu'à la clôture.
  * - Aucun code promo pendant la vente. Premium 3 mois créateurs conservé.
  * - Livraison : les 10 à 159 € entre le 11 et le 18 décembre (« avant Noël ») ;
@@ -61,8 +63,12 @@ export const FETES_SALE = {
   flash: {
     units: 10,
     priceTtc: 159,
-    /** ID personnalisé du coupon Stripe (identique sandbox / live). */
-    couponId: 'fetes-2026-159',
+    /**
+     * ID personnalisé du coupon Stripe (identique sandbox / live) : remise fixe
+     * 20 €, une fois, produit pré-commande, SANS « nombre max d'utilisations ».
+     * (L'ancien `fetes-2026-159`, plafonné à 10, n'est plus utilisé.)
+     */
+    couponId: 'fetes-2026-remise-20',
     delivery: 'entre le 11 et le 18 décembre',
     deliveryDeadline: '18 décembre 2026',
   },

@@ -7,7 +7,7 @@ import { getPartnerOffer, type PartnerOffer } from '@/lib/offers'
 import { sendCapiEvent, readClientSignals } from '@/lib/meta-capi'
 import { SHOP_CONTENT } from '@/lib/meta-content'
 import { isCheckoutOpen, isFetesSaleOpen } from '@/lib/campaign'
-import { flashStockFromCoupon } from '@/lib/flash-stock'
+import { countFlashSold, isFlashCouponCoherent } from '@/lib/flash-stock'
 
 // Pré-commande V2 → création d'une session Stripe Checkout (hébergé, mode payment).
 // Le client envoie sa zone de livraison (choisie sur /boutique) ; la session borne
@@ -198,13 +198,16 @@ export async function POST(request: NextRequest) {
     // en silence le prix standard — la boutique se met à jour et le client
     // reclique en connaissance de cause.
     if (wantsFlash) {
-      const [coupon, price] = await Promise.all([
+      // Stock = commandes payées au prix réduit (lib/flash-stock.ts), PAS le
+      // compteur du coupon (Stripe le consomme dès un paiement Klarna démarré).
+      const [coupon, price, sold] = await Promise.all([
         stripe.coupons.retrieve(FETES_SALE.flash.couponId).catch(() => null),
         stripe.prices.retrieve(priceId),
+        countFlashSold(stripe),
       ])
-      const stock = coupon ? flashStockFromCoupon(coupon, price.unit_amount) : { left: 0 }
       if (!coupon) console.error(`checkout: coupon ${FETES_SALE.flash.couponId} introuvable`)
-      if (stock.left <= 0) {
+      const usable = coupon !== null && isFlashCouponCoherent(coupon, price.unit_amount)
+      if (!usable || sold >= FETES_SALE.flash.units) {
         return NextResponse.json(
           {
             error:
