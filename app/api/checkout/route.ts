@@ -117,7 +117,7 @@ export async function POST(request: NextRequest) {
   // Pré-commandes closes le 31/10/2026 : plus aucune session ne doit être créée,
   // même depuis une ancienne page /boutique restée ouverte dans un onglet.
   if (!isCheckoutOpen()) {
-    return NextResponse.json({ error: 'Les pré-commandes sont closes. Recharge la page pour t’inscrire à la vente flash de fin d’année.', closed: true }, { status: 410 })
+    return NextResponse.json({ error: 'Les pré-commandes sont closes. Recharge la page pour t’inscrire à la précommande des fêtes.', closed: true }, { status: 410 })
   }
 
   try {

@@ -49,7 +49,7 @@ export default function WaitlistSection({
             color: 'var(--color-primary-beige)',
           }}
         >
-          {isFlashWaitlist ? `Vente flash · ${FLASH_SALE.window}` : 'Objectif 100 % atteint — merci à la cordée'}
+          {isFlashWaitlist ? `${FLASH_SALE.window} · livrés avant Noël` : 'Objectif 100 % atteint — merci à la cordée'}
         </span>
 
         <h2

@@ -3,21 +3,29 @@ import Link from 'next/link'
 import NewsletterForm from '@/components/NewsletterForm'
 import { FLASH_SALE } from '@/lib/campaign'
 import { APP_PROOF } from '@/lib/proof'
-import { PREORDER_PACK } from '@/lib/preorder'
+import { PREORDER_PACK, FETES_SALE } from '@/lib/preorder'
 
 /**
  * /boutique en phase 'vente-flash-attente' (lib/campaign.ts) : pré-commandes
- * closes le 31/10/2026, checkout fermé, liste d'attente de la vente flash de fin
- * d'année. Même URL que la boutique : les liens déjà diffusés (bio, créateurs,
+ * closes le 31/10/2026, checkout fermé, liste d'attente de la précommande des
+ * fêtes (FETES_SALE, lib/preorder.ts). Même URL que la boutique : les liens déjà diffusés (bio, créateurs,
  * emails) atterrissent ici, et l'ancre #liste-attente cible le formulaire.
  *
- * Rien de chiffré sur l'offre (prix, date exacte) tant qu'elle n'est pas arrêtée.
  */
 
 const PROMISES: { title: string; text: string }[] = [
-  { title: 'Une semaine, pas plus', text: `La vente ouvre ${FLASH_SALE.window}, pour les fêtes de fin d’année.` },
-  { title: 'Quantités très limitées', text: 'Peu de bracelets disponibles : les inscrits sont prévenus avant tout le monde.' },
-  { title: 'Tarif avantageux', text: 'Un prix de fin d’année sur le pack bracelet Polar 360 + app WAC.' },
+  {
+    title: `${FETES_SALE.flash.units} bracelets à ${FETES_SALE.flash.priceTtc} €`,
+    text: `Au lieu de ${PREORDER_PACK.priceTtc} €, pour les ${FETES_SALE.flash.units} premiers seulement. Les inscrits sont prévenus dès l’ouverture.`,
+  },
+  {
+    title: 'Livrés avant Noël',
+    text: `Les ${FETES_SALE.flash.units} bracelets à ${FETES_SALE.flash.priceTtc} € sont livrés ${FETES_SALE.flash.delivery}.`,
+  },
+  {
+    title: 'Une semaine, pas plus',
+    text: `Précommande ouverte ${FLASH_SALE.window} à 23 h 59. Ensuite, c’est fermé.`,
+  },
 ]
 
 export default function FlashWaitlist({ climbersCount }: { climbersCount: number }) {
@@ -40,7 +48,7 @@ export default function FlashWaitlist({ climbersCount }: { climbersCount: number
             className="text-xs md:text-sm mb-5 font-bold uppercase"
             style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-secondary-orange)', letterSpacing: '0.15em' }}
           >
-            Pré-commandes closes · merci à la cordée
+            Du {FETES_SALE.startLabel} au {FETES_SALE.endLabel}
           </p>
           <h1
             className="text-4xl md:text-6xl lg:text-7xl mb-6"
@@ -52,14 +60,17 @@ export default function FlashWaitlist({ climbersCount }: { climbersCount: number
               textWrap: 'balance',
             }}
           >
-            Vente flash de fin d&apos;année
+            Précommande des fêtes
           </h1>
           <p
             className="text-lg md:text-xl max-w-3xl mx-auto mb-10"
             style={{ fontFamily: 'var(--font-roboto)', lineHeight: '1.6' }}
           >
-            Une semaine seulement, {FLASH_SALE.window}&nbsp;: le bracelet Polar 360 et l&apos;app WAC, en
-            quantités très limitées et à tarif avantageux. Inscris-toi pour être prévenu·e en premier.
+            <strong style={{ color: 'var(--color-secondary-orange)' }}>
+              {FETES_SALE.flash.units} bracelets à {FETES_SALE.flash.priceTtc}&nbsp;€
+            </strong>{' '}
+            au lieu de {PREORDER_PACK.priceTtc}&nbsp;€, livrés avant Noël. Le bracelet Polar 360 et l&apos;app WAC,
+            une semaine seulement. Inscris-toi pour être prévenu·e dès l&apos;ouverture, le {FETES_SALE.startLabel} à 9&nbsp;h.
           </p>
 
           {/* Cible des liens de campagne (/boutique#liste-attente) — ne pas supprimer cet id. */}

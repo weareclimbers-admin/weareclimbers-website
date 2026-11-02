@@ -15,6 +15,8 @@
  * "Accès Anticipé", "Pack Fondateur/Pionnier", "haute précision / ±1 BPM".
  */
 
+import { FETES_SALE, PREORDER_PACK } from '@/lib/preorder';
+
 export type CampaignPhase = 'ulule-live' | 'campaign-success' | 'precommande-live' | 'vente-flash-attente';
 
 /**
@@ -69,15 +71,14 @@ export const WAITLIST = {
  * atterrissent). Inscriptions : NewsletterForm → /api/newsletter → liste Brevo
  * `BREVO_LIST_ID` (à faire pointer sur la nouvelle liste « vente flash »).
  *
- * ⚠️ Rien de chiffré tant que l'offre n'est pas arrêtée : pas de prix, pas de
- * date exacte, pas de promesse de livraison avant Noël.
+ * Offre arrêtée le 02/11/2026 et annoncée dès la liste d'attente (accord Julien) :
+ * dates, 10 bracelets à 159 €, livrés avant Noël — source : FETES_SALE (lib/preorder.ts).
  */
 export const FLASH_SALE = {
   href: '/boutique#liste-attente',
-  window: 'fin novembre – début décembre',
-  formTitle: 'Vente flash de fin d’année',
-  formSubtitle:
-    "Une semaine seulement, fin novembre – début décembre : quantités très limitées et tarif avantageux. Inscris-toi pour être prévenu·e en premier.",
+  window: `du ${FETES_SALE.startLabel} au ${FETES_SALE.endLabel}`,
+  formTitle: 'Précommande des fêtes',
+  formSubtitle: `Du ${FETES_SALE.startLabel} au ${FETES_SALE.endLabel} : ${FETES_SALE.flash.units} bracelets à ${FETES_SALE.flash.priceTtc} € au lieu de ${PREORDER_PACK.priceTtc} €, livrés avant Noël. Inscris-toi pour être prévenu·e dès l’ouverture.`,
   buttonText: 'Préviens-moi',
 } as const;
 
@@ -100,13 +101,13 @@ export function getPrimaryCta(): Cta {
     case 'precommande-live':
       return { label: 'Je précommande', kind: 'precommande', href: '/boutique' };
     case 'vente-flash-attente':
-      return { label: 'Je m’inscris à la vente flash', kind: 'waitlist', href: FLASH_SALE.href };
+      return { label: 'Je m’inscris', kind: 'waitlist', href: FLASH_SALE.href };
   }
 }
 
 /** Libellé du lien vers /boutique dans le header et le footer. */
 export function getShopNavLabel(): string {
-  return CAMPAIGN.phase === 'vente-flash-attente' ? 'Vente flash' : 'Pré-commandes';
+  return CAMPAIGN.phase === 'vente-flash-attente' ? 'Précommande des fêtes' : 'Pré-commandes';
 }
 
 /** Contenu du bandeau haut de page selon la phase. */
@@ -129,7 +130,7 @@ export function getBannerConfig(): { text: string; cta: Cta } | null {
       };
     case 'vente-flash-attente':
       return {
-        text: `Vente flash de fin d’année · ${FLASH_SALE.window}`,
+        text: `Précommande des fêtes · ${FETES_SALE.flash.units} bracelets à ${FETES_SALE.flash.priceTtc} € · ${FLASH_SALE.window}`,
         cta: { ...getPrimaryCta(), label: 'Je m’inscris' },
       };
   }

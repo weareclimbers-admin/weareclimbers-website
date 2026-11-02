@@ -36,6 +36,46 @@ export const PREORDER_FLOW = 'preorder_v2' as const
 export const PREORDER_END_DATE = '2026-10-31T23:59:59+01:00'
 export const PREORDER_END_LABEL = '31 octobre 2026'
 
+/**
+ * PRÉCOMMANDE DES FÊTES 2026 (décisions Julien du 02/11/2026).
+ *
+ * - Ouverte du 30/11 à 9 h au 06/12 à 23 h 59 (heure de Paris) — l'ouverture et
+ *   la fermeture sont AUTOMATIQUES (lib/campaign.ts, getPhase) : rien à déployer
+ *   ces jours-là.
+ * - 10 bracelets à 159 € TTC au lieu de 179 € : coupon Stripe −20 € SANS code
+ *   public (`flash.couponId`), plafonné à 10 utilisations par Stripe, appliqué
+ *   côté serveur. La price Stripe à 179 € ne change pas. 1 bracelet par commande
+ *   à ce prix (10 personnes différentes).
+ * - Ensuite précommande standard à 179 € jusqu'à la clôture.
+ * - Aucun code promo pendant la vente. Premium 3 mois créateurs conservé.
+ * - Livraison : les 10 à 159 € entre le 11 et le 18 décembre (« avant Noël ») ;
+ *   les autres « on fait tout pour livrer avant les fêtes », au plus tard le
+ *   15/01/2027 (date limite légale des CGV, L.216-1).
+ */
+export const FETES_SALE = {
+  id: 'fetes-2026',
+  startDate: '2026-11-30T09:00:00+01:00',
+  endDate: '2026-12-06T23:59:59+01:00',
+  startLabel: '30 novembre',
+  endLabel: '6 décembre',
+  flash: {
+    units: 10,
+    priceTtc: 159,
+    /** ID personnalisé du coupon Stripe (identique sandbox / live). */
+    couponId: 'fetes-2026-159',
+    delivery: 'entre le 11 et le 18 décembre',
+    deliveryDeadline: '18 décembre 2026',
+  },
+  standard: {
+    delivery:
+      'On fait tout pour te livrer avant les fêtes, selon les délais d’approvisionnement de notre fournisseur.',
+    deliveryDeadline: '15 janvier 2027',
+  },
+} as const
+
+/** Niveau de prix d'une commande de la précommande des fêtes (metadata price_tier). */
+export type PriceTier = 'flash-159' | 'standard-179'
+
 export interface PreorderPack {
   name: string
   description: string

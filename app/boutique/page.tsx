@@ -14,18 +14,18 @@ import { Metadata } from 'next'
  * /boutique2 redirige désormais vers /boutique (voir next.config.js).
  *
  * Pré-commandes closes (phase 'vente-flash-attente', lib/campaign.ts) : la même
- * URL affiche la liste d'attente de la vente flash de fin d'année.
+ * URL affiche la liste d'attente de la précommande des fêtes.
  */
 
 const FLASH_DESCRIPTION =
-  'Vente flash de fin d’année sur le bracelet Polar 360 + l’app WAC : une semaine seulement, quantités très limitées. Inscris-toi pour être prévenu·e en premier.'
+  'Précommande des fêtes du 30 novembre au 6 décembre : 10 bracelets Polar 360 + app WAC à 159 € au lieu de 179 €, livrés avant Noël. Inscris-toi pour être prévenu·e dès l’ouverture.'
 
 const flashMetadata: Metadata = {
-  title: 'Vente flash de fin d’année — Bracelet Polar 360 + App | We Are Climbers',
+  title: 'Précommande des fêtes — Bracelet Polar 360 + App | We Are Climbers',
   description: FLASH_DESCRIPTION,
   alternates: { canonical: 'https://www.weareclimbers.fr/boutique' },
   openGraph: {
-    title: 'Vente flash de fin d’année — Bracelet Polar 360 + App | We Are Climbers',
+    title: 'Précommande des fêtes — Bracelet Polar 360 + App | We Are Climbers',
     description: FLASH_DESCRIPTION,
     url: 'https://www.weareclimbers.fr/boutique',
   },

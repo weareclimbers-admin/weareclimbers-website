@@ -2,7 +2,8 @@
 
 import { motion, AnimatePresence } from 'motion/react'
 import { useEffect, useState } from 'react'
-import { getPrimaryCta, WAITLIST, CAMPAIGN } from '@/lib/campaign'
+import { getPrimaryCta, WAITLIST, CAMPAIGN, FLASH_SALE } from '@/lib/campaign'
+import { FETES_SALE } from '@/lib/preorder'
 
 /**
  * Barre CTA sticky phase-aware — apparaît en bas d'écran une fois la hero dépassée.
@@ -55,8 +56,8 @@ export default function StickyCta() {
                 </>
               ) : isFlashWaitlist ? (
                 <>
-                  <strong style={{ color: 'var(--color-secondary-orange)' }}>Vente flash de fin d&apos;année.</strong>{' '}
-                  Quantités très limitées — sois prévenu·e en premier.
+                  <strong style={{ color: 'var(--color-secondary-orange)' }}>Précommande des fêtes.</strong>{' '}
+                  {FETES_SALE.flash.units} bracelets à {FETES_SALE.flash.priceTtc}&nbsp;€, {FLASH_SALE.window}.
                 </>
               ) : (
                 <>Les pré-commandes sont ouvertes.</>
