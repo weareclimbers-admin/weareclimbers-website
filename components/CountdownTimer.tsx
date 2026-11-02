@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react'
 import { CAMPAIGN } from '@/lib/campaign'
 
-type Variant = 'compact' | 'large'
+/** compact = « J-3 » · inline = « 3 j 04:12:09 » (secondes, discret) · large = blocs. */
+type Variant = 'compact' | 'inline' | 'large'
 
 function computeRemaining(endIso: string) {
   const diff = new Date(endIso).getTime() - Date.now()
@@ -43,11 +44,12 @@ export default function CountdownTimer({
   if (!mounted) {
     // Placeholder côté serveur — même taille que le rendu final pour éviter le shift
     if (variant === 'compact') return <span className="font-bold">J-…</span>
+    if (variant === 'inline') return <span className="tabular-nums">… j --:--:--</span>
     return <span className="opacity-0">J-00 · 00:00:00</span>
   }
 
   if (time.ended) {
-    return variant === 'compact' ? <span>Terminé</span> : <span>{endedLabel}</span>
+    return variant === 'large' ? <span>{endedLabel}</span> : <span>Terminé</span>
   }
 
   if (variant === 'compact') {
@@ -55,6 +57,15 @@ export default function CountdownTimer({
   }
 
   const pad = (n: number) => n.toString().padStart(2, '0')
+
+  if (variant === 'inline') {
+    return (
+      <span className="tabular-nums whitespace-nowrap">
+        {time.days > 0 ? `${time.days} j ` : ''}
+        {pad(time.hours)}:{pad(time.minutes)}:{pad(time.seconds)}
+      </span>
+    )
+  }
 
   return (
     <div className="flex gap-3 md:gap-6 justify-center items-end font-bold" style={{ fontFamily: 'var(--font-syne)' }}>

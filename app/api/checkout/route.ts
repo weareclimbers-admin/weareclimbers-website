@@ -262,6 +262,7 @@ export async function POST(request: NextRequest) {
       metadata.sale = FETES_SALE.id
       metadata.price_tier = priceTier
     }
+    if (body?.payment === 'klarna') metadata.checkout_button = 'klarna'
     if (relay && relayShipping) {
       metadata.relay_point_code = relay.id
       metadata.relay_name = relayShipping.name
@@ -303,11 +304,22 @@ export async function POST(request: NextRequest) {
     // pas de lien de reprise de panier (il resterait valable 30 j, donc après la
     // clôture du 06/12, et pourrait rejouer le prix réduit).
     const promoCodesAllowed = !offer && !fetesSale
+
+    // Bouton « Payer en plusieurs fois avec Klarna » : session limitée à Klarna,
+    // le client arrive directement sur Klarna (échéances proposées par Klarna
+    // selon son éligibilité). France uniquement : Stripe exige que le pays du
+    // client corresponde à la devise (EUR), et Klarna ne couvre pas toutes nos zones.
+    const klarnaOnly = body?.payment === 'klarna'
+    if (klarnaOnly && zone.id !== 'fr') {
+      return NextResponse.json({ error: 'Le paiement Klarna est proposé pour la France uniquement.' }, { status: 400 })
+    }
     const discountCoupon = offer?.couponId ?? (wantsFlash ? FETES_SALE.flash.couponId : null)
 
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
       locale: 'fr',
+      // Sans restriction : moyens de paiement automatiques (carte, Klarna, Link…).
+      ...(klarnaOnly ? { payment_method_types: ['klarna' as const] } : {}),
       line_items: [
         {
           price: priceId,

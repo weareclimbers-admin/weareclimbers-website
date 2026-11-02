@@ -8,6 +8,9 @@ import type { PartnerOffer } from '@/lib/offers'
 import { trackShopEvent, SHOP_CONTENT, newEventId, hasMarketingConsent } from '@/lib/meta-pixel'
 import { trackShop, trackShopBeforeLeaving } from '@/lib/umami'
 import Reassurance from '@/components/boutique/Reassurance'
+import CountdownTimer from '@/components/CountdownTimer'
+import { FETES_SALE } from '@/lib/preorder'
+import { isFetesSaleOpen } from '@/lib/campaign'
 
 /**
  * Formulaire de commande de la boutique → checkout Stripe hébergé.
@@ -264,7 +267,8 @@ export default function OrderForm({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [relayZip, relayCountry, mapReady, mapFailed, currentMode.relay])
 
-  async function handleCheckout() {
+  /** payment = 'klarna' : session Stripe limitée à Klarna (bouton secondaire, France). */
+  async function handleCheckout(payment?: 'klarna') {
     // Sur mobile, le clic d'ouverture du panneau a déjà été compté.
     if (!inSheet) trackShop('clic-precommande', { emplacement: 'fiche' })
     if (currentMode.relay && !selectedRelay) {
@@ -308,6 +312,7 @@ export default function OrderForm({
           fbclid: attribution.fbclid,
           offer: offer?.slug,
           tier: flash ? 'flash' : 'standard',
+          payment,
           relay: selectedRelay
             ? {
                 id: selectedRelay.id,
@@ -338,7 +343,11 @@ export default function OrderForm({
       if (!res.ok || !data?.url) {
         throw new Error(data?.error || 'Une erreur est survenue. Réessaye dans quelques instants.')
       }
-      await trackShopBeforeLeaving('depart-paiement', { zone: zoneId, mode: currentMode.id })
+      await trackShopBeforeLeaving('depart-paiement', {
+        zone: zoneId,
+        mode: currentMode.id,
+        moyen: payment === 'klarna' ? 'klarna' : 'standard',
+      })
       window.location.href = data.url // redirection vers le checkout hébergé Stripe
     } catch (err) {
       trackShop('erreur-paiement', { raison: failure })
@@ -609,16 +618,49 @@ export default function OrderForm({
         </p>
       )}
 
+      {/* Clôture de la précommande — discret, toujours juste au-dessus du paiement. */}
+      {isFetesSaleOpen() && (
+        <p
+          className="mb-2 text-xs text-center"
+          style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', opacity: 0.75 }}
+        >
+          Fin de la précommande dans{' '}
+          <strong style={{ color: 'var(--color-secondary-orange)' }}>
+            <CountdownTimer variant="inline" endDate={FETES_SALE.endDate} />
+          </strong>
+        </p>
+      )}
+
       <button
         type="button"
-        onClick={handleCheckout}
+        onClick={() => handleCheckout()}
         disabled={loading}
-        className="btn-secondary w-full mb-4 disabled:opacity-60 disabled:cursor-wait"
+        className="btn-secondary w-full mb-3 disabled:opacity-60 disabled:cursor-wait"
       >
         {loading
           ? 'Redirection vers le paiement…'
           : `Passer au paiement${total !== null ? ` — ${formatPrice(total)}` : ''} →`}
       </button>
+
+      {/* Klarna direct (France) : même commande, session Stripe limitée à Klarna. */}
+      {zoneId === 'fr' && (
+        <button
+          type="button"
+          onClick={() => handleCheckout('klarna')}
+          disabled={loading}
+          className="w-full mb-4 px-4 py-3 rounded-lg flex items-center justify-center gap-2 text-sm font-bold transition-opacity hover:opacity-80 disabled:opacity-60 disabled:cursor-wait"
+          style={{
+            fontFamily: 'var(--font-roboto)',
+            color: 'var(--color-primary-green)',
+            border: '2px solid var(--color-primary-green)',
+            backgroundColor: 'transparent',
+          }}
+        >
+          Payer en plusieurs fois avec
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/images/paiement/klarna.svg" alt="Klarna" className="h-5 w-auto" />
+        </button>
+      )}
 
       <div className="mt-2 mb-5">
         <Reassurance />

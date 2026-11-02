@@ -1057,7 +1057,16 @@ export default function ShopLanding({
           paddingBottom: 'env(safe-area-inset-bottom)',
         }}
       >
-        <div className="flex items-center justify-between gap-4 px-5 py-3">
+        <p
+          className="pt-2 text-[11px] text-center"
+          style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', opacity: 0.75 }}
+        >
+          Fin de la précommande dans{' '}
+          <strong style={{ color: 'var(--color-secondary-orange)' }}>
+            <CountdownTimer variant="inline" endDate={FETES_SALE.endDate} />
+          </strong>
+        </p>
+        <div className="flex items-center justify-between gap-4 px-5 pb-3 pt-1.5">
           <div>
             {unitPrice !== null && (
               <p className="text-lg font-bold leading-tight" style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-primary-green)' }}>
@@ -1066,8 +1075,8 @@ export default function ShopLanding({
             )}
             <p className="text-[11px]" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', opacity: 0.7 }}>
               {flashActive && flashLeft !== null
-                ? `Plus que ${flashLeft} à ${formatPrice(FETES_SALE.flash.priceTtc)} · jusqu’au ${FETES_SALE.endLabel}`
-                : `Précommande jusqu’au ${FETES_SALE.endLabel}`}
+                ? `Plus que ${flashLeft} à ${formatPrice(FETES_SALE.flash.priceTtc)}`
+                : 'Livraison offerte en France'}
             </p>
           </div>
           <a {...preorderLinkProps('barre-mobile')} className="btn-secondary text-sm whitespace-nowrap">
