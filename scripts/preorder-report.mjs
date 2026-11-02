@@ -95,8 +95,14 @@ for await (const session of stripe.checkout.sessions.list({
   if (!addr?.line1 || !addr?.postal_code || !addr?.city || !addr?.country) issues.push('adresse incomplète')
   if (isRelay && !session.metadata.relay_point_code) issues.push('point relais manquant')
   if (!/^\+\d{9,15}$/.test(phone)) issues.push(`téléphone invalide (« ${session.customer_details?.phone ?? ''} »)`)
-  if (zone === 'fr' && /^9[78]/.test(addr?.postal_code ?? '')) issues.push('CP Outre-mer en zone France')
-  if (!isRelay && ship && session.customer_details?.name && ship.name && ship.name !== session.customer_details.name) {
+  // Monaco (MC, 98000) fait partie de la zone France : seul un CP 97/98 en pays FR est suspect.
+  if (zone === 'fr' && country === 'FR' && /^9[78]/.test(addr?.postal_code ?? '')) issues.push('CP Outre-mer en zone France')
+  // Même personne écrite autrement (« Tognet quentin » / « Quentin Tognet ») = pas un problème.
+  const sameName = (a, b) => {
+    const norm = (x) => x.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').split(/[\s-]+/).filter(Boolean).sort().join(' ')
+    return norm(a) === norm(b)
+  }
+  if (!isRelay && ship?.name && session.customer_details?.name && !sameName(ship.name, session.customer_details.name)) {
     issues.push(`destinataire ≠ payeur (${ship.name})`)
   }
 

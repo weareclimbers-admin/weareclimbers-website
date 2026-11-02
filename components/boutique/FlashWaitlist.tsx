@@ -20,9 +20,9 @@ const PROMISES: { title: string; text: string }[] = [
   { title: 'Tarif avantageux', text: 'Un prix de fin d’année sur le pack bracelet Polar 360 + app WAC.' },
 ]
 
-export default function FlashWaitlist({ climbersCount }: { climbersCount: number | null }) {
+export default function FlashWaitlist({ climbersCount }: { climbersCount: number }) {
   const proofs: { big: string; small: string }[] = [
-    { big: climbersCount !== null ? String(climbersCount) : '100+', small: 'grimpeurs ont déjà choisi WAC' },
+    { big: String(climbersCount), small: 'grimpeurs ont déjà choisi WAC' },
     { big: APP_PROOF.storeRating, small: 'note de l’app sur l’App Store et Google Play' },
     { big: APP_PROOF.activeUsers, small: 'grimpeurs actifs sur l’app' },
     { big: APP_PROOF.sessions, small: 'séances déjà enregistrées' },
@@ -64,7 +64,7 @@ export default function FlashWaitlist({ climbersCount }: { climbersCount: number
 
           {/* Cible des liens de campagne (/boutique#liste-attente) — ne pas supprimer cet id. */}
           <div id="liste-attente" className="scroll-mt-32">
-            <NewsletterForm variant="footer" buttonText={FLASH_SALE.buttonText} />
+            <NewsletterForm variant="footer" buttonText={FLASH_SALE.buttonText} askFullName />
           </div>
         </div>
       </section>

@@ -4,7 +4,7 @@ import ShopLanding from '@/components/boutique/ShopLanding'
 import FlashWaitlist from '@/components/boutique/FlashWaitlist'
 import { isCheckoutOpen } from '@/lib/campaign'
 import { countPaidPreorders } from '@/lib/preorder-count'
-import { ULULE_BUYERS } from '@/lib/proof'
+import { ULULE_BUYERS, CLIMBERS_EQUIPPED } from '@/lib/proof'
 import { Metadata } from 'next'
 
 /**
@@ -51,6 +51,17 @@ export const metadata: Metadata = isCheckoutOpen() ? shopMetadata : flashMetadat
 export const revalidate = 300
 
 export default async function Boutique() {
+  // Ventes closes : chiffre figé (lib/proof.ts), plus d'appel Stripe.
+  if (!isCheckoutOpen()) {
+    return (
+      <>
+        <Header showCampaignBanner={false} />
+        <FlashWaitlist climbersCount={CLIMBERS_EQUIPPED} />
+        <Footer />
+      </>
+    )
+  }
+
   const paid = await countPaidPreorders()
   const climbersCount = paid === null ? null : ULULE_BUYERS + paid
 
@@ -59,7 +70,7 @@ export default async function Boutique() {
       {/* Pas de bandeau pré-commande ici : la page porte déjà son compte à
           rebours, et le bandeau ne ferait que renvoyer… vers cette page. */}
       <Header showCampaignBanner={false} />
-      {isCheckoutOpen() ? <ShopLanding climbersCount={climbersCount} /> : <FlashWaitlist climbersCount={climbersCount} />}
+      <ShopLanding climbersCount={climbersCount} />
       <Footer />
     </>
   )

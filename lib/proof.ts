@@ -13,6 +13,13 @@
 /** Grimpeurs équipés lors de la campagne Ulule (clôturée le 10/07/2026). */
 export const ULULE_BUYERS = 102
 
+/**
+ * Total des grimpeurs équipés (Ulule + pré-commandes en propre), FIGÉ à la
+ * clôture des pré-commandes du 31/10/2026 — chiffre donné par Julien le
+ * 02/11/2026. À mettre à jour à la main après la vente flash.
+ */
+export const CLIMBERS_EQUIPPED = 129
+
 export const APP_PROOF = {
   activeUsers: '+150',
   sessions: '750',

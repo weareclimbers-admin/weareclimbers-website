@@ -7,15 +7,19 @@ interface NewsletterFormProps {
   variant?: 'hero' | 'footer'
   placeholder?: string
   buttonText?: string
+  /** Variante 'footer' : demande aussi prénom + nom (attributs Brevo PRENOM / NOM). */
+  askFullName?: boolean
 }
 
 export default function NewsletterForm({
   variant = 'hero',
   placeholder = 'ton@email.fr',
-  buttonText = 'Je rejoins le mouvement'
+  buttonText = 'Je rejoins le mouvement',
+  askFullName = false
 }: NewsletterFormProps) {
   const [email, setEmail] = useState('')
   const [name, setName] = useState('')
+  const [lastName, setLastName] = useState('')
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [message, setMessage] = useState('')
 
@@ -34,6 +38,7 @@ export default function NewsletterForm({
         body: JSON.stringify({
           email: email.trim(),
           name: name.trim(),
+          lastName: lastName.trim(),
           utm
         })
       })
@@ -46,6 +51,7 @@ export default function NewsletterForm({
         setMessage(data.message || 'Merci ! Tu fais maintenant partie du mouvement.')
         setEmail('')
         setName('')
+        setLastName('')
       } else {
         setStatus('error')
         setMessage(data.error || 'Oups, une erreur est survenue. Réessaye dans quelques instants.')
@@ -62,12 +68,40 @@ export default function NewsletterForm({
     return (
       <div className="w-full max-w-2xl mx-auto">
         <form onSubmit={handleSubmit} className="space-y-4">
+          {askFullName && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {[
+                { value: name, set: setName, placeholder: 'Ton prénom', autoComplete: 'given-name' },
+                { value: lastName, set: setLastName, placeholder: 'Ton nom', autoComplete: 'family-name' },
+              ].map((field) => (
+                <input
+                  key={field.placeholder}
+                  type="text"
+                  value={field.value}
+                  onChange={(e) => field.set(e.target.value)}
+                  placeholder={field.placeholder}
+                  aria-label={field.placeholder}
+                  autoComplete={field.autoComplete}
+                  required
+                  className="px-6 py-4 text-lg border-2 focus:outline-none focus:ring-2 focus:ring-secondary-orange"
+                  style={{
+                    fontFamily: 'var(--font-roboto)',
+                    backgroundColor: 'var(--color-secondary-beige-light)',
+                    borderColor: 'var(--color-secondary-orange)',
+                    color: 'var(--color-primary-green)'
+                  }}
+                />
+              ))}
+            </div>
+          )}
           <div className="flex flex-col md:flex-row gap-3">
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder={placeholder}
+              aria-label="Ton email"
+              autoComplete="email"
               required
               className="flex-1 px-6 py-4 text-lg border-2 focus:outline-none focus:ring-2 focus:ring-secondary-orange"
               style={{

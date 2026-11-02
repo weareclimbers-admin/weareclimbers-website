@@ -74,6 +74,7 @@ export default function WaitlistSection({
           <NewsletterForm
             variant="footer"
             buttonText={isFlashWaitlist ? FLASH_SALE.buttonText : WAITLIST.buttonText}
+            askFullName={isFlashWaitlist}
           />
         )}
       </div>

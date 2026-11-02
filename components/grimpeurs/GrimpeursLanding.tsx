@@ -7,6 +7,7 @@ import { Reveal, TitleReveal, CountUp } from '@/components/Reveal'
 import Magnetic from '@/components/Magnetic'
 import WaitlistSection from '@/components/WaitlistSection'
 import { DERNIER_ARTICLE } from '@/lib/press'
+import { CLIMBERS_EQUIPPED } from '@/lib/proof'
 
 /**
  * Landing /nos-grimpeurs — la surface de confiance.
@@ -99,7 +100,7 @@ export default function GrimpeursLanding() {
         <div className="container-custom">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-6 items-start">
             {[
-              { num: <CountUp to={102} duration={2} />, label: 'grimpeurs ont déjà acheté leur bracelet' },
+              { num: <CountUp to={CLIMBERS_EQUIPPED} duration={2} />, label: 'grimpeurs ont déjà acheté leur bracelet' },
               { num: <CountUp to={9} duration={1.4} />, label: "coachs embarqués dans l'aventure" },
               { num: <CountUp to={100} suffix=" %" duration={1.8} />, label: 'objectif de campagne atteint' },
               { num: <CountUp to={30} prefix="<" suffix=" s" duration={1.6} />, label: "pour analyser une séance" },

@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, name, utm } = await request.json()
+    const { email, name, lastName, utm } = await request.json()
 
     // Validation des données
     if (!email || !email.includes('@')) {
@@ -39,11 +39,20 @@ export async function POST(request: NextRequest) {
     }
     const hasUtm = Object.values(utmAttributes).some(Boolean)
 
+    // Identité : PRENOM / NOM (attributs standards Brevo). Sur un contact existant,
+    // on ne remplace jamais une valeur connue par du vide.
+    const firstName = typeof name === 'string' ? name.trim().slice(0, 100) : ''
+    const familyName = typeof lastName === 'string' ? lastName.trim().slice(0, 100) : ''
+    const identityAttributes = {
+      ...(firstName ? { PRENOM: firstName } : {}),
+      ...(familyName ? { NOM: familyName } : {}),
+    }
+
     // Préparation des données pour Brevo
     const contactData = {
       email: email.toLowerCase().trim(),
       attributes: {
-        PRENOM: name || '',
+        ...identityAttributes,
         ...utmAttributes,
       },
       listIds: [parseInt(listId)], // Ajout à la liste "Early Supporters WAC"
@@ -108,7 +117,7 @@ export async function POST(request: NextRequest) {
           },
           body: JSON.stringify({
             attributes: {
-              PRENOM: name || '',
+              ...identityAttributes,
               // Contact existant : on n'écrase pas une attribution déjà
               // enregistrée avec des valeurs vides ; on ne met à jour que si
               // cette visite porte réellement des UTM.

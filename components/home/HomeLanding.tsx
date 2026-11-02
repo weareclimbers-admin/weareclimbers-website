@@ -16,6 +16,7 @@ import ReadyGauge from './ReadyGauge'
 import { faqItems } from '@/lib/faq'
 import { DERNIER_ARTICLE } from '@/lib/press'
 import { getPrimaryCta } from '@/lib/campaign'
+import { CLIMBERS_EQUIPPED } from '@/lib/proof'
 
 /** Numéro de section en filigrane orange — motif structurant WAC 2.0 */
 function SectionNum({ n }: { n: string }) {
@@ -173,7 +174,7 @@ export default function HomeLanding() {
         <div className="container-custom">
           <div className="grid grid-cols-2 md:grid-cols-5 gap-8 md:gap-6 items-start">
             {[
-              { num: <CountUp to={102} duration={2} />, label: 'grimpeurs ont déjà acheté leur bracelet' },
+              { num: <CountUp to={CLIMBERS_EQUIPPED} duration={2} />, label: 'grimpeurs ont déjà acheté leur bracelet' },
               { num: <CountUp to={9} duration={1.4} />, label: "coachs embarqués dans l'aventure" },
               { num: <CountUp to={180000} duration={2.2} />, label: 'données analysées par heure' },
               { num: <CountUp to={30} prefix="<" suffix=" s" duration={1.6} />, label: 'pour analyser ta séance' },
