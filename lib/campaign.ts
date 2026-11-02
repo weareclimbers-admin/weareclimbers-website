@@ -177,7 +177,7 @@ export function getPrimaryCta(): Cta {
 
 /** Libellé du lien vers /boutique dans le header et le footer. */
 export function getShopNavLabel(): string {
-  return 'Précommande des fêtes';
+  return isFetesSaleOver() ? 'Liste d’attente' : 'Précommande des fêtes';
 }
 
 /** Contenu du bandeau haut de page selon la phase. */

@@ -2,7 +2,7 @@ import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import ShopLanding from '@/components/boutique/ShopLanding'
 import FlashWaitlist from '@/components/boutique/FlashWaitlist'
-import { isCheckoutOpen, saleCountingSince } from '@/lib/campaign'
+import { isCheckoutOpen, isFetesSaleOver, saleCountingSince } from '@/lib/campaign'
 import { countPaidPreorders } from '@/lib/preorder-count'
 import { getFlashStock } from '@/lib/flash-stock'
 import { CLIMBERS_EQUIPPED } from '@/lib/proof'
@@ -45,7 +45,26 @@ const shopMetadata: Metadata = {
   },
 }
 
-export const metadata: Metadata = isCheckoutOpen() ? shopMetadata : flashMetadata
+const ENDED_DESCRIPTION =
+  'La précommande des fêtes est terminée. Inscris-toi pour être prévenu·e en premier de la prochaine ouverture du bracelet Polar 360 + app WAC.'
+
+const endedMetadata: Metadata = {
+  title: 'Liste d’attente — Bracelet Polar 360 + App | We Are Climbers',
+  description: ENDED_DESCRIPTION,
+  alternates: { canonical: 'https://www.weareclimbers.fr/boutique' },
+  openGraph: {
+    title: 'Liste d’attente — Bracelet Polar 360 + App | We Are Climbers',
+    description: ENDED_DESCRIPTION,
+    url: 'https://www.weareclimbers.fr/boutique',
+  },
+}
+
+// Calculées à chaque régénération de la page (pas au chargement du module) :
+// le titre suit l'ouverture et la clôture automatiques de la vente.
+export function generateMetadata(): Metadata {
+  if (isCheckoutOpen()) return shopMetadata
+  return isFetesSaleOver() ? endedMetadata : flashMetadata
+}
 
 // Page statique régénérée toutes les 5 min pour le compteur de précommandes —
 // et immédiatement après chaque achat (revalidatePath dans le webhook Stripe).

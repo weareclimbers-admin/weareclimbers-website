@@ -188,8 +188,11 @@ export default function FlashWaitlist({ climbersCount }: { climbersCount: number
             Tu as précommandé&nbsp;?
           </h2>
           <p style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', lineHeight: 1.6 }}>
-            Ta commande est bien enregistrée, rien à faire de ton côté. Livraison estimée la{' '}
-            {PREORDER_PACK.estimatedDelivery} : on t&apos;écrit à chaque étape. Une question ?{' '}
+            Ta commande est bien enregistrée, rien à faire de ton côté.{' '}
+            {over
+              ? `Les bracelets à ${FETES_SALE.flash.priceTtc} € sont livrés ${FETES_SALE.flash.delivery}, les autres au plus tard le ${FETES_SALE.standard.deliveryDeadline}`
+              : `Livraison estimée la ${PREORDER_PACK.estimatedDelivery}`}{' '}
+            : on t&apos;écrit à chaque étape. Une question ?{' '}
             <Link href="/contact" className="underline font-bold">
               Écris-nous
             </Link>
