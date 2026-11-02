@@ -12,7 +12,7 @@ import CountdownTimer from '@/components/CountdownTimer'
 import OrderForm, { type Attribution } from '@/components/boutique/OrderForm'
 import Reassurance from '@/components/boutique/Reassurance'
 import { DERNIER_ARTICLE } from '@/lib/press'
-import { PREORDER_PACK, PREORDER_END_DATE, PREORDER_END_LABEL, formatPrice } from '@/lib/preorder'
+import { PREORDER_PACK, FETES_SALE, formatPrice } from '@/lib/preorder'
 import { APP_PROOF, STORE_REVIEWS } from '@/lib/proof'
 import { detectCreator } from '@/lib/creator'
 import { getPartnerOffer } from '@/lib/offers'
@@ -52,7 +52,7 @@ const STEPS: { title: string; text: string }[] = [
   },
   {
     title: 'On commande les bracelets',
-    text: `À la clôture des pré-commandes, le ${PREORDER_END_LABEL}, on passe commande de tous les bracelets auprès de Polar.`,
+    text: `On passe commande auprès de Polar, notre fournisseur. Les ${FETES_SALE.flash.units} bracelets à ${FETES_SALE.flash.priceTtc} € arrivent avant Noël ; pour les suivants, on fait tout pour te livrer avant les fêtes.`,
   },
   {
     title: 'On expédie nous-mêmes',
@@ -72,7 +72,7 @@ const FAQ: { q: string; a: string }[] = [
   },
   {
     q: 'Quand est-ce que je serai livré·e ?',
-    a: `Livraison estimée la ${PREORDER_PACK.estimatedDelivery} (quelques jours de plus pour l’Outre-mer). On commande les bracelets à Polar à la clôture des pré-commandes, le ${PREORDER_END_LABEL}, puis on t’expédie le tien nous-mêmes, avec un email à chaque étape.`,
+    a: `Les ${FETES_SALE.flash.units} bracelets à ${FETES_SALE.flash.priceTtc} € sont livrés ${FETES_SALE.flash.delivery}, avant Noël. Au-delà, ${FETES_SALE.standard.delivery.charAt(0).toLowerCase()}${FETES_SALE.standard.delivery.slice(1, -1)} — au plus tard le ${FETES_SALE.standard.deliveryDeadline}. Pour la Suisse et l’Outre-mer, compte quelques jours de plus. On t’expédie ton bracelet nous-mêmes, avec un email à chaque étape.`,
   },
   {
     q: 'Puis-je payer en plusieurs fois ?',
@@ -147,9 +147,12 @@ const PILIERS_APP = [
 
 export default function ShopLanding({
   climbersCount,
+  flashStock,
 }: {
-  /** 102 (Ulule) + précommandes payées, calculé côté serveur (lib/preorder-count.ts) ; null si Stripe injoignable. */
+  /** Grimpeurs équipés (lib/proof.ts) + précommandes payées depuis l'ouverture, calculé côté serveur. */
   climbersCount: number | null
+  /** Bracelets restants à prix réduit (coupon Stripe, lib/flash-stock.ts) ; null si illisible. */
+  flashStock: { left: number; total: number } | null
 }) {
   const [mainImage, setMainImage] = useState(0)
 
@@ -172,8 +175,19 @@ export default function ShopLanding({
   })
   const creatorDetected = detectCreator(attribution.creator)
   const offer = getPartnerOffer(attribution.offer)
-  // Prix unitaire réellement payé (le serveur applique la remise de l'offre).
-  const unitPrice = offer ? offer.priceTtc : PREORDER_PACK.priceTtc
+  // Stock à prix réduit : chiffre serveur au chargement, passé à 0 si le
+  // paiement répond « épuisé » (409). null = illisible → le prix réduit reste
+  // proposé et le serveur tranche au clic.
+  const [flashLeft, setFlashLeft] = useState<number | null>(flashStock ? flashStock.left : null)
+  const flashActive = !offer && (flashLeft === null || flashLeft > 0)
+  // Prix unitaire réellement payé (le serveur applique la remise du coupon).
+  const unitPrice = offer ? offer.priceTtc : flashActive ? FETES_SALE.flash.priceTtc : PREORDER_PACK.priceTtc
+  const ctaLabel = flashActive
+    ? `Je prends le mien à ${formatPrice(FETES_SALE.flash.priceTtc)}`
+    : `Je précommande — ${formatPrice(unitPrice ?? 0)}`
+  const deliveryShort = flashActive
+    ? `livré avant Noël, ${FETES_SALE.flash.delivery}`
+    : `au plus tard le ${FETES_SALE.standard.deliveryDeadline}, on fait tout pour avant les fêtes`
 
   useEffect(() => {
     try {
@@ -279,9 +293,13 @@ export default function ShopLanding({
           <div className="max-w-4xl mx-auto text-center">
             <p
               className="text-xs md:text-sm mb-5 font-bold uppercase"
-              style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-secondary-orange)', letterSpacing: '0.15em' }}
+              style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-primary-green)', letterSpacing: '0.12em', textWrap: 'balance' }}
             >
-              Pré-commandes ouvertes
+              <span style={{ color: 'var(--color-secondary-orange)' }}>Précommande des fêtes</span>
+              {' '}· jusqu&apos;au {FETES_SALE.endLabel} 23&nbsp;h&nbsp;59 ·{' '}
+              <span style={{ color: 'var(--color-secondary-orange)' }}>
+                <CountdownTimer variant="compact" endDate={FETES_SALE.endDate} />
+              </span>
             </p>
             <h1
               className="text-4xl md:text-6xl lg:text-7xl mb-6"
@@ -294,36 +312,81 @@ export default function ShopLanding({
                 textWrap: 'balance',
               }}
             >
-              Projet ou récup&nbsp;?
-              <br />
-              Ton corps te&nbsp;le&nbsp;dit.
+              {flashActive ? (
+                <>
+                  {FETES_SALE.flash.units} bracelets à {FETES_SALE.flash.priceTtc}&nbsp;€.
+                  <br />
+                  Livrés avant Noël.
+                </>
+              ) : (
+                <>Les {FETES_SALE.flash.units} bracelets à {FETES_SALE.flash.priceTtc}&nbsp;€ sont partis.</>
+              )}
             </h1>
-            <p
-              className="text-lg md:text-xl max-w-3xl mx-auto"
-              style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', lineHeight: '1.6' }}
-            >
-              Le bracelet Polar 360 mesure ton corps à ±1&nbsp;BPM. Chaque matin, l&apos;app WAC en tire ton
-              État de Forme : tu sais si c&apos;est un jour pour ton projet ou un jour pour récupérer, et
-              tu repères la surcharge d&apos;entraînement avant qu&apos;elle ne s&apos;installe.
-            </p>
+
+            {flashActive ? (
+              <div className="max-w-xl mx-auto">
+                {/* Jauge de stock — chiffre réel lu sur le coupon Stripe (lib/flash-stock.ts). */}
+                {flashLeft !== null && (
+                  <>
+                    <p
+                      className="text-lg md:text-xl font-bold mb-3"
+                      style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-primary-green)' }}
+                    >
+                      Plus que <span style={{ color: 'var(--color-secondary-orange)' }}>{flashLeft}</span> sur{' '}
+                      {FETES_SALE.flash.units} à {formatPrice(FETES_SALE.flash.priceTtc)} au lieu de{' '}
+                      {formatPrice(PREORDER_PACK.priceTtc ?? 0)}
+                    </p>
+                    <div
+                      className="h-3 rounded-full overflow-hidden mb-4"
+                      style={{ backgroundColor: 'var(--color-secondary-beige-light)', border: '1px solid var(--color-primary-green)' }}
+                      role="progressbar"
+                      aria-valuemin={0}
+                      aria-valuemax={FETES_SALE.flash.units}
+                      aria-valuenow={flashLeft}
+                      aria-label={`Bracelets restants à ${FETES_SALE.flash.priceTtc} €`}
+                    >
+                      <div
+                        className="h-full"
+                        style={{
+                          width: `${(flashLeft / FETES_SALE.flash.units) * 100}%`,
+                          backgroundColor: 'var(--color-secondary-orange)',
+                        }}
+                      />
+                    </div>
+                  </>
+                )}
+                <p className="text-base md:text-lg" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', lineHeight: '1.6' }}>
+                  Au-delà des {FETES_SALE.flash.units}, la précommande reste ouverte jusqu&apos;au {FETES_SALE.endLabel}, sans
+                  tarif réduit ({formatPrice(PREORDER_PACK.priceTtc ?? 0)}).
+                </p>
+              </div>
+            ) : (
+              <p
+                className="text-lg md:text-xl max-w-3xl mx-auto"
+                style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', lineHeight: '1.6' }}
+              >
+                La précommande reste ouverte à {formatPrice(PREORDER_PACK.priceTtc ?? 0)} jusqu&apos;au{' '}
+                {FETES_SALE.endLabel}. {FETES_SALE.standard.delivery}
+              </p>
+            )}
 
             <div className="mt-8 flex flex-col items-center gap-3">
               <a {...preorderLinkProps('haut-de-page')} className="btn-secondary inline-block">
-                Je précommande{unitPrice !== null ? ` — ${formatPrice(unitPrice)}` : ''}
+                {ctaLabel}
               </a>
               <p className="text-sm" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', opacity: 0.8 }}>
-                Livraison offerte en France, estimée la {PREORDER_PACK.estimatedDelivery}
-              </p>
-              <p
-                className="text-xs md:text-sm font-bold uppercase"
-                style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-primary-green)', letterSpacing: '0.1em', textWrap: 'balance' }}
-              >
-                <span style={{ color: 'var(--color-secondary-orange)' }}>
-                  <CountdownTimer variant="compact" endDate={PREORDER_END_DATE} />
-                </span>
-                {' '}· Fin des pré-commandes le {PREORDER_END_LABEL}
+                Livraison offerte en France · {deliveryShort}
               </p>
             </div>
+
+            <p
+              className="mt-8 text-base max-w-3xl mx-auto"
+              style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', lineHeight: '1.6', opacity: 0.85 }}
+            >
+              <strong>Projet ou récup&nbsp;? Ton corps te le dit.</strong> Le bracelet Polar 360 mesure ton corps à
+              ±1&nbsp;BPM. Chaque matin, l&apos;app WAC en tire ton État de Forme : tu sais si c&apos;est un jour pour
+              ton projet ou un jour pour récupérer.
+            </p>
           </div>
         </div>
       </section>
@@ -448,7 +511,7 @@ export default function ShopLanding({
                   >
                     {formatPrice(unitPrice)}
                   </span>
-                  {offer && PREORDER_PACK.priceTtc !== null && (
+                  {(offer || flashActive) && PREORDER_PACK.priceTtc !== null && (
                     <s
                       className="ml-3 text-xl md:text-2xl font-bold"
                       style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-primary-green)', opacity: 0.45 }}
@@ -479,7 +542,10 @@ export default function ShopLanding({
                 Payable en plusieurs fois avec Klarna
               </p>
               <p className="text-sm mb-6" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', opacity: 0.75 }}>
-                <strong>Pré-commande</strong> : livraison estimée la {PREORDER_PACK.estimatedDelivery}.
+                <strong>Précommande des fêtes</strong> :{' '}
+                {flashActive
+                  ? `livré avant Noël, ${FETES_SALE.flash.delivery}. 1 bracelet par commande à ce prix.`
+                  : `${FETES_SALE.standard.delivery} Au plus tard le ${FETES_SALE.standard.deliveryDeadline}.`}
               </p>
 
               {/* Contenu du pack */}
@@ -538,7 +604,7 @@ export default function ShopLanding({
                 onClick={() => openOrder('fiche')}
                 className="btn-secondary w-full mb-5 lg:hidden"
               >
-                Je précommande{unitPrice !== null ? ` — ${formatPrice(unitPrice)}` : ''}
+                {ctaLabel}
               </button>
               <div className="mb-6 lg:hidden">
                 <Reassurance />
@@ -573,7 +639,7 @@ export default function ShopLanding({
                         Bracelet Polar 360 + App WAC
                       </p>
                       <p className="text-xs mt-1" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', opacity: 0.75 }}>
-                        Livraison estimée la {PREORDER_PACK.estimatedDelivery}.
+                        {flashActive ? `Livré avant Noël, ${FETES_SALE.flash.delivery}.` : `Au plus tard le ${FETES_SALE.standard.deliveryDeadline}.`}
                       </p>
                     </div>
                     <button
@@ -594,6 +660,8 @@ export default function ShopLanding({
                     attribution={attribution}
                     offer={offer}
                     onOfferUnavailable={onOfferUnavailable}
+                    flash={flashActive}
+                    onFlashSoldOut={() => setFlashLeft(0)}
                   />
                 </div>
               </div>
@@ -997,7 +1065,9 @@ export default function ShopLanding({
               </p>
             )}
             <p className="text-[11px]" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', opacity: 0.7 }}>
-              Fin des pré-commandes le {PREORDER_END_LABEL}
+              {flashActive && flashLeft !== null
+                ? `Plus que ${flashLeft} à ${formatPrice(FETES_SALE.flash.priceTtc)} · jusqu’au ${FETES_SALE.endLabel}`
+                : `Précommande jusqu’au ${FETES_SALE.endLabel}`}
             </p>
           </div>
           <a {...preorderLinkProps('barre-mobile')} className="btn-secondary text-sm whitespace-nowrap">

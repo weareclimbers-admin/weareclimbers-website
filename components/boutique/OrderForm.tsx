@@ -63,6 +63,8 @@ export default function OrderForm({
   attribution,
   offer,
   onOfferUnavailable,
+  flash,
+  onFlashSoldOut,
 }: {
   /** Formulaire visible au moins une fois → la carte Boxtal peut se charger. */
   active: boolean
@@ -72,6 +74,10 @@ export default function OrderForm({
   attribution: Attribution
   offer: PartnerOffer | undefined
   onOfferUnavailable: () => void
+  /** Précommande des fêtes : le client demande le prix réduit (revérifié par le serveur). */
+  flash: boolean
+  /** Le serveur a répondu « prix réduit épuisé » (409) : la boutique repasse au prix standard. */
+  onFlashSoldOut: () => void
 }) {
   const [zoneId, setZoneId] = useState(SHIPPING_ZONES[0].id)
   const [modeId, setModeId] = useState(SHIPPING_ZONES[0].modes[0].id)
@@ -301,6 +307,7 @@ export default function OrderForm({
           utm: attribution.utm,
           fbclid: attribution.fbclid,
           offer: offer?.slug,
+          tier: flash ? 'flash' : 'standard',
           relay: selectedRelay
             ? {
                 id: selectedRelay.id,
@@ -317,7 +324,12 @@ export default function OrderForm({
         }),
       })
       const data = await res.json().catch(() => null)
-      failure = data?.offerUnavailable ? 'offre-indisponible' : `serveur-${res.status}`
+      failure = data?.offerUnavailable
+        ? 'offre-indisponible'
+        : data?.flashSoldOut
+          ? 'prix-reduit-epuise'
+          : `serveur-${res.status}`
+      if (data?.flashSoldOut) onFlashSoldOut()
       if (data?.offerUnavailable) {
         // Places épuisées / offre terminée : on retire l'offre (le clic suivant
         // part au tarif normal) et on affiche l'explication du serveur.
@@ -613,7 +625,7 @@ export default function OrderForm({
       </div>
 
       <p className="text-xs" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', opacity: 0.7, lineHeight: 1.6 }}>
-        {offer ? '' : 'Quantité modifiable sur la page de paiement. '}
+        {offer || flash ? '1 bracelet par commande à ce prix. ' : 'Quantité modifiable sur la page de paiement. '}
         Facture envoyée par email. En précommandant, tu acceptes nos{' '}
         <Link href="/cgv" target="_blank" className="underline underline-offset-2 font-bold hover:opacity-70 transition-opacity">
           Conditions Générales de Vente

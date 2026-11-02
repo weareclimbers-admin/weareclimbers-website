@@ -4,6 +4,7 @@ import ShopLanding from '@/components/boutique/ShopLanding'
 import FlashWaitlist from '@/components/boutique/FlashWaitlist'
 import { isCheckoutOpen } from '@/lib/campaign'
 import { countPaidPreorders } from '@/lib/preorder-count'
+import { getFlashStock } from '@/lib/flash-stock'
 import { CLIMBERS_EQUIPPED } from '@/lib/proof'
 import { FETES_SALE } from '@/lib/preorder'
 import { Metadata } from 'next'
@@ -65,7 +66,10 @@ export default async function Boutique() {
 
   // Précommande des fêtes : 129 grimpeurs équipés à la clôture d'octobre + les
   // bracelets payés depuis l'ouverture du 30/11.
-  const paid = await countPaidPreorders(Math.floor(Date.parse(FETES_SALE.startDate) / 1000))
+  const [paid, flashStock] = await Promise.all([
+    countPaidPreorders(Math.floor(Date.parse(FETES_SALE.startDate) / 1000)),
+    getFlashStock(),
+  ])
   const climbersCount = paid === null ? CLIMBERS_EQUIPPED : CLIMBERS_EQUIPPED + paid
 
   return (
@@ -73,7 +77,7 @@ export default async function Boutique() {
       {/* Pas de bandeau pré-commande ici : la page porte déjà son compte à
           rebours, et le bandeau ne ferait que renvoyer… vers cette page. */}
       <Header showCampaignBanner={false} />
-      <ShopLanding climbersCount={climbersCount} />
+      <ShopLanding climbersCount={climbersCount} flashStock={flashStock} />
       <Footer />
     </>
   )

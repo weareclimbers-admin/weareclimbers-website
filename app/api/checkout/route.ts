@@ -296,7 +296,8 @@ export async function POST(request: NextRequest) {
     const submitMessage =
       deliveryMessage +
       "Annulation gratuite jusqu'à l'expédition · 14 jours de rétractation après réception · Bracelet garanti 2 ans" +
-      (zone.id === 'dom-tom' ? " · Pour l'Outre-mer, compte quelques jours d'acheminement en plus." : '')
+      (zone.id === 'dom-tom' ? " · Pour l'Outre-mer, compte quelques jours d'acheminement en plus." : '') +
+      (zone.id === 'ch' ? ' · Pour la Suisse, compte quelques jours de dédouanement en plus.' : '')
 
     // Pendant la précommande des fêtes : aucun code promo (décision Julien), et
     // pas de lien de reprise de panier (il resterait valable 30 j, donc après la
