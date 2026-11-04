@@ -16,7 +16,7 @@
  * helpers (getPrimaryCta / getBannerConfig).
  *
  * ⚠️ Terminologie : jamais "crowdfunding" / "early access" / "médical". On dit
- * "Accès Anticipé", "Pack Fondateur/Pionnier", "haute précision / ±1 BPM".
+ * "Pack Fondateur/Pionnier", « ±1 BPM (donnée Polar) ».
  */
 
 import { FETES_SALE, PREORDER_PACK } from '@/lib/preorder';

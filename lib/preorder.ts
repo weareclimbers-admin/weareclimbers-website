@@ -15,7 +15,7 @@
  * dans les variables d'env serveur — voir .env.example, section Stripe.
  *
  * ⚠️ Terminologie : jamais « crowdfunding » / « early access » / « médical ».
- * On dit « pré-commande », « haute précision / ±1 BPM ».
+ * On dit « prévente » ; ±1 BPM toujours attribué à Polar (« ±1 BPM (donnée Polar) »).
  */
 
 /**
@@ -111,10 +111,10 @@ export const PREORDER_PACK: PreorderPack = {
   // TODO(Julien) : nom commercial du pack à valider
   name: 'Prévente — Bracelet + App WAC',
   description:
-    "Le bracelet Polar 360 haute précision (±1 BPM) associé à l'app WAC : analyse physiologique en temps réel, prévention des blessures et suivi de récupération.",
+    "Le bracelet Polar 360 (±1 BPM, donnée Polar) associé à l'app WAC : analyse physiologique en temps réel, suivi de la charge et de la récupération.",
   priceTtc: 179, // acté 14/08/2026 : « 179 € TTC hors promotion » (aligné flux bracelet coach) — doit matcher la price Stripe
   perks: [
-    'Bracelet Polar 360 haute précision (±1 BPM)',
+    'Bracelet Polar 360 (±1 BPM, donnée Polar)',
     // Périmètre gratuit précisé par Julien le 13/10/2026 (premium = option)
     "L'app WAC sans abonnement obligatoire : État de Forme, séances, récupération",
     'Livraison offerte en France métropolitaine',

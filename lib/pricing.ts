@@ -25,7 +25,7 @@ export const pricingPlans: PricingPlan[] = [
       ],
       excluded: [
         'Fréquence cardiaque temps réel',
-        'Prévention blessure',
+        'Suivi de la charge et de la récupération',
         'Analyse cycles menstruels',
         'Détection automatique mouvements'
       ]
@@ -59,7 +59,6 @@ export const pricingPlans: PricingPlan[] = [
     features: {
       included: [
         'Tout du pack Grimpeur',
-        'Chargeur USB-C supplémentaire',
         'Bracelet textile de remplacement',
         'Support technique prioritaire',
         'Stickers WeAreClimbers',
