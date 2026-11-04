@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
     })
 
     // Gestion de la réponse JSON (peut être vide)
-    let data: any = {}
+    let data: { code?: string; message?: string } = {}
     try {
       const text = await response.text()
       if (text) {
