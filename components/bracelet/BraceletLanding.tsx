@@ -457,7 +457,7 @@ export default function BraceletLanding() {
         </div>
       </section>
 
-      {/* ───────────── CTA PRÉ-COMMANDE ───────────── */}
+      {/* ───────────── CTA PRÉVENTE ───────────── */}
       <WaitlistSection heading="Réserve ton bracelet." />
     </main>
   )

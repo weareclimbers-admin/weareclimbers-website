@@ -351,7 +351,7 @@ export default function GrimpeursLanding() {
       {/* ───────────── CTA LISTE D'ATTENTE ───────────── */}
       <WaitlistSection
         heading="Rejoins celles et ceux qui grimpent avec WAC."
-        subtitle="Les pré-commandes ouvrent bientôt, directement sur weareclimbers.fr. Laisse ton email pour être prévenu·e en premier."
+        subtitle="Les préventes ouvrent bientôt, directement sur weareclimbers.fr. Laisse ton email pour être prévenu·e en premier."
       />
 
       {/* ───────────── PORTE COACH ───────────── */}

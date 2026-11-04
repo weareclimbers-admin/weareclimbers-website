@@ -9,7 +9,7 @@ import { FETES_SALE } from '@/lib/preorder'
  * Barre CTA sticky phase-aware — apparaît en bas d'écran une fois la hero dépassée.
  * Le libellé et la cible suivent la phase active (lib/campaign.ts) :
  *   campaign-success → "Rejoins la liste" (#liste-attente)
- *   precommande-live → "Je précommande" (/boutique)
+ *   precommande-live → "Je commande" (/boutique)
  *   vente-flash-attente → "Je m'inscris" (/boutique#liste-attente)
  */
 export default function StickyCta() {
@@ -53,18 +53,18 @@ export default function StickyCta() {
               {phase === 'campaign-success' ? (
                 <>
                   <strong style={{ color: 'var(--color-secondary-orange)' }}>Objectif 100 % atteint.</strong>{' '}
-                  Les pré-commandes arrivent — sois prévenu·e en premier.
+                  Les préventes arrivent — sois prévenu·e en premier.
                 </>
               ) : isFlashWaitlist && isFetesSaleOver() ? (
-                <>Précommande des fêtes terminée — merci à la cordée.</>
+                <>Prévente des fêtes terminée — merci à la cordée.</>
               ) : isFlashWaitlist ? (
                 <>
-                  <strong style={{ color: 'var(--color-secondary-orange)' }}>Précommande des fêtes.</strong>{' '}
+                  <strong style={{ color: 'var(--color-secondary-orange)' }}>Prévente des fêtes.</strong>{' '}
                   {FETES_SALE.flash.units} bracelets à {FETES_SALE.flash.priceTtc}&nbsp;€, {FLASH_SALE.window}.
                 </>
               ) : (
                 <>
-                  <strong style={{ color: 'var(--color-secondary-orange)' }}>Précommande des fêtes.</strong>{' '}
+                  <strong style={{ color: 'var(--color-secondary-orange)' }}>Prévente des fêtes.</strong>{' '}
                   Jusqu&apos;au {FETES_SALE.endLabel} à 23&nbsp;h&nbsp;59.
                 </>
               )}

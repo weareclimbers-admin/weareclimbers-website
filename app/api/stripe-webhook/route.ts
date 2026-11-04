@@ -190,7 +190,7 @@ async function notifyNewPreorder(
       <div style="font-family: Roboto, Arial, sans-serif; color: #265335; background:#F5ECE5; padding:24px;">
         <div style="max-width:560px; margin:0 auto; background:#fff; border:2px solid #265335;">
           <div style="background:#265335; color:#F5ECE5; padding:20px 24px; font-family:'Syne',Arial,sans-serif; font-weight:700; text-transform:uppercase;">
-            Nouvelle pré-commande — Boutique WAC
+            Nouvelle commande en prévente — Boutique WAC
           </div>
           ${alerts.map((a) => `<div style="padding:12px 24px; background:#FDF3E7; border-bottom:1px solid #E6D5C7; font-weight:700;">${a}</div>`).join('')}
           <table style="width:100%; border-collapse:collapse; padding:24px;">
@@ -213,7 +213,7 @@ async function notifyNewPreorder(
       from: `"Boutique WAC" <${mailer.from}>`,
       to: notifyTo,
       replyTo: session.customer_details?.email || undefined,
-      subject: `⛰️ Pré-commande — ${session.customer_details?.name || 'Client'} (${formatEur(session.amount_total)})`,
+      subject: `⛰️ Prévente — ${session.customer_details?.name || 'Client'} (${formatEur(session.amount_total)})`,
       html,
     })
   } catch (err) {
@@ -251,12 +251,12 @@ async function sendCustomerConfirmation(session: Stripe.Checkout.Session, extras
       <div style="font-family: Roboto, Arial, sans-serif; color: #265335; background:#F5ECE5; padding:24px;">
         <div style="max-width:560px; margin:0 auto; background:#fff; border:2px solid #265335;">
           <div style="background:#265335; color:#F5ECE5; padding:20px 24px; font-family:'Syne',Arial,sans-serif; font-weight:700; text-transform:uppercase;">
-            Ta pré-commande est confirmée
+            Ta commande est confirmée
           </div>
           <div style="padding:24px; line-height:1.6;">
             <p style="margin:0 0 16px;">${firstName ? `Salut ${firstName},` : 'Salut,'}</p>
             <p style="margin:0 0 16px;">
-              Merci de faire partie de la cordée ! Ta pré-commande est bien enregistrée
+              Merci de faire partie de la cordée ! Ta commande est bien enregistrée
               et ton paiement confirmé. Voici le récapitulatif :
             </p>
           </div>
@@ -321,7 +321,7 @@ async function sendCustomerConfirmation(session: Stripe.Checkout.Session, extras
     await mailer.transporter.sendMail({
       from: `"We Are Climbers" <${mailer.from}>`,
       to: customerEmail,
-      subject: '⛰️ Ta pré-commande We Are Climbers est confirmée',
+      subject: '⛰️ Ta commande We Are Climbers est confirmée',
       html,
     })
   } catch (err) {

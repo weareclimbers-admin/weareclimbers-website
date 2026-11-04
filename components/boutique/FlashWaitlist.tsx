@@ -16,7 +16,7 @@ import { PREORDER_PACK, FETES_SALE } from '@/lib/preorder'
 const PROMISES: { title: string; text: string }[] = [
   {
     title: `${FETES_SALE.flash.units} bracelets à ${FETES_SALE.flash.priceTtc} €`,
-    text: `Au lieu de ${PREORDER_PACK.priceTtc} €, pour les ${FETES_SALE.flash.units} premiers seulement. Au-delà, la précommande reste ouverte au prix de ${PREORDER_PACK.priceTtc} €.`,
+    text: `Au lieu de ${PREORDER_PACK.priceTtc} €, pour les ${FETES_SALE.flash.units} premiers seulement. Au-delà, la prévente reste ouverte au prix de ${PREORDER_PACK.priceTtc} €.`,
   },
   {
     title: 'Livrés avant Noël',
@@ -24,7 +24,7 @@ const PROMISES: { title: string; text: string }[] = [
   },
   {
     title: 'Une semaine, pas plus',
-    text: `Précommande ouverte ${FLASH_SALE.window} à 23 h 59. Ensuite, c’est fermé.`,
+    text: `Prévente ouverte ${FLASH_SALE.window} à 23 h 59. Ensuite, c’est fermé.`,
   },
 ]
 
@@ -78,7 +78,7 @@ export default function FlashWaitlist({ climbersCount }: { climbersCount: number
                   {FETES_SALE.flash.units} bracelets à {FETES_SALE.flash.priceTtc}&nbsp;€
                 </strong>{' '}
                 au lieu de {PREORDER_PACK.priceTtc}&nbsp;€, livrés avant Noël. Le bracelet Polar 360 et l&apos;app WAC,
-                une semaine seulement. Au-delà des {FETES_SALE.flash.units}, la précommande reste ouverte au prix de {PREORDER_PACK.priceTtc}&nbsp;€.
+                une semaine seulement. Au-delà des {FETES_SALE.flash.units}, la prévente reste ouverte au prix de {PREORDER_PACK.priceTtc}&nbsp;€.
                 Inscris-toi pour être prévenu·e dès l&apos;ouverture, le {FETES_SALE.startLabel} à 9&nbsp;h.
               </>
             )}
@@ -185,7 +185,7 @@ export default function FlashWaitlist({ climbersCount }: { climbersCount: number
             className="text-2xl md:text-3xl mb-4"
             style={{ fontFamily: 'var(--font-syne)', fontWeight: 700, textTransform: 'uppercase', color: 'var(--color-primary-green)' }}
           >
-            Tu as précommandé&nbsp;?
+            Tu as déjà commandé&nbsp;?
           </h2>
           <p style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', lineHeight: 1.6 }}>
             Ta commande est bien enregistrée, rien à faire de ton côté.{' '}

@@ -482,7 +482,7 @@ export default function HistoireLanding() {
       {/* ───────────── CTA LISTE D'ATTENTE ───────────── */}
       <WaitlistSection
         heading="Rejoins le mouvement."
-        subtitle="Les pré-commandes ouvrent bientôt, directement sur weareclimbers.fr. Laisse ton email pour faire partie des premiers."
+        subtitle="Les préventes ouvrent bientôt, directement sur weareclimbers.fr. Laisse ton email pour faire partie des premiers."
       />
     </main>
   )

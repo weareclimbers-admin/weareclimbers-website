@@ -4,7 +4,7 @@
  * Noms FIGÉS (kebab-case FR, comme inscription-liste-attente / clic-app-store) :
  * ne jamais les renommer, les rapports Funnel d'Umami en dépendent.
  *
- *   clic-precommande     un bouton « Je précommande » (data : emplacement)
+ *   clic-precommande     un bouton « Je commande » (data : emplacement)
  *   choix-livraison      changement de zone ou de mode (data : zone, mode)
  *   point-relais-choisi  relais sélectionné (data : pays)
  *   depart-paiement      session Stripe créée, redirection en cours (data : zone, mode, quantite)
