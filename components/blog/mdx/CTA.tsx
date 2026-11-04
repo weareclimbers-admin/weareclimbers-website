@@ -11,7 +11,7 @@ import Link from 'next/link'
 
 const TARGETS = {
   '/le-bracelet': {
-    title: 'Le bracelet pensé pour la grimpe',
+    title: 'Le bracelet choisi pour la grimpe',
     text: "Porté à l'avant-bras, sans écran, relié à l'app We Are Climbers.",
     label: 'Découvrir le bracelet',
   },
