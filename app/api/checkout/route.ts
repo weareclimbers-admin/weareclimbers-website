@@ -118,7 +118,7 @@ export async function POST(request: NextRequest) {
   // Pré-commandes closes le 31/10/2026 : plus aucune session ne doit être créée,
   // même depuis une ancienne page /boutique restée ouverte dans un onglet.
   if (!isCheckoutOpen()) {
-    return NextResponse.json({ error: 'Les pré-commandes sont closes. Recharge la page pour t’inscrire à la précommande des fêtes.', closed: true }, { status: 410 })
+    return NextResponse.json({ error: 'Les préventes sont closes. Recharge la page pour t’inscrire à la prévente des fêtes.', closed: true }, { status: 410 })
   }
 
   try {
@@ -187,7 +187,7 @@ export async function POST(request: NextRequest) {
         {
           error:
             "L'offre partenaire n'est plus disponible (toutes les places sont parties ou l'offre est terminée). " +
-            'Tu peux toujours précommander au tarif normal.',
+            'Tu peux toujours commander en prévente au tarif normal.',
           offerUnavailable: true,
         },
         { status: 409 },
@@ -212,7 +212,7 @@ export async function POST(request: NextRequest) {
           {
             error:
               `Les ${FETES_SALE.flash.units} bracelets à ${FETES_SALE.flash.priceTtc} € sont partis. ` +
-              `Tu peux toujours précommander au prix de ${PREORDER_PACK.priceTtc} € jusqu'au ${FETES_SALE.endLabel}.`,
+              `Tu peux toujours commander en prévente au prix de ${PREORDER_PACK.priceTtc} € jusqu'au ${FETES_SALE.endLabel}.`,
             flashSoldOut: true,
           },
           { status: 409 },

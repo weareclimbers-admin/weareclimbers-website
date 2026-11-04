@@ -651,8 +651,8 @@ export default function HomeLanding() {
 
       {/* ───────────── CTA FINAL — LISTE D'ATTENTE ───────────── */}
       <WaitlistSection
-        heading="Les pré-commandes arrivent en propre."
-        subtitle="La campagne a atteint son objectif à 100 %. Prochaine étape : les pré-commandes directement sur weareclimbers.fr, sans intermédiaire. Laisse ton email pour être prévenu·e en premier."
+        heading="Les préventes arrivent en propre."
+        subtitle="La campagne a atteint son objectif à 100 %. Prochaine étape : les préventes directement sur weareclimbers.fr, sans intermédiaire. Laisse ton email pour être prévenu·e en premier."
       />
 
       {/* ───────────── PORTE COACH ───────────── */}

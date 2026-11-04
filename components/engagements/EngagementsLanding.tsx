@@ -357,7 +357,7 @@ export default function EngagementsLanding() {
       {/* ───────────── CTA LISTE D'ATTENTE ───────────── */}
       <WaitlistSection
         heading="Soutiens notre démarche."
-        subtitle="Rejoins-nous dans cette aventure : ensemble, construisons une escalade plus responsable. Sois prévenu·e en premier de l'ouverture des pré-commandes."
+        subtitle="Rejoins-nous dans cette aventure : ensemble, construisons une escalade plus responsable. Sois prévenu·e en premier de l'ouverture des préventes."
       />
     </main>
   )

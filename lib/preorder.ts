@@ -109,7 +109,7 @@ export interface PreorderPack {
 
 export const PREORDER_PACK: PreorderPack = {
   // TODO(Julien) : nom commercial du pack à valider
-  name: 'Pré-commande — Bracelet + App WAC',
+  name: 'Prévente — Bracelet + App WAC',
   description:
     "Le bracelet Polar 360 haute précision (±1 BPM) associé à l'app WAC : analyse physiologique en temps réel, prévention des blessures et suivi de récupération.",
   priceTtc: 179, // acté 14/08/2026 : « 179 € TTC hors promotion » (aligné flux bracelet coach) — doit matcher la price Stripe

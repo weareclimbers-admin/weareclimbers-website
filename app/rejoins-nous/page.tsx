@@ -143,7 +143,7 @@ export default function RejoinsNous() {
                 data-aos="fade-up"
                 data-aos-delay="100"
               >
-                La campagne a atteint son objectif à 100 %. Prochaine étape : les pré-commandes en propre du bracelet Polar 360 et de l'app WAC. Rejoins la liste d'attente pour être prévenu·e en premier.
+                La campagne a atteint son objectif à 100 %. Prochaine étape : les préventes en propre du bracelet Polar 360 et de l'app WAC. Rejoins la liste d'attente pour être prévenu·e en premier.
               </p>
 
               <div
@@ -206,7 +206,7 @@ export default function RejoinsNous() {
                 data-aos="fade-up"
                 data-aos-delay="150"
               >
-                Grâce à vous, la campagne a atteint son objectif. Merci à toute la cordée. La suite : les pré-commandes en propre, sans intermédiaire. Découvre le projet en vidéo.
+                Grâce à vous, la campagne a atteint son objectif. Merci à toute la cordée. La suite : les préventes en propre, sans intermédiaire. Découvre le projet en vidéo.
               </p>
 
               {/* Vidéo YouTube */}
@@ -245,7 +245,7 @@ export default function RejoinsNous() {
                   className="text-sm font-roboto mt-4"
                   style={{ opacity: 0.7 }}
                 >
-                  Sois prévenu·e en premier de l'ouverture des pré-commandes.
+                  Sois prévenu·e en premier de l'ouverture des préventes.
                 </p>
               </div>
 
@@ -338,13 +338,13 @@ export default function RejoinsNous() {
                   className="text-3xl md:text-5xl mb-4"
                   style={{ color: 'var(--color-primary-green)', fontFamily: 'var(--font-syne)' }}
                 >
-                  Les pré-commandes arrivent.
+                  Les préventes arrivent.
                 </h2>
                 <p
                   className="text-lg md:text-xl font-roboto max-w-2xl mx-auto leading-relaxed mt-4"
                   style={{ color: 'var(--color-primary-green)' }}
                 >
-                  Le bracelet Polar 360 et l'app WAC seront bientôt disponibles en pré-commande, directement sur weareclimbers.fr. Les tarifs et contreparties seront dévoilés au lancement.
+                  Le bracelet Polar 360 et l'app WAC seront bientôt disponibles en prévente, directement sur weareclimbers.fr. Les tarifs et contreparties seront dévoilés au lancement.
                 </p>
               </div>
 
@@ -426,7 +426,7 @@ export default function RejoinsNous() {
                     className="font-roboto leading-relaxed"
                     style={{ color: 'var(--color-primary-green)' }}
                   >
-                    Ouverture des pré-commandes en propre. Les inscrits à la liste sont prévenus en premier, avec un tarif de lancement.
+                    Ouverture des préventes en propre. Les inscrits à la liste sont prévenus en premier, avec un tarif de lancement.
                   </p>
                 </div>
 
@@ -715,8 +715,8 @@ export default function RejoinsNous() {
                   },
                   {
                     icon: '📣',
-                    titre: 'Ouverture des pré-commandes',
-                    texte: "Tu es prévenu·e en premier dès l'ouverture des pré-commandes en propre, avant l'annonce publique.",
+                    titre: 'Ouverture des préventes',
+                    texte: "Tu es prévenu·e en premier dès l'ouverture des préventes en propre, avant l'annonce publique.",
                   },
                   {
                     icon: '🚀',
@@ -782,7 +782,7 @@ export default function RejoinsNous() {
                   className="text-lg md:text-xl font-roboto"
                   style={{ color: 'var(--color-primary-beige)', opacity: 0.85 }}
                 >
-                  Laisse ton email : tu seras prévenu·e en premier de l'ouverture des pré-commandes, avec un tarif de lancement réservé à la liste.
+                  Laisse ton email : tu seras prévenu·e en premier de l'ouverture des préventes, avec un tarif de lancement réservé à la liste.
                 </p>
               </div>
 

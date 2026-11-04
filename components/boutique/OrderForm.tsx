@@ -624,7 +624,7 @@ export default function OrderForm({
           className="mb-2 text-xs text-center"
           style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', opacity: 0.75 }}
         >
-          Fin de la précommande dans{' '}
+          Fin de la prévente dans{' '}
           <strong style={{ color: 'var(--color-secondary-orange)' }}>
             <CountdownTimer variant="inline" endDate={FETES_SALE.endDate} />
           </strong>
@@ -668,7 +668,7 @@ export default function OrderForm({
 
       <p className="text-xs" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', opacity: 0.7, lineHeight: 1.6 }}>
         {offer || flash ? '1 bracelet par commande à ce prix. ' : 'Quantité modifiable sur la page de paiement. '}
-        Facture envoyée par email. En précommandant, tu acceptes nos{' '}
+        Facture envoyée par email. En commandant, tu acceptes nos{' '}
         <Link href="/cgv" target="_blank" className="underline underline-offset-2 font-bold hover:opacity-70 transition-opacity">
           Conditions Générales de Vente
         </Link>
