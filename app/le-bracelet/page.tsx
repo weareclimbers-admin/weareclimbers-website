@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     "Le Polar 360 version We Are Climbers : capteur cardio sans écran, ±1 BPM (donnée Polar), porté à l'avant-bras et relié à l'app. Commande-le en prévente dès maintenant.",
   keywords: ['bracelet cardio escalade', 'capteur FC escalade', 'capteur fréquence cardiaque grimpe', 'Polar 360 escalade', 'bracelet connecté escalade'],
   openGraph: {
-    title: "Le bracelet cardio pensé pour l'escalade — Polar 360 × WAC",
+    title: "Le bracelet cardio choisi pour l'escalade — Polar 360 × WAC",
     description:
       "Capteur cardio sans écran, ±1 BPM (donnée Polar), porté à l'avant-bras et relié à l'app d'analyse We Are Climbers.",
     url: 'https://www.weareclimbers.fr/le-bracelet',

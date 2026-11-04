@@ -41,7 +41,7 @@ export default function BraceletLanding() {
               </motion.p>
 
               <TitleReveal
-                lines={['Le bracelet cardio', "pensé pour l'escalade."]}
+                lines={['Le bracelet cardio', "choisi pour l'escalade."]}
                 as="h1"
                 className="text-4xl md:text-5xl lg:text-6xl mb-7"
                 style={{
@@ -60,7 +60,7 @@ export default function BraceletLanding() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ type: 'spring', stiffness: 120, damping: 18, delay: 0.25 }}
               >
-                Un capteur de fréquence cardiaque haute précision, porté à l'avant-bras, sans écran. Tu l'oublies pendant la grimpe. Lui, n'oublie rien.
+                Un capteur de fréquence cardiaque porté à l'avant-bras, sans écran. Tu l'oublies pendant la grimpe. Lui, n'oublie rien.
               </motion.p>
 
               <motion.div
@@ -191,7 +191,7 @@ export default function BraceletLanding() {
 
           <Reveal delay={0.15}>
             <p className="text-center text-lg md:text-xl max-w-2xl mx-auto" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', lineHeight: '1.6' }}>
-              Étanche à 30 mètres, selon Polar. On le porte à l'avant-bras. Notre R&D mesure actuellement ce placement face à une ceinture thoracique.
+              Étanche à 30 mètres, selon Polar. Porté à l'avant-bras.
             </p>
           </Reveal>
         </div>
@@ -244,11 +244,6 @@ export default function BraceletLanding() {
             </Reveal>
           </div>
 
-          <Reveal delay={0.15}>
-            <p className="text-center text-lg italic font-medium" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-secondary-orange)' }}>
-              Nous avons choisi le Polar 360 après une analyse de ses caractéristiques, sans banc d'essai comparatif.
-            </p>
-          </Reveal>
         </div>
       </section>
 
@@ -318,7 +313,6 @@ export default function BraceletLanding() {
                 title: 'Capteurs',
                 items: [
                   'Fréquence cardiaque optique Precision Prime™ : ±1 BPM selon les données communiquées par Polar',
-                  "Sa validité en escalade et à l'avant-bras est en cours d'évaluation par notre R&D.",
                   'Accéléromètre : 50 Hz, soit 180 000 points de mesure par heure.',
                   'Capteur de température cutanée',
                 ],
@@ -345,7 +339,7 @@ export default function BraceletLanding() {
                 title: 'Physique & compatibilité',
                 items: [
                   '17 g avec bracelet, 5 g pour le module seul (données Polar), sans écran',
-                  "On le porte à l'avant-bras. Notre R&D mesure actuellement ce placement face à une ceinture thoracique.",
+                  "Porté à l'avant-bras",
                   'Étanche à 30 mètres (WR30, selon Polar)',
                   'iOS 15.1+ · Android 13+ · Garantie légale de conformité : 2 ans',
                 ],
@@ -389,7 +383,7 @@ export default function BraceletLanding() {
                   On est transparents&nbsp;: le capteur est fabriqué par <strong>Polar</strong>, fabricant finlandais de capteurs cardio pour le sport. Fabriquer notre propre hardware dès le premier jour aurait signifié des années de retard. Nous avons choisi le Polar 360 après une analyse de ses caractéristiques, sans banc d'essai comparatif.
                 </p>
                 <p>
-                  <strong>Toute l'intelligence, elle, est française</strong>&nbsp;: les algorithmes d'analyse, l'app, les modèles de prévention des blessures sont développés en France, avec des grimpeurs et des coachs fédéraux.
+                  <strong>Toute l'intelligence, elle, est française</strong>&nbsp;: les algorithmes d'analyse, l'app, l'analyse de la charge et de la récupération sont développés en France, avec des grimpeurs et des coachs fédéraux.
                 </p>
                 <p>
                   Et c'est une étape&nbsp;: notre roadmap prévoit un <strong>bracelet WAC éco-conçu</strong>, développé en propre. On y va pas à pas — en commençant par un capteur existant.
