@@ -12,7 +12,7 @@ import Link from 'next/link'
 const TARGETS = {
   '/le-bracelet': {
     title: 'Le bracelet pensé pour la grimpe',
-    text: "Fréquence cardiaque à ±1 BPM, porté à l'avant-bras, sans écran.",
+    text: "Porté à l'avant-bras, sans écran, relié à l'app We Are Climbers.",
     label: 'Découvrir le bracelet',
   },
   '/l-app': {
