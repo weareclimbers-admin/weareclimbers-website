@@ -6,8 +6,8 @@ import { Metadata } from 'next'
 export const metadata: Metadata = {
   title: "L'app d'entraînement escalade — analyse physiologique | We Are Climbers",
   description:
-    "L'app qui transforme tes données en décisions : État de Forme quotidien, suivi de charge, prévention des blessures, analyse du cycle menstruel, sessions poutre. Gratuite, dispo sur iOS et Android.",
-  keywords: ['app entraînement escalade', 'suivi charge escalade', 'application escalade', 'app grimpe analyse', 'prévention blessures escalade'],
+    "L'app qui transforme tes données en décisions : État de Forme quotidien, suivi de la charge et de la récupération, analyse du cycle menstruel, sessions poutre. Gratuite, dispo sur iOS et Android.",
+  keywords: ['app entraînement escalade', 'suivi charge escalade', 'application escalade', 'app grimpe analyse', 'suivi récupération escalade'],
   openGraph: {
     title: "L'app d'entraînement escalade — We Are Climbers",
     description:
@@ -24,7 +24,7 @@ export default function LAppPage() {
     applicationCategory: 'HealthApplication',
     operatingSystem: 'iOS 15.1+, Android 13+',
     description:
-      "App d'analyse physiologique pour l'escalade : score État de Forme quotidien (récupération, sommeil, charge, ressenti, cycle), résumé de séance automatique, dashboards de charge, recommandations IA et prévention des blessures.",
+      "App d'analyse physiologique pour l'escalade : score État de Forme quotidien (récupération, sommeil, charge, ressenti, cycle), résumé de séance automatique, dashboards de charge, suivi de la charge et de la récupération.",
     offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
     publisher: { '@type': 'Organization', name: 'We Are Climbers' },
   }

@@ -19,34 +19,34 @@ import { Metadata } from 'next'
  */
 
 const FLASH_DESCRIPTION =
-  'Précommande des fêtes du 30 novembre au 6 décembre : 10 bracelets Polar 360 + app WAC à 159 € au lieu de 179 €, livrés avant Noël. Inscris-toi pour être prévenu·e dès l’ouverture.'
+  'Prévente des fêtes du 30 novembre au 6 décembre : 10 bracelets Polar 360 + app WAC à 159 € au lieu de 179 €, livrés avant Noël. Inscris-toi pour être prévenu·e dès l’ouverture.'
 
 const flashMetadata: Metadata = {
-  title: 'Précommande des fêtes — Bracelet Polar 360 + App | We Are Climbers',
+  title: 'Prévente des fêtes — Bracelet Polar 360 + App | We Are Climbers',
   description: FLASH_DESCRIPTION,
   alternates: { canonical: 'https://www.weareclimbers.fr/boutique' },
   openGraph: {
-    title: 'Précommande des fêtes — Bracelet Polar 360 + App | We Are Climbers',
+    title: 'Prévente des fêtes — Bracelet Polar 360 + App | We Are Climbers',
     description: FLASH_DESCRIPTION,
     url: 'https://www.weareclimbers.fr/boutique',
   },
 }
 
 const shopMetadata: Metadata = {
-  title: 'Pré-commande — Bracelet Polar 360 + App | We Are Climbers',
+  title: 'Prévente — Bracelet Polar 360 + App | We Are Climbers',
   description:
-    'Précommande le bracelet Polar 360 haute précision (±1 BPM) et l’app WAC. Paiement sécurisé, livraison France, Belgique, Luxembourg, Suisse et outre-mer.',
+    'Commande en prévente le bracelet Polar 360 (±1 BPM, donnée Polar) et l’app WAC. Paiement sécurisé, livraison France, Belgique, Luxembourg, Suisse et outre-mer.',
   alternates: { canonical: 'https://www.weareclimbers.fr/boutique' },
   openGraph: {
-    title: 'Pré-commande — Bracelet Polar 360 + App | We Are Climbers',
+    title: 'Prévente — Bracelet Polar 360 + App | We Are Climbers',
     description:
-      'Précommande le bracelet Polar 360 (±1 BPM) et l’app WAC. Paiement sécurisé, livraison France, Belgique, Luxembourg, Suisse et outre-mer.',
+      'Commande en prévente le bracelet Polar 360 (±1 BPM, donnée Polar) et l’app WAC. Paiement sécurisé, livraison France, Belgique, Luxembourg, Suisse et outre-mer.',
     url: 'https://www.weareclimbers.fr/boutique',
   },
 }
 
 const ENDED_DESCRIPTION =
-  'La précommande des fêtes est terminée. Inscris-toi pour être prévenu·e en premier de la prochaine ouverture du bracelet Polar 360 + app WAC.'
+  'La prévente des fêtes est terminée. Inscris-toi pour être prévenu·e en premier de la prochaine ouverture du bracelet Polar 360 + app WAC.'
 
 const endedMetadata: Metadata = {
   title: 'Liste d’attente — Bracelet Polar 360 + App | We Are Climbers',
@@ -82,7 +82,7 @@ export default async function Boutique() {
     )
   }
 
-  // Précommande des fêtes : 129 grimpeurs équipés à la clôture d'octobre + les
+  // Prévente des fêtes : 129 grimpeurs équipés à la clôture d'octobre + les
   // bracelets payés depuis l'ouverture du 30/11.
   const [paid, flashStock] = await Promise.all([
     countPaidPreorders(saleCountingSince()),

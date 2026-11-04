@@ -161,7 +161,7 @@ export default function EngagementsLanding() {
                 <ul className="space-y-3 mb-5">
                   {[
                     ["Pas d'écran", 'fini les distractions. Tu grimpes, le bracelet mesure. Point.'],
-                    ['Capteurs essentiels uniquement', 'fréquence cardiaque, accéléromètre, gyroscope. Pas de gadgets inutiles.'],
+                    ['Capteurs essentiels uniquement', 'fréquence cardiaque, accéléromètre, température cutanée. Pas de gadgets inutiles.'],
                     ['Autonomie longue durée', "moins de recharges, moins d'usure."],
                     ['Démarche environnementale de Polar', 'certification ISO 14001, fabrication durable, exploration de matériaux recyclés.'],
                   ].map(([strong, rest]) => (
@@ -357,7 +357,7 @@ export default function EngagementsLanding() {
       {/* ───────────── CTA LISTE D'ATTENTE ───────────── */}
       <WaitlistSection
         heading="Soutiens notre démarche."
-        subtitle="Rejoins-nous dans cette aventure : ensemble, construisons une escalade plus responsable. Sois prévenu·e en premier de l'ouverture des pré-commandes."
+        subtitle="Rejoins-nous dans cette aventure : ensemble, construisons une escalade plus responsable. Sois prévenu·e en premier de l'ouverture des préventes."
       />
     </main>
   )

@@ -8,12 +8,12 @@ export const faqItems: FAQItem[] = [
   {
     id: '1',
     question: "L'app fonctionne-t-elle sans le bracelet ?",
-    answer: "Oui ! L'app est 100% gratuite et utilisable sans bracelet. Tu peux saisir manuellement tes sessions, accéder à la communauté, participer aux challenges de groupe.\n\nMais pour notre mission principale — prévenir les blessures via l'analyse cardiaque en temps réel — le bracelet est indispensable. Sans lui, tu n'as pas accès aux fonctionnalités avancées qui font vraiment la différence : détection de fatigue, prévention blessure, analyse cycles menstruels.\n\nC'est comme avoir une voiture sans GPS : tu peux rouler, mais tu rates plein de raccourcis."
+    answer: "Oui ! L'app est 100% gratuite et utilisable sans bracelet. Tu peux saisir manuellement tes sessions, accéder à la communauté, participer aux challenges de groupe.\n\nMais pour notre mission principale — suivre ta charge et ta récupération grâce à l'analyse cardiaque en temps réel — le bracelet est indispensable. Sans lui, tu n'as pas accès aux fonctionnalités avancées qui font vraiment la différence : suivi de tes indicateurs de récupération, suivi de la charge et de la récupération, analyse cycles menstruels.\n\nC'est comme avoir une voiture sans GPS : tu peux rouler, mais tu rates plein de raccourcis."
   },
   {
     id: '2',
     question: "Pourquoi pas ma montre Garmin ou Apple Watch ?",
-    answer: "Les montres connectées estiment la fréquence cardiaque via capteur optique au poignet. Le problème ? Cette technologie est imprécise dans les mouvements explosifs typiques de l'escalade (variations rapides de rythme, positions extrêmes du poignet).\n\nLe bracelet Polar 360 mesure sur l'avant-bras avec haute précision (99,4%), même dans les surplombs les plus intenses. Tests cliniques à l'appui.\n\nPour ta sécurité et pour nos recommandations anti-blessure, on ne fait pas de compromis sur la fiabilité des données. Ta santé mérite mieux qu'une estimation."
+    answer: "Ta montre mesure aussi ta fréquence cardiaque, avec un capteur optique au poignet. On ne prétend pas faire mieux qu'elle en escalade : aucune mesure ne le montre à ce jour.\n\nOn a fait un autre choix : un seul capteur, le Polar 360, pour que l'app sache exactement d'où viennent ses données. On le porte à l'avant-bras. Notre R&D mesure actuellement ce placement face à une ceinture thoracique.\n\nNous avons choisi le Polar 360 après une analyse de ses caractéristiques, sans banc d'essai comparatif."
   },
   {
     id: '3',
@@ -33,7 +33,7 @@ export const faqItems: FAQItem[] = [
   {
     id: '6',
     question: "Les modules premium sont obligatoires ?",
-    answer: "Non ! Les modules (Outdoor, Nutrition, etc.) sont optionnels.\n\nL'app + bracelet te donnent déjà tout pour progresser en sécurité :\n- Analyse fréquence cardiaque temps réel\n- Prévention blessures\n- Analyse cycles menstruels\n- Recommandations personnalisées\n- Coaching de base\n\nLes modules premium sont des bonus pour aller encore plus loin selon tes besoins spécifiques. À toi de choisir ce qui te correspond."
+    answer: "Non ! Les modules (Outdoor, Nutrition, etc.) sont optionnels.\n\nL'app + bracelet te donnent déjà tout pour progresser en sécurité :\n- Analyse fréquence cardiaque temps réel\n- Suivi de la charge et de la récupération\n- Analyse cycles menstruels\n- Recommandations personnalisées\n- Coaching de base\n\nLes modules premium sont des bonus pour aller encore plus loin selon tes besoins spécifiques. À toi de choisir ce qui te correspond."
   },
   {
     id: '7',

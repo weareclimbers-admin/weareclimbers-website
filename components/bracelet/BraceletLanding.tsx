@@ -4,7 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useRef } from 'react'
 import { motion, useScroll, useSpring, useTransform } from 'motion/react'
-import { Reveal, TitleReveal, CountUp } from '@/components/Reveal'
+import { Reveal, TitleReveal } from '@/components/Reveal'
 import TopoLines from '@/components/TopoLines'
 import Magnetic from '@/components/Magnetic'
 import StoreButtons from '@/components/StoreButtons'
@@ -41,7 +41,7 @@ export default function BraceletLanding() {
               </motion.p>
 
               <TitleReveal
-                lines={['Le bracelet cardio', "pensé pour l'escalade."]}
+                lines={['Le bracelet cardio', "choisi pour l'escalade."]}
                 as="h1"
                 className="text-4xl md:text-5xl lg:text-6xl mb-7"
                 style={{
@@ -60,7 +60,7 @@ export default function BraceletLanding() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ type: 'spring', stiffness: 120, damping: 18, delay: 0.25 }}
               >
-                Un capteur de fréquence cardiaque haute précision, porté à l'avant-bras, sans écran. Tu l'oublies pendant la grimpe. Lui, n'oublie rien.
+                Un capteur de fréquence cardiaque porté à l'avant-bras, sans écran. Tu l'oublies pendant la grimpe. Lui, n'oublie rien.
               </motion.p>
 
               <motion.div
@@ -94,9 +94,9 @@ export default function BraceletLanding() {
                   className="object-contain w-full max-w-lg"
                 />
                 {[
-                  { text: '±1 BPM', pos: 'top-6 -left-2 md:left-0' },
-                  { text: '29 g', pos: 'bottom-24 -right-2 md:right-0' },
-                  { text: '10 jours', pos: 'bottom-2 left-8' },
+                  { text: '±1 BPM (donnée Polar)', pos: 'top-6 -left-2 md:left-0' },
+                  { text: 'Sans écran', pos: 'bottom-24 -right-2 md:right-0' },
+                  { text: 'Avant-bras', pos: 'bottom-2 left-8' },
                 ].map((chip, i) => (
                   <motion.span
                     key={chip.text}
@@ -128,7 +128,7 @@ export default function BraceletLanding() {
               className="text-3xl md:text-5xl text-center mb-6"
               style={{ fontFamily: 'var(--font-syne)', fontWeight: 700, textTransform: 'uppercase', color: 'var(--color-primary-beige)' }}
             >
-              La précision d'abord. Tout le reste en découle.
+              Ce que mesure le bracelet.
             </h2>
           </Reveal>
           <Reveal delay={0.08}>
@@ -136,38 +136,17 @@ export default function BraceletLanding() {
               className="text-lg md:text-xl max-w-3xl mx-auto text-center mb-14"
               style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-beige)', opacity: 0.9, lineHeight: '1.6' }}
             >
-              Prévenir une blessure demande des données fiables. Le Polar 360 mesure ta fréquence cardiaque à l'avant-bras — là où le signal est stable, même dans les mouvements explosifs de la grimpe.
+              Le Polar 360 mesure en continu ta fréquence cardiaque, l'intervalle entre chaque battement, ta température cutanée et tes mouvements. ±1 BPM selon les données communiquées par Polar. Sa validité en escalade et à l'avant-bras est en cours d'évaluation par notre R&D.
             </p>
           </Reveal>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto mb-14">
-            {[
-              { num: <CountUp to={1} prefix="±" duration={1.2} />, unit: 'BPM', label: 'de précision cardiaque' },
-              { num: <CountUp to={50} duration={1.6} />, unit: 'Hz', label: "d'échantillonnage" },
-              { num: <CountUp to={180000} duration={2.2} />, unit: '', label: 'données par heure' },
-              { num: <CountUp to={99} suffix=",4" duration={1.8} />, unit: '%', label: 'de fiabilité mesurée' },
-            ].map((m, i) => (
-              <Reveal key={m.label} delay={i * 0.08}>
-                <div className="text-center">
-                  <div className="text-3xl md:text-4xl leading-none" style={{ fontFamily: 'var(--font-syne)', fontWeight: 700, color: 'var(--color-primary-beige)' }}>
-                    {m.num}
-                    {m.unit && (
-                      <span className="text-lg md:text-xl ml-1" style={{ color: 'var(--color-secondary-orange)' }}>{m.unit}</span>
-                    )}
-                  </div>
-                  <span className="metric-underline mx-auto" />
-                  <p className="metric-label mt-2.5" style={{ color: 'var(--color-primary-beige)', opacity: 0.75 }}>{m.label}</p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
             {[
-              { t: 'Optique 9 LED', d: 'Capteur Precision Prime™, conçu pour le signal en mouvement.' },
-              { t: 'Accéléromètre 3 axes', d: 'Calibré pour les mouvements spécifiques de la grimpe.' },
-              { t: 'Variabilité cardiaque', d: 'La HRV, base de ton analyse de récupération.' },
-              { t: 'Température cutanée', d: 'Un signal de plus pour détecter la fatigue.' },
+              { t: 'Capteur optique', d: "Precision Prime™ : Polar combine la mesure optique à d'autres capteurs pour limiter les erreurs dues aux mouvements." },
+              { t: 'Accéléromètre', d: "Accéléromètre : 50 Hz, soit 180 000 points de mesure par heure. L'app s'en sert pour analyser tes séances." },
+              { t: 'Variabilité cardiaque', d: "L'intervalle entre chaque battement, base de ton analyse de récupération." },
+              { t: 'Température cutanée', d: 'Mesurée en continu par le bracelet.' },
             ].map((c, i) => (
               <Reveal key={c.t} delay={i * 0.08}>
                 <div className="h-full p-6 rounded-[20px]" style={{ border: '1px solid rgba(245,236,229,0.2)' }}>
@@ -194,9 +173,9 @@ export default function BraceletLanding() {
 
           <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto mb-10">
             {[
-              { num: '29', unit: 'g', label: 'tu ne le sens plus après 2 minutes' },
+              { num: '17', unit: 'g', label: "avec bracelet, 5 g pour le module seul (données Polar)" },
               { num: '0', unit: 'écran', label: 'zéro distraction, juste la grimpe' },
-              { num: '10', unit: 'jours', label: "d'autonomie en usage quotidien" },
+              { num: '5', unit: 'jours', label: "Polar annonce jusqu'à 5 jours. Avec l'usage We Are Climbers, on recharge le nôtre environ tous les 10 jours. L'autonomie varie selon l'utilisation." },
             ].map((m, i) => (
               <Reveal key={m.label} delay={i * 0.08}>
                 <div className="card-dark text-center h-full">
@@ -212,7 +191,7 @@ export default function BraceletLanding() {
 
           <Reveal delay={0.15}>
             <p className="text-center text-lg md:text-xl max-w-2xl mx-auto" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', lineHeight: '1.6' }}>
-              Résistant à l'eau, aux chocs et à la magnésie. Porté à l'avant-bras, il ne gêne ni les fissures, ni les inversées, ni les manchons.
+              Étanche à 30 mètres, selon Polar. Porté à l'avant-bras.
             </p>
           </Reveal>
         </div>
@@ -231,36 +210,13 @@ export default function BraceletLanding() {
           </Reveal>
           <Reveal delay={0.08}>
             <p className="text-lg md:text-xl max-w-3xl mx-auto text-center mb-14" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', lineHeight: '1.6' }}>
-              Bonne question. On aurait pu rendre WAC compatible avec tous les capteurs. On a fait le choix inverse&nbsp;: <strong>un seul capteur, optimisé à 100&nbsp;% pour l'escalade</strong>. Parce que la qualité des analyses passe avant la compatibilité universelle.
+              Bonne question. Ta montre mesure aussi ta fréquence cardiaque, et on ne prétend pas faire mieux qu'elle en escalade&nbsp;: aucune mesure ne le montre à ce jour. On a fait un autre choix&nbsp;: <strong>un seul capteur</strong>, pour que l'app sache exactement d'où viennent ses données.
             </p>
           </Reveal>
 
-          <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-12">
-            {/* Montres généralistes */}
+          <div className="max-w-2xl mx-auto mb-12">
+            {/* Polar 360 : des faits, sans comparaison chiffrée avec les montres */}
             <Reveal>
-              <div className="h-full p-8 rounded-[20px]" style={{ backgroundColor: 'var(--color-primary-beige)', border: '1px solid rgba(38,83,53,0.15)' }}>
-                <h3 className="text-xl md:text-2xl mb-6" style={{ fontFamily: 'var(--font-syne)', fontWeight: 700, color: 'var(--color-primary-green)', opacity: 0.65 }}>
-                  Montre au poignet
-                </h3>
-                <ul className="space-y-4">
-                  {[
-                    'Précision FC variable sur les mouvements explosifs',
-                    "Positions extrêmes du poignet = signal dégradé",
-                    "Accéléromètre non calibré pour l'escalade",
-                    'Un écran qui te distrait en pleine voie',
-                    "1 à 2 jours d'autonomie",
-                  ].map((item) => (
-                    <li key={item} className="flex items-start gap-3">
-                      <span className="flex-shrink-0 mt-0.5 font-bold" style={{ color: 'var(--color-secondary-beige)' }}>✕</span>
-                      <span className="text-sm md:text-base" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', opacity: 0.75, lineHeight: '1.55' }}>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </Reveal>
-
-            {/* Polar 360 */}
-            <Reveal delay={0.1}>
               <div className="relative h-full p-8 rounded-[20px]" style={{ backgroundColor: 'var(--color-primary-green)', border: '2px solid var(--color-secondary-orange)' }}>
                 <span className="absolute top-0 right-0 w-4 h-4" style={{ backgroundColor: 'var(--color-secondary-orange)' }} />
                 <h3 className="text-xl md:text-2xl mb-6" style={{ fontFamily: 'var(--font-syne)', fontWeight: 700, color: 'var(--color-primary-beige)' }}>
@@ -268,11 +224,10 @@ export default function BraceletLanding() {
                 </h3>
                 <ul className="space-y-4">
                   {[
-                    '99,4 % de fiabilité, même dans les surplombs',
-                    'Signal stable quel que soit le mouvement du poignet',
-                    'Accéléromètre calibré grimpe (bloc, voie, poutre)',
+                    "±1 BPM selon les données communiquées par Polar",
+                    'Intervalles entre chaque battement, température cutanée, accéléromètre',
                     'Sans écran — ton attention reste sur le caillou',
-                    "10 jours d'autonomie",
+                    "On le porte à l'avant-bras. Notre R&D mesure actuellement ce placement face à une ceinture thoracique.",
                   ].map((item) => (
                     <li key={item} className="flex items-start gap-3">
                       <span
@@ -289,11 +244,6 @@ export default function BraceletLanding() {
             </Reveal>
           </div>
 
-          <Reveal delay={0.15}>
-            <p className="text-center text-lg italic font-medium" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-secondary-orange)' }}>
-              → On a testé plus de 15 capteurs. Le Polar 360 a gagné.
-            </p>
-          </Reveal>
         </div>
       </section>
 
@@ -311,9 +261,9 @@ export default function BraceletLanding() {
 
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {[
-              { n: '1', t: 'Tu grimpes', d: 'Le bracelet enregistre en continu — même sans ton téléphone, grâce à sa mémoire interne de 200 heures.' },
+              { n: '1', t: 'Tu grimpes', d: 'Le bracelet enregistre en continu — même sans ton téléphone, grâce à sa mémoire interne.' },
               { n: '2', t: 'Il se synchronise', d: "De retour près de ton téléphone, tout remonte automatiquement en Bluetooth. Zéro manipulation." },
-              { n: '3', t: "L'app analyse", d: "Ta séance est analysée en moins de 30 secondes : zones d'effort, tentatives, récupération, état de forme." },
+              { n: '3', t: "L'app analyse", d: "Une heure enregistrée est analysée en moins de 30 secondes : zones d'effort, tentatives, récupération, état de forme." },
             ].map((s, i) => (
               <Reveal key={s.n} delay={i * 0.1}>
                 <div className="text-center">
@@ -362,38 +312,36 @@ export default function BraceletLanding() {
               {
                 title: 'Capteurs',
                 items: [
-                  'Fréquence cardiaque optique 9 LED (Precision Prime™), ±1 BPM',
-                  'Échantillonnage 50 Hz — 180 000 données par heure',
-                  'Accéléromètre 3 axes + gyroscope',
+                  'Fréquence cardiaque optique Precision Prime™ : ±1 BPM selon les données communiquées par Polar',
+                  'Accéléromètre : 50 Hz, soit 180 000 points de mesure par heure.',
                   'Capteur de température cutanée',
-                  'Capteur de luminosité ambiante',
                 ],
               },
               {
                 title: 'Connectivité',
                 items: [
-                  'Bluetooth 5.0',
+                  'Bluetooth Low Energy et ANT',
                   "Synchronisation automatique avec l'app WAC",
-                  'Mode offline intelligent (enregistrement sans connexion)',
-                  'Mémoire interne : 200 heures de sessions',
+                  'Mode hors connexion (enregistrement sans téléphone)',
+                  'Mémoire interne : 16 Mo',
                 ],
               },
               {
                 title: 'Autonomie & charge',
                 items: [
-                  "Jusqu'à 10 jours en usage quotidien",
-                  '40 heures en enregistrement continu',
-                  'Recharge USB-C — 2 heures pour une charge complète',
+                  "Polar annonce jusqu'à 5 jours. Avec l'usage We Are Climbers, on recharge le nôtre environ tous les 10 jours. L'autonomie varie selon l'utilisation.",
+                  'Batterie Li-Po rechargeable de 148 mAh',
+                  'Recharge avec le câble fourni, sur un port ou un chargeur USB',
                   "Indicateur de batterie dans l'app",
                 ],
               },
               {
                 title: 'Physique & compatibilité',
                 items: [
-                  "29 g, sans écran, porté à l'avant-bras",
-                  "Résistant à l'eau, aux chocs et à la magnésie",
-                  'iOS 15.1+ · Android 13+ · mises à jour firmware OTA',
-                  'Garantie constructeur Polar : 2 ans',
+                  '17 g avec bracelet, 5 g pour le module seul (données Polar), sans écran',
+                  "Porté à l'avant-bras",
+                  'Étanche à 30 mètres (WR30, selon Polar)',
+                  'iOS 15.1+ · Android 13+ · Garantie légale de conformité : 2 ans',
                 ],
               },
             ].map((group, i) => (
@@ -432,13 +380,13 @@ export default function BraceletLanding() {
             <Reveal delay={0.1}>
               <div className="space-y-5 text-lg md:text-xl leading-relaxed" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)' }}>
                 <p>
-                  On est transparents&nbsp;: le capteur est fabriqué par <strong>Polar</strong>, référence mondiale du cardio sportif depuis 40 ans. Fabriquer notre propre hardware dès le premier jour aurait signifié des années de retard et des données moins fiables.
+                  On est transparents&nbsp;: le capteur est fabriqué par <strong>Polar</strong>, fabricant finlandais de capteurs cardio pour le sport. Fabriquer notre propre hardware dès le premier jour aurait signifié des années de retard. Nous avons choisi le Polar 360 après une analyse de ses caractéristiques, sans banc d'essai comparatif.
                 </p>
                 <p>
-                  <strong>Toute l'intelligence, elle, est française</strong>&nbsp;: les algorithmes d'analyse, l'app, les modèles de prévention des blessures sont développés en France, avec des grimpeurs et des coachs fédéraux.
+                  <strong>Toute l'intelligence, elle, est française</strong>&nbsp;: l'app et ses algorithmes d'analyse de la charge et de la récupération sont développés en France, avec des grimpeurs et des coachs fédéraux.
                 </p>
                 <p>
-                  Et c'est une étape&nbsp;: notre roadmap prévoit un <strong>bracelet WAC éco-conçu</strong>, développé en propre. On y va pas à pas — en commençant par le meilleur capteur disponible.
+                  Et c'est une étape&nbsp;: notre roadmap prévoit un <strong>bracelet WAC éco-conçu</strong>, développé en propre. On y va pas à pas — en commençant par un capteur existant.
                 </p>
               </div>
             </Reveal>
@@ -457,7 +405,7 @@ export default function BraceletLanding() {
         </div>
       </section>
 
-      {/* ───────────── CTA PRÉ-COMMANDE ───────────── */}
+      {/* ───────────── CTA PRÉVENTE ───────────── */}
       <WaitlistSection heading="Réserve ton bracelet." />
     </main>
   )

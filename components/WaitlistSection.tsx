@@ -15,7 +15,7 @@ import { FETES_SALE, PREORDER_PACK } from '@/lib/preorder'
  * En phase 'precommande-live', le sous-titre est forcé sur le message pré-commande
  * (les sous-titres passés par les pages sont orientés liste d'attente).
  */
-const PREORDER_SUBTITLE = `Précommande des fêtes ouverte jusqu'au ${FETES_SALE.endLabel} : ${FETES_SALE.flash.units} bracelets à ${FETES_SALE.flash.priceTtc} €, livrés avant Noël, puis ${PREORDER_PACK.priceTtc} €.`
+const PREORDER_SUBTITLE = `Prévente des fêtes ouverte jusqu'au ${FETES_SALE.endLabel} : ${FETES_SALE.flash.units} bracelets à ${FETES_SALE.flash.priceTtc} €, livrés avant Noël, puis ${PREORDER_PACK.priceTtc} €.`
 
 export default function WaitlistSection({
   heading = WAITLIST.formTitle,
@@ -70,7 +70,7 @@ export default function WaitlistSection({
 
         {isPreorder ? (
           <Link href="/boutique" className="btn-secondary inline-block">
-            Je précommande →
+            Je commande →
           </Link>
         ) : (
           <NewsletterForm

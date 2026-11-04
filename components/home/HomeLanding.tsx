@@ -17,6 +17,7 @@ import { faqItems } from '@/lib/faq'
 import { DERNIER_ARTICLE } from '@/lib/press'
 import { getPrimaryCta } from '@/lib/campaign'
 import { CLIMBERS_EQUIPPED } from '@/lib/proof'
+import StoreReviews from '@/components/StoreReviews'
 
 /** Numéro de section en filigrane orange — motif structurant WAC 2.0 */
 function SectionNum({ n }: { n: string }) {
@@ -323,10 +324,10 @@ export default function HomeLanding() {
               <div className="card-dark h-full">
                 <IconChip src="/icons/icons8-bouclier-50.png" />
                 <h3 className="text-xl mb-3" style={{ fontFamily: 'var(--font-syne)', fontWeight: 700 }}>
-                  Prévention des blessures
+                  Suivi de la charge et de la récupération
                 </h3>
                 <p className="text-sm md:text-base" style={{ fontFamily: 'var(--font-roboto)', lineHeight: '1.6', opacity: 0.88 }}>
-                  WAC t'alerte avant que ton corps craque&nbsp;: suivi de récupération, charge hebdomadaire, recommandations adaptées à ton état réel.
+                  WAC t'aide à suivre ta charge et ta récupération.
                 </p>
               </div>
             </Reveal>
@@ -399,7 +400,7 @@ export default function HomeLanding() {
                   </p>
                 </Reveal>
                 <ul className="space-y-3 mb-8">
-                  {['Analyse physiologique en temps réel', 'Prévention des blessures', 'Analyse du cycle menstruel (optionnel)', 'Entraînement intentionnel'].map((item, i) => (
+                  {['Analyse physiologique en temps réel', 'Suivi de la charge et de la récupération', 'Analyse du cycle menstruel (optionnel)', 'Entraînement intentionnel'].map((item, i) => (
                     <Reveal key={item} delay={0.08 + i * 0.08}>
                       <li className="flex items-center gap-3">
                         <span
@@ -444,7 +445,7 @@ export default function HomeLanding() {
               <div>
                 <Reveal>
                   <p className="text-lg md:text-xl leading-relaxed mb-8 italic" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', lineHeight: '1.6' }}>
-                    Des capteurs de haute précision utilisés par les sportifs de haut niveau. Tu l'oublies pendant la grimpe. Lui, n'oublie rien.
+                    Tu l'oublies pendant la grimpe. Lui, n'oublie rien.
                   </p>
                 </Reveal>
 
@@ -547,44 +548,8 @@ export default function HomeLanding() {
         )}
       </section>
 
-      {/* ───────────── TÉMOIGNAGES ───────────── */}
-      <section className="py-20 md:py-24">
-        <div className="container-custom">
-          <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
-            {[
-              {
-                quote:
-                  "J'ai évité une tendinite grâce aux alertes récupération de WAC. L'app m'a conseillé de me reposer alors que je me sentais en pleine forme. Le bracelet avait vu avant moi ce que mon corps me cachait. Depuis six mois : zéro blessure, progression constante.",
-                author: 'Marie, 7b, grimpe 3x/semaine',
-              },
-              {
-                quote:
-                  "Grâce au bracelet, j'ai compris que je grimpais systématiquement en zone rouge. WAC m'a montré comment doser mes efforts. Paradoxalement, depuis que j'en fais moins, je progresse plus vite.",
-                author: 'Alex, 7a+, salle et falaise',
-              },
-            ].map((t, i) => (
-              <Reveal key={t.author} delay={i * 0.1}>
-                <motion.div
-                  className="h-full p-8 rounded-[20px]"
-                  style={{ backgroundColor: 'var(--color-secondary-beige-light)', border: '1px solid rgba(38,83,53,0.1)' }}
-                  whileHover={{ y: -6, boxShadow: '0 14px 40px rgba(216,90,26,0.16)' }}
-                  transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-                >
-                  <span aria-hidden className="block leading-none mb-3" style={{ fontFamily: 'var(--font-syne)', fontWeight: 700, fontSize: '2.5rem', color: 'var(--color-secondary-orange)' }}>
-                    “
-                  </span>
-                  <p className="text-base md:text-lg mb-6 italic" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', lineHeight: '1.6' }}>
-                    {t.quote}
-                  </p>
-                  <p className="font-bold" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)' }}>
-                    {t.author}
-                  </p>
-                </motion.div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* ───────────── AVIS (stores, texte non retouché — lib/proof.ts) ───────────── */}
+      <StoreReviews />
 
       {/* ───────────── POUR QUI ───────────── */}
       <section className="py-20 md:py-24" style={{ backgroundColor: 'var(--color-secondary-beige-light)' }}>
@@ -651,8 +616,8 @@ export default function HomeLanding() {
 
       {/* ───────────── CTA FINAL — LISTE D'ATTENTE ───────────── */}
       <WaitlistSection
-        heading="Les pré-commandes arrivent en propre."
-        subtitle="La campagne a atteint son objectif à 100 %. Prochaine étape : les pré-commandes directement sur weareclimbers.fr, sans intermédiaire. Laisse ton email pour être prévenu·e en premier."
+        heading="Les préventes arrivent en propre."
+        subtitle="La campagne a atteint son objectif à 100 %. Prochaine étape : les préventes directement sur weareclimbers.fr, sans intermédiaire. Laisse ton email pour être prévenu·e en premier."
       />
 
       {/* ───────────── PORTE COACH ───────────── */}

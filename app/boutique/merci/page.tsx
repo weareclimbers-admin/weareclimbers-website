@@ -18,7 +18,7 @@ import UmamiPurchase from '@/components/boutique/UmamiPurchase'
 // injoignable, la page de merci générique s'affiche normalement.
 
 export const metadata: Metadata = {
-  title: 'Merci — Pré-commande confirmée | We Are Climbers',
+  title: 'Merci — Commande confirmée | We Are Climbers',
   robots: { index: false, follow: false },
 }
 
@@ -89,7 +89,7 @@ export default async function MerciPrecommande({
                   letterSpacing: '0.15em',
                 }}
               >
-                Pré-commande confirmée
+                Commande confirmée
               </p>
 
               <h1

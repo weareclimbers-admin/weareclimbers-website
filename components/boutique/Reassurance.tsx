@@ -4,7 +4,7 @@ import type { ReactNode } from 'react'
 /**
  * Réassurances de commande, en pictos (demandées par Julien le 13/10/2026) :
  * affichées sous le bouton de paiement (OrderForm) et sous le bouton
- * « Je précommande » de la fiche sur mobile.
+ * « Je commande » de la fiche sur mobile.
  *
  * ⚠️ Rétractation : 14 jours À COMPTER DE LA RÉCEPTION (art. L.221-18 Code de
  * la consommation, CGV §9), plus l'annulation gratuite jusqu'à l'expédition

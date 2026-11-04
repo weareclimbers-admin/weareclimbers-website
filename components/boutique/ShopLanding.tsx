@@ -26,7 +26,7 @@ import { trackShop } from '@/lib/umami'
  *
  * Refonte conversion (13/10/2026) : bénéfice d'abord, preuves sociales juste
  * sous le titre, et une commande accessible de partout — chaque bouton
- * « Je précommande » ouvre le formulaire (panneau mobile / fiche sur ordinateur).
+ * « Je commande » ouvre le formulaire (panneau mobile / fiche sur ordinateur).
  *
  * TODO(Julien) : packshots provisoires — à remplacer par les vrais visuels boutique.
  */
@@ -41,13 +41,13 @@ const GALLERY = [
 /** Largeur « ordinateur » (lg) : le formulaire vit dans la fiche, pas dans le panneau mobile. */
 const DESKTOP_QUERY = '(min-width: 1024px)'
 
-const METRIC_CHIPS = ['±1 BPM', '29 g', '10 jours d’autonomie']
+const METRIC_CHIPS = ['±1 BPM (donnée Polar)', 'Sans écran', 'Porté à l’avant-bras']
 
 // Ordre validé par Julien le 14/08 : transparence totale sur la mécanique de
 // pré-commande (commande groupée à Polar après clôture, expédition par nos soins).
 const STEPS: { title: string; text: string }[] = [
   {
-    title: 'Tu précommandes',
+    title: 'Tu commandes',
     text: 'Paiement sécurisé par Stripe. Tu reçois immédiatement un email de confirmation avec ta facture.',
   },
   {
@@ -68,7 +68,7 @@ const STEPS: { title: string; text: string }[] = [
 const FAQ: { q: string; a: string }[] = [
   {
     q: 'Faut-il payer un abonnement ?',
-    a: 'Non. Avec ton bracelet, l’app WAC gratuite te donne tout ce qu’il faut pour éviter la surcharge d’entraînement : ton État de Forme chaque matin, l’analyse de tes séances, tes graphiques de suivi, ta récupération nocturne et le suivi de ton cycle. Le premium (9,99 €/mois ou 99 €/an) est une option pour aller plus loin : séances de renforcement et mixtes grimpe + renfo, analyses avancées, analyses IA illimitées en fin de séance et connexion à un coach.',
+    a: 'Non. Avec ton bracelet, l’app WAC gratuite te donne déjà l’essentiel : ton État de Forme chaque matin, l’analyse de tes séances, tes graphiques de suivi, ta récupération nocturne et le suivi de ton cycle. Le premium (9,99 €/mois ou 99 €/an) est une option pour aller plus loin : séances de renforcement et mixtes grimpe + renfo, analyses avancées, analyses IA illimitées en fin de séance et connexion à un coach.',
   },
   {
     q: 'Quand est-ce que je serai livré·e ?',
@@ -84,7 +84,7 @@ const FAQ: { q: string; a: string }[] = [
   },
   {
     q: 'Et si je change d’avis ?',
-    a: 'Tant que ta précommande n’est pas expédiée, tu peux l’annuler gratuitement sur simple email, et on te rembourse intégralement. Après réception, tu disposes encore du droit de rétractation légal de 14 jours. Écris-nous simplement, on s’occupe de tout.',
+    a: 'Tant que ta commande n’est pas expédiée, tu peux l’annuler gratuitement sur simple email, et on te rembourse intégralement. Après réception, tu disposes encore du droit de rétractation légal de 14 jours. Écris-nous simplement, on s’occupe de tout.',
   },
 ]
 
@@ -97,33 +97,33 @@ const SPECS_RESUME: { title: string; items: string[] }[] = [
   {
     title: 'Capteurs',
     items: [
-      'Cardio optique 9 LED (Precision Prime™), ±1 BPM',
-      'Échantillonnage 50 Hz — 180 000 données par heure',
-      'Accéléromètre 3 axes, gyroscope, température cutanée',
+      'Cardio optique Precision Prime™ : ±1 BPM (donnée Polar)',
+      'Accéléromètre : 50 Hz, soit 180 000 points de mesure par heure.',
+      'Température cutanée',
     ],
   },
   {
     title: 'Autonomie & charge',
     items: [
-      'Jusqu’à 10 jours en usage quotidien',
-      '40 heures en enregistrement continu',
-      'Recharge USB-C — 2 h pour une charge complète',
+      "Polar annonce jusqu’à 5 jours. Avec l’usage We Are Climbers, on recharge le nôtre environ tous les 10 jours. L’autonomie varie selon l’utilisation.",
+      'Batterie Li-Po rechargeable de 148 mAh',
+      'Recharge avec le câble fourni, sur un port ou un chargeur USB',
     ],
   },
   {
     title: 'Connectivité',
     items: [
-      'Bluetooth 5.0, synchronisation automatique avec l’app',
-      'Mode offline intelligent (enregistre sans connexion)',
-      'Mémoire interne : 200 heures de sessions',
+      'Bluetooth Low Energy et ANT, synchronisation automatique avec l’app',
+      'Mode hors connexion (enregistre sans téléphone)',
+      'Mémoire interne : 16 Mo',
     ],
   },
   {
     title: 'Physique & compatibilité',
     items: [
-      '29 g, sans écran, porté à l’avant-bras',
-      'Résistant à l’eau, aux chocs et à la magnésie',
-      'iOS 15.1+ · Android 13+ · Garantie Polar 2 ans',
+      '17 g avec bracelet, 5 g pour le module seul (données Polar), sans écran',
+      "On le porte à l’avant-bras. Notre R&D mesure actuellement ce placement face à une ceinture thoracique.",
+      'Étanche à 30 mètres (WR30, selon Polar) · iOS 15.1+ · Android 13+ · Garantie légale 2 ans',
     ],
   },
 ]
@@ -131,7 +131,7 @@ const SPECS_RESUME: { title: string; items: string[] }[] = [
 // TODO(Julien) : contenu exact de la boîte à valider avant mise en ligne.
 const INCLUS: { title: string; text: string }[] = [
   { title: 'Le bracelet Polar 360', text: 'Édition We Are Climbers, prêt à grimper.' },
-  { title: 'Son câble de charge USB-C', text: '2 h de charge pour 10 jours d’autonomie.' },
+  { title: 'Son câble de charge', text: 'Le câble Polar fourni, à brancher sur un port ou un chargeur USB.' },
   { title: 'Ton guide de démarrage', text: 'Connexion à l’app WAC en quelques minutes.' },
 ]
 
@@ -158,7 +158,7 @@ export default function ShopLanding({
 
   // Formulaire de commande : en ligne dans la fiche sur ordinateur, dans un
   // panneau qui monte du bas de l'écran sur mobile, ouvert par n'importe quel
-  // bouton « Je précommande ». Une seule instance d'OrderForm (une seule carte).
+  // bouton « Je commande ». Une seule instance d'OrderForm (une seule carte).
   const [sheetOpen, setSheetOpen] = useState(false)
   const [sheetOpened, setSheetOpened] = useState(false)
   const [isDesktop, setIsDesktop] = useState(false)
@@ -184,7 +184,7 @@ export default function ShopLanding({
   const unitPrice = offer ? offer.priceTtc : flashActive ? FETES_SALE.flash.priceTtc : PREORDER_PACK.priceTtc
   const ctaLabel = flashActive
     ? `Je prends le mien à ${formatPrice(FETES_SALE.flash.priceTtc)}`
-    : `Je précommande — ${formatPrice(unitPrice ?? 0)}`
+    : `Je commande — ${formatPrice(unitPrice ?? 0)}`
   const deliveryShort = flashActive
     ? `livré avant Noël, ${FETES_SALE.flash.delivery}`
     : `au plus tard le ${FETES_SALE.standard.deliveryDeadline}, on fait tout pour avant les fêtes`
@@ -240,7 +240,7 @@ export default function ShopLanding({
     }
   }, [sheetOpen])
 
-  /** Tous les boutons « Je précommande » : panneau sur mobile, formulaire de la fiche sur ordinateur. */
+  /** Tous les boutons « Je commande » : panneau sur mobile, formulaire de la fiche sur ordinateur. */
   function openOrder(emplacement: string) {
     trackShop('clic-precommande', { emplacement })
     if (window.matchMedia(DESKTOP_QUERY).matches) {
@@ -251,7 +251,7 @@ export default function ShopLanding({
     }
   }
 
-  /** Lien « Je précommande » : ancre #achat sans JavaScript, panneau avec. */
+  /** Lien « Je commande » : ancre #achat sans JavaScript, panneau avec. */
   function preorderLinkProps(emplacement: string) {
     return {
       href: '#achat',
@@ -295,7 +295,7 @@ export default function ShopLanding({
               className="text-xs md:text-sm mb-5 font-bold uppercase"
               style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-primary-green)', letterSpacing: '0.12em', textWrap: 'balance' }}
             >
-              <span style={{ color: 'var(--color-secondary-orange)' }}>Précommande des fêtes</span>
+              <span style={{ color: 'var(--color-secondary-orange)' }}>Prévente des fêtes</span>
               {' '}· jusqu&apos;au {FETES_SALE.endLabel} 23&nbsp;h&nbsp;59 ·{' '}
               <span style={{ color: 'var(--color-secondary-orange)' }}>
                 <CountdownTimer variant="compact" endDate={FETES_SALE.endDate} />
@@ -356,7 +356,7 @@ export default function ShopLanding({
                   </>
                 )}
                 <p className="text-base md:text-lg" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', lineHeight: '1.6' }}>
-                  Au-delà des {FETES_SALE.flash.units}, la précommande reste ouverte jusqu&apos;au {FETES_SALE.endLabel}, sans
+                  Au-delà des {FETES_SALE.flash.units}, la prévente reste ouverte jusqu&apos;au {FETES_SALE.endLabel}, sans
                   tarif réduit ({formatPrice(PREORDER_PACK.priceTtc ?? 0)}).
                 </p>
               </div>
@@ -365,7 +365,7 @@ export default function ShopLanding({
                 className="text-lg md:text-xl max-w-3xl mx-auto"
                 style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', lineHeight: '1.6' }}
               >
-                La précommande reste ouverte à {formatPrice(PREORDER_PACK.priceTtc ?? 0)} jusqu&apos;au{' '}
+                La prévente reste ouverte à {formatPrice(PREORDER_PACK.priceTtc ?? 0)} jusqu&apos;au{' '}
                 {FETES_SALE.endLabel}. {FETES_SALE.standard.delivery}
               </p>
             )}
@@ -479,13 +479,13 @@ export default function ShopLanding({
               </div>
             </div>
 
-            {/* Panneau d'achat — cible des boutons « Je précommande » (#achat) */}
+            {/* Panneau d'achat — cible des boutons « Je commande » (#achat) */}
             <div id="achat" className="lg:sticky lg:top-28 scroll-mt-28">
               <p
                 className="text-sm md:text-base mb-4 font-bold uppercase tracking-[0.15em]"
                 style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-secondary-orange)' }}
               >
-                Pré-commande
+                Prévente
               </p>
 
               <h2
@@ -542,7 +542,7 @@ export default function ShopLanding({
                 Payable en plusieurs fois avec Klarna
               </p>
               <p className="text-sm mb-6" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', opacity: 0.75 }}>
-                <strong>Précommande des fêtes</strong> :{' '}
+                <strong>Prévente des fêtes</strong> :{' '}
                 {flashActive
                   ? `livré avant Noël, ${FETES_SALE.flash.delivery}. 1 bracelet par commande à ce prix.`
                   : `${FETES_SALE.standard.delivery} Au plus tard le ${FETES_SALE.standard.deliveryDeadline}.`}
@@ -612,12 +612,12 @@ export default function ShopLanding({
 
               {/* Formulaire de commande : en ligne dans la fiche sur ordinateur, panneau
                   qui monte du bas de l'écran sur mobile (ouvert par les boutons
-                  « Je précommande »). Une seule instance → une seule carte Boxtal. */}
+                  « Je commande »). Une seule instance → une seule carte Boxtal. */}
               <div
                 className={`${sheetOpen ? 'fixed inset-0 z-[60] flex flex-col justify-end' : 'hidden'} lg:static lg:z-auto lg:block`}
                 role={sheetOpen ? 'dialog' : undefined}
                 aria-modal={sheetOpen ? true : undefined}
-                aria-label={sheetOpen ? 'Ta pré-commande' : undefined}
+                aria-label={sheetOpen ? 'Ta commande' : undefined}
               >
                 <div aria-hidden className="absolute inset-0 bg-black/50 lg:hidden" onClick={() => setSheetOpen(false)} />
                 <div
@@ -633,7 +633,7 @@ export default function ShopLanding({
                         className="text-xs font-bold uppercase mb-1"
                         style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-secondary-orange)', letterSpacing: '0.15em' }}
                       >
-                        Pré-commande
+                        Prévente
                       </p>
                       <p className="text-lg font-bold uppercase" style={{ fontFamily: 'var(--font-syne)', color: 'var(--color-primary-green)', lineHeight: 1.2 }}>
                         Bracelet Polar 360 + App WAC
@@ -731,7 +731,7 @@ export default function ShopLanding({
         </div>
       </section>
 
-      {/* ───────────── DANS TA PRÉ-COMMANDE ───────────── */}
+      {/* ───────────── DANS TA COMMANDE ───────────── */}
       <section className="py-20" style={{ backgroundColor: 'var(--color-primary-green)' }}>
         <div className="container-custom">
           <Reveal>
@@ -739,7 +739,7 @@ export default function ShopLanding({
               className="text-3xl md:text-5xl mb-12 text-center"
               style={{ fontFamily: 'var(--font-syne)', fontWeight: 700, textTransform: 'uppercase', color: 'var(--color-primary-beige)' }}
             >
-              Dans ta pré-commande.
+              Dans ta commande.
             </h2>
           </Reveal>
 
@@ -747,7 +747,7 @@ export default function ShopLanding({
             {[
               {
                 title: 'Le bracelet Polar 360',
-                text: 'Capteur cardio haute précision (±1 BPM), 29 g, 10 jours d’autonomie. Porté à l’avant-bras, sans écran : tu l’oublies pendant la grimpe.',
+                text: "Capteur cardio sans écran, ±1 BPM (donnée Polar), porté à l’avant-bras.",
               },
               {
                 title: 'L’app WAC',
@@ -1041,7 +1041,7 @@ export default function ShopLanding({
             </h2>
             <Magnetic>
               <a {...preorderLinkProps('bas-de-page')} className="btn-secondary inline-block">
-                Je précommande →
+                Je commande →
               </a>
             </Magnetic>
           </Reveal>
@@ -1061,7 +1061,7 @@ export default function ShopLanding({
           className="pt-2 text-[11px] text-center"
           style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', opacity: 0.75 }}
         >
-          Fin de la précommande dans{' '}
+          Fin de la prévente dans{' '}
           <strong style={{ color: 'var(--color-secondary-orange)' }}>
             <CountdownTimer variant="inline" endDate={FETES_SALE.endDate} />
           </strong>
@@ -1080,7 +1080,7 @@ export default function ShopLanding({
             </p>
           </div>
           <a {...preorderLinkProps('barre-mobile')} className="btn-secondary text-sm whitespace-nowrap">
-            Je précommande
+            Je commande
           </a>
         </div>
       </div>

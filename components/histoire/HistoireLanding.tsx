@@ -23,7 +23,7 @@ const PILIERS = [
   {
     n: '02',
     t: 'Progression durable',
-    d: "Progresser, c'est durer. Entraînement intelligent, prévention des blessures, tous niveaux : la vraie performance se mesure sur des années.",
+    d: "Progresser, c'est durer. Entraînement intelligent, suivi de la charge et de la récupération, tous niveaux : la vraie performance se mesure sur des années.",
   },
   {
     n: '03',
@@ -482,7 +482,7 @@ export default function HistoireLanding() {
       {/* ───────────── CTA LISTE D'ATTENTE ───────────── */}
       <WaitlistSection
         heading="Rejoins le mouvement."
-        subtitle="Les pré-commandes ouvrent bientôt, directement sur weareclimbers.fr. Laisse ton email pour faire partie des premiers."
+        subtitle="Les préventes ouvrent bientôt, directement sur weareclimbers.fr. Laisse ton email pour faire partie des premiers."
       />
     </main>
   )

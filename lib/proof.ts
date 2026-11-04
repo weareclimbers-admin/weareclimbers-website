@@ -5,7 +5,7 @@
  *   à jour ici, à la main.
  * - Avis : copiés tels quels depuis les stores (pseudo, source, date). Ne jamais
  *   retoucher le texte d'un avis ; `excerpt` quand il a été raccourci.
- * - Ne jamais réutiliser lib/testimonials.ts (témoignages fictifs, code mort).
+ * - Ne jamais publier de témoignage fictif (l'ancien lib/testimonials.ts a été supprimé le 04/11/2026).
  *
  * Importable côté client (aucun import serveur).
  */

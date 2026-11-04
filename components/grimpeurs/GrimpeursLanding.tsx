@@ -8,6 +8,7 @@ import Magnetic from '@/components/Magnetic'
 import WaitlistSection from '@/components/WaitlistSection'
 import { DERNIER_ARTICLE } from '@/lib/press'
 import { CLIMBERS_EQUIPPED } from '@/lib/proof'
+import StoreReviews from '@/components/StoreReviews'
 
 /**
  * Landing /nos-grimpeurs — la surface de confiance.
@@ -213,12 +214,12 @@ export default function GrimpeursLanding() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
               <Reveal delay={0}>
                 <PersonaCard icon="/icons/icons8-objectif-50.png" title="Comprends comment tu grimpes vraiment">
-                  Zones d'effort, fréquence cardiaque à ±1 BPM, patterns de récupération. WAC t'explique ce que ton corps fait pendant que tu grimpes — pour que tu puisses grimper plus intelligemment.
+                  Zones d'effort, fréquence cardiaque (±1 BPM, donnée Polar), patterns de récupération. WAC t'explique ce que ton corps fait pendant que tu grimpes — pour que tu puisses grimper plus intelligemment.
                 </PersonaCard>
               </Reveal>
               <Reveal delay={0.08}>
                 <PersonaCard icon="/icons/icons8-bouclier-50.png" title="Grimpe plus longtemps sans te blesser">
-                  WAC t'alerte quand ton corps accumule trop de fatigue. Pas après la tendinite. Avant. Parce que grimper longtemps vaut mieux que grimper fort une seule saison.
+                  WAC t'aide à suivre ta charge et ta récupération. Parce que grimper longtemps vaut mieux que grimper fort une seule saison.
                 </PersonaCard>
               </Reveal>
               <Reveal delay={0.16}>
@@ -270,7 +271,7 @@ export default function GrimpeursLanding() {
               </Reveal>
               <Reveal delay={0.16}>
                 <PersonaCard icon="/icons/icons8-bouclier-50.png" title="Prévention pensée pour ton corps">
-                  Alertes récupération, suivi de charge d'entraînement, recommandations adaptées à ton profil physiologique réel. Pas un programme générique conçu pour un corps masculin.
+                  Suivi de ta charge et de tes indicateurs de récupération. Pas un programme générique conçu pour un corps masculin.
                 </PersonaCard>
               </Reveal>
             </div>
@@ -309,49 +310,13 @@ export default function GrimpeursLanding() {
         </section>
       )}
 
-      {/* ───────────── TÉMOIGNAGES ───────────── */}
-      <section className="pb-20 md:pb-24">
-        <div className="container-custom">
-          <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
-            {[
-              {
-                quote:
-                  "Grâce au bracelet, j'ai compris que je grimpais systématiquement en zone rouge. WAC m'a montré comment doser mes efforts. Paradoxalement, depuis que j'en fais moins, je progresse plus vite.",
-                author: 'Alex, 7a+, salle et falaise',
-              },
-              {
-                quote:
-                  "WAC m'a montré que mes 'mauvais jours' étaient systématiquement liés à ma phase lutéale. Maintenant j'adapte mes sessions selon mon cycle. Fini la culpabilité — mon corps n'est pas défaillant, il a juste son propre rythme.",
-                author: 'Léa, 6b+, grimpe depuis 2 ans',
-              },
-            ].map((t, i) => (
-              <Reveal key={t.author} delay={i * 0.1}>
-                <motion.div
-                  className="h-full p-8 rounded-[20px]"
-                  style={{ backgroundColor: 'var(--color-secondary-beige-light)', border: '1px solid rgba(38,83,53,0.1)' }}
-                  whileHover={{ y: -6, boxShadow: '0 14px 40px rgba(216,90,26,0.16)' }}
-                  transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-                >
-                  <span aria-hidden className="block leading-none mb-3" style={{ fontFamily: 'var(--font-syne)', fontWeight: 700, fontSize: '2.5rem', color: 'var(--color-secondary-orange)' }}>
-                    “
-                  </span>
-                  <p className="text-base md:text-lg mb-6 italic" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', lineHeight: '1.6' }}>
-                    {t.quote}
-                  </p>
-                  <p className="font-bold" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)' }}>
-                    {t.author}
-                  </p>
-                </motion.div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* ───────────── AVIS (stores, texte non retouché — lib/proof.ts) ───────────── */}
+      <StoreReviews />
 
       {/* ───────────── CTA LISTE D'ATTENTE ───────────── */}
       <WaitlistSection
         heading="Rejoins celles et ceux qui grimpent avec WAC."
-        subtitle="Les pré-commandes ouvrent bientôt, directement sur weareclimbers.fr. Laisse ton email pour être prévenu·e en premier."
+        subtitle="Les préventes ouvrent bientôt, directement sur weareclimbers.fr. Laisse ton email pour être prévenu·e en premier."
       />
 
       {/* ───────────── PORTE COACH ───────────── */}

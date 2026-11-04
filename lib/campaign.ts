@@ -4,7 +4,7 @@
  * MODÈLE À PHASES — le site s'adapte automatiquement à la phase active :
  *   'ulule-live'        → campagne Accès Anticipé Ulule en cours (compte à rebours + CTA Ulule)
  *   'campaign-success'  → campagne terminée avec succès (preuve sociale + liste d'attente)
- *   'precommande-live'  → pré-commandes en propre ouvertes (checkout WAC)
+ *   'precommande-live'  → préventes en propre ouvertes (checkout WAC)
  *   'vente-flash-attente' → checkout FERMÉ, liste d'attente de la précommande des
  *                         fêtes sur /boutique (avant le 30/11 9 h, et après le 06/12)
  *
@@ -16,7 +16,7 @@
  * helpers (getPrimaryCta / getBannerConfig).
  *
  * ⚠️ Terminologie : jamais "crowdfunding" / "early access" / "médical". On dit
- * "Accès Anticipé", "Pack Fondateur/Pionnier", "haute précision / ±1 BPM".
+ * "Pack Fondateur/Pionnier", « ±1 BPM (donnée Polar) ».
  */
 
 import { FETES_SALE, PREORDER_PACK } from '@/lib/preorder';
@@ -57,7 +57,7 @@ export const CAMPAIGN = {
 } as const;
 
 /**
- * Liste d'attente (entre la fin d'Ulule et l'ouverture des pré-commandes en propre).
+ * Liste d'attente (entre la fin d'Ulule et l'ouverture des préventes en propre).
  * Le formulaire réel est `NewsletterForm` (→ /api/newsletter → Brevo).
  * `anchor` = cible vers laquelle les CTA "waitlist" pointent (section formulaire).
  */
@@ -65,7 +65,7 @@ export const WAITLIST = {
   anchor: '#liste-attente',
   formTitle: 'Sois aux premières loges',
   formSubtitle:
-    "Les pré-commandes en propre arrivent. Laisse ton email : tu seras prévenu·e en premier, avant tout le monde.",
+    "Les préventes en propre arrivent. Laisse ton email : tu seras prévenu·e en premier, avant tout le monde.",
   buttonText: 'Préviens-moi du lancement',
 } as const;
 
@@ -81,8 +81,8 @@ export const WAITLIST = {
 export const FLASH_SALE = {
   href: '/boutique#liste-attente',
   window: `du ${FETES_SALE.startLabel} au ${FETES_SALE.endLabel}`,
-  formTitle: 'Précommande des fêtes',
-  formSubtitle: `Du ${FETES_SALE.startLabel} au ${FETES_SALE.endLabel} : ${FETES_SALE.flash.units} bracelets à ${FETES_SALE.flash.priceTtc} € au lieu de ${PREORDER_PACK.priceTtc} €, livrés avant Noël. Au-delà, la précommande reste ouverte au prix de ${PREORDER_PACK.priceTtc} €. Inscris-toi pour être prévenu·e dès l’ouverture.`,
+  formTitle: 'Prévente des fêtes',
+  formSubtitle: `Du ${FETES_SALE.startLabel} au ${FETES_SALE.endLabel} : ${FETES_SALE.flash.units} bracelets à ${FETES_SALE.flash.priceTtc} € au lieu de ${PREORDER_PACK.priceTtc} €, livrés avant Noël. Au-delà, la prévente reste ouverte au prix de ${PREORDER_PACK.priceTtc} €. Inscris-toi pour être prévenu·e dès l’ouverture.`,
   buttonText: 'Préviens-moi',
 } as const;
 
@@ -139,8 +139,8 @@ export function getWaitlistCopy(now: number = saleNow()): {
   if (isFetesSaleOver(now)) {
     return {
       badge: 'Merci à la cordée',
-      title: 'Précommande des fêtes terminée',
-      subtitle: 'Les précommandes sont closes. Laisse ton email pour être prévenu·e en premier de la prochaine ouverture.',
+      title: 'Prévente des fêtes terminée',
+      subtitle: 'Les préventes sont closes. Laisse ton email pour être prévenu·e en premier de la prochaine ouverture.',
       buttonText: 'Préviens-moi',
     };
   }
@@ -169,7 +169,7 @@ export function getPrimaryCta(): Cta {
     case 'campaign-success':
       return { label: 'Préviens-moi du lancement', kind: 'waitlist' };
     case 'precommande-live':
-      return { label: 'Je précommande', kind: 'precommande', href: '/boutique' };
+      return { label: 'Je commande', kind: 'precommande', href: '/boutique' };
     case 'vente-flash-attente':
       return { label: 'Je m’inscris', kind: 'waitlist', href: FLASH_SALE.href };
   }
@@ -177,7 +177,7 @@ export function getPrimaryCta(): Cta {
 
 /** Libellé du lien vers /boutique dans le header et le footer. */
 export function getShopNavLabel(): string {
-  return isFetesSaleOver() ? 'Liste d’attente' : 'Précommande des fêtes';
+  return isFetesSaleOver() ? 'Liste d’attente' : 'Prévente des fêtes';
 }
 
 /** Contenu du bandeau haut de page selon la phase. */
@@ -190,18 +190,18 @@ export function getBannerConfig(): { text: string; cta: Cta } | null {
       };
     case 'campaign-success':
       return {
-        text: 'Objectif 100 % atteint — merci ! Les pré-commandes en propre arrivent bientôt.',
+        text: 'Objectif 100 % atteint — merci ! Les préventes en propre arrivent bientôt.',
         cta: getPrimaryCta(),
       };
     case 'precommande-live':
       return {
-        text: `Précommande des fêtes jusqu'au ${FETES_SALE.endLabel}`,
+        text: `Prévente des fêtes jusqu'au ${FETES_SALE.endLabel}`,
         cta: getPrimaryCta(),
       };
     case 'vente-flash-attente':
       if (isFetesSaleOver()) return null;
       return {
-        text: `Précommande des fêtes · ${FETES_SALE.flash.units} bracelets à ${FETES_SALE.flash.priceTtc} € · ${FLASH_SALE.window}`,
+        text: `Prévente des fêtes · ${FETES_SALE.flash.units} bracelets à ${FETES_SALE.flash.priceTtc} € · ${FLASH_SALE.window}`,
         cta: { ...getPrimaryCta(), label: 'Je m’inscris' },
       };
   }

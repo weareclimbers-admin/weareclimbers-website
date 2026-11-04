@@ -55,7 +55,7 @@ const FEATURES: {
     title: 'Des insights, pas des graphiques de plus.',
     desc: "L'app transforme tes données en recommandations actionnables : « Ta récupération plafonne depuis 5 jours, allège ta prochaine séance. » Parfois elle te dit simplement : « Stop. Repose-toi. » Et elle est fière de te le dire.",
     src: '/videos/app/ia.mp4',
-    placeholder: 'Insights & recommandations IA',
+    placeholder: 'Analyses de tes séances',
   },
   {
     kicker: 'Une première dans l’escalade',
