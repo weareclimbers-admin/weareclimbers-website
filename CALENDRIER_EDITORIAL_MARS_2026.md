@@ -165,7 +165,7 @@ Texte vert foncé (#265335) :
 
 "PHASE FOLLICULAIRE (J1-J14)
 
-✅ +15% de force maximale
+✅ [Statistique retirée le 04/11/2026 : non sourcée.]
 ✅ Meilleure récupération
 ✅ Tendons plus résistants
 
@@ -181,7 +181,7 @@ Texte :
 
 "PHASE LUTÉALE (J15-J28)
 
-⚠️ +48% risque blessure ligamentaire
+⚠️ [Statistique retirée le 04/11/2026 : non sourcée.]
 ⚠️ Fatigue accrue
 ⚠️ Récupération ralentie
 
@@ -243,12 +243,12 @@ Parce que la tech sportive est pensée par des hommes, pour des hommes.
 LES FAITS :
 
 📊 Phase folliculaire (J1-J14) :
-→ +15% de force maximale
+→ [Statistique retirée le 04/11/2026 : non sourcée.]
 → Meilleure récupération
 → C'est le moment de pousser, tester tes projets limites
 
 📊 Phase lutéale (J15-J28) :
-→ +48% de risque de blessure ligamentaire
+→ [Statistique retirée le 04/11/2026 : non sourcée.]
 → Fatigue accrue
 → C'est le moment de baisser le volume, travailler la technique
 
@@ -515,8 +515,8 @@ Texte :
 
 "Les faits :
 
-📊 +15% de force en phase folliculaire
-📊 +48% de risque blessure en phase lutéale
+📊 [Statistique retirée le 04/11/2026 : non sourcée.]
+📊 [Statistique retirée le 04/11/2026 : non sourcée.]
 
 Ignorer le cycle = ignorer 50% des grimpeurs.
 
@@ -554,8 +554,8 @@ Pourquoi ?
 Parce que la tech sportive est pensée par des hommes, pour des hommes.
 
 Les faits :
-📊 +15% de force en phase folliculaire
-📊 +48% de risque blessure en phase lutéale
+📊 [Statistique retirée le 04/11/2026 : non sourcée.]
+📊 [Statistique retirée le 04/11/2026 : non sourcée.]
 
 Ignorer le cycle = ignorer la réalité physiologique de 50% des grimpeurs.
 

@@ -600,7 +600,7 @@ Inscris-toi sur la liste d'attente (lien en bio) 🔗
 #Temoignage #BetaTest #WeAreClimbers #Escalade #RealTalk
 ```
 
-**Note** : Remplacer [Prénom] par un vrai prénom si témoignage dispo, sinon utiliser un témoignage anonymisé crédible
+**Note** : uniquement de vrais témoignages, avec l'accord écrit de la personne. Jamais de témoignage ni de persona inventé. (Règle du 04/11/2026)
 
 ---
 
@@ -758,49 +758,17 @@ Texte overlay : "3 beta-testeurs. 3 mois de tests. Leurs retours brutaux. 💬"
 
 **Slide 2 :**
 ```
-Texte :
-
-"SOPHIE, 28 ans, grimpeuse 7a
-
-'WAC m'a évité une tendinite.'
-
-'En février, WAC m'a conseillé de me reposer 3 jours.
-J'avais pas de douleur. Juste une fatigue légère.
-J'ai suivi le conseil.
-2 semaines plus tard, des copines avec les mêmes signaux se sont blessées.
-Pas moi.
-WAC m'a sauvée.'"
+[Publication retirée le 04/11/2026 : elle reposait sur des témoignages fictifs. N'utiliser que de vrais témoignages, avec l'accord écrit de la personne.]
 ```
 
 **Slide 3 :**
 ```
-Texte :
-
-"ALEX, 32 ans, grimpeur 6b
-
-'Le cycle menstruel, ça change tout.'
-
-'Ma compagne utilise WAC.
-Avant, elle forçait même en phase lutéale.
-Résultat : blessures répétées.
-Depuis qu'elle adapte son training avec WAC ?
-Zéro blessure. Et elle progresse mieux.
-C'est dingue que personne en parlait avant.'"
+[Publication retirée le 04/11/2026 : elle reposait sur des témoignages fictifs. N'utiliser que de vrais témoignages, avec l'accord écrit de la personne.]
 ```
 
 **Slide 4 :**
 ```
-Texte :
-
-"LÉA, 24 ans, grimpeuse 6c
-
-'Enfin une app qui valorise le repos.'
-
-'Les autres apps me culpabilisaient.
-"Ton pote a grimpé 5x cette semaine !"
-Avec WAC, quand je me repose, l'app me dit :
-"Bien joué. Tu écoutes ton corps."
-Ça change TOUT psychologiquement.'"
+[Publication retirée le 04/11/2026 : elle reposait sur des témoignages fictifs. N'utiliser que de vrais témoignages, avec l'accord écrit de la personne.]
 ```
 
 **Slide 5 :**
@@ -813,7 +781,7 @@ Texte :
 
 WAC change leur façon de grimper.
 
-Merci Sophie, Alex, Léa 💙
+[Retiré le 04/11/2026 : contenu bâti sur des bêta-testeurs fictifs.]
 
 Crowdfunding J-27 🚀
 
@@ -827,46 +795,10 @@ Logo WAC
 
 **Légende Instagram :**
 ```
-3 beta-testeurs. 3 mois de tests. Leurs retours brutaux. 💬
-
-Depuis février, 15 grimpeurs testent WAC en conditions réelles.
-
-Voici 3 témoignages (vrais, non édités) :
-
----
-
-**SOPHIE, 28 ans, 7a**
-"WAC m'a évité une tendinite.
-L'app m'a conseillé de me reposer 3 jours alors que j'avais aucune douleur.
-J'ai suivi. 2 semaines après, des copines avec les mêmes signaux se sont blessées. Pas moi."
-
-**ALEX, 32 ans, 6b**
-"Ma compagne utilise WAC pour adapter son training au cycle.
-Avant : blessures répétées.
-Depuis WAC : zéro blessure. Et elle progresse mieux."
-
-**LÉA, 24 ans, 6c**
-"Les autres apps me culpabilisaient. WAC me dit 'Bien joué' quand je me repose.
-Ça change TOUT psychologiquement."
-
----
-
-3 grimpeurs. 3 profils. 1 constat :
-WAC change leur façon de grimper.
-
-Crowdfunding dans 27 jours 🚀
-
-Prix early bird : 79€ (pack bracelet + 1 an app)
-Prix public après : 129€
-
-Inscris-toi (lien en bio) 🔗
-
-Merci Sophie, Alex, Léa pour votre honnêteté 💙
-
-#Temoignages #BetaTest #WeAreClimbers #Escalade #Communaute
+[Publication retirée le 04/11/2026 : elle reposait sur des témoignages fictifs. N'utiliser que de vrais témoignages, avec l'accord écrit de la personne.]
 ```
 
-**Note** : Utiliser de vrais témoignages si disponibles, sinon créer des personas crédibles basés sur feedbacks réels
+**Note** : uniquement de vrais témoignages, avec l'accord écrit de la personne. Jamais de témoignage ni de persona inventé. (Règle du 04/11/2026)
 
 ---
 
@@ -882,19 +814,12 @@ Texte : "J-26 avant le crowdfunding 🚀"
 
 **Story 2 :**
 ```
-Visuel : Photo Sophie (beta-testeuse)
-Texte : "Hier, on a partagé 3 témoignages.
-Aujourd'hui, Sophie nous en dit plus 👇"
+[Retiré le 04/11/2026 : contenu bâti sur des bêta-testeurs fictifs.]
 ```
 
-**Story 3 - Question à Sophie :**
+**Story 3 :**
 ```
-Texte : "Q : Comment WAC a détecté ta fatigue ?
-
-R : Analyse HRV + récup cardiaque.
-L'app a vu que ma récup ralentissait.
-Elle m'a dit : 'Repos 3 jours.'
-J'ai suivi. Aucune blessure depuis."
+[Retiré le 04/11/2026 : contenu bâti sur des bêta-testeurs fictifs.]
 ```
 
 **Story 4 :**
@@ -2260,7 +2185,7 @@ Texte :
 
 "MERCI AUX BETA-TESTEURS
 
-Sophie, Alex, Léa, et les 12 autres.
+Nos bêta-testeurs.
 
 Vous avez testé WAC pendant 3 mois.
 Critiqué sans filtre.
@@ -2339,7 +2264,7 @@ Mais avant, je voulais dire merci.
 ---
 
 **MERCI AUX BETA-TESTEURS**
-Sophie, Alex, Léa, et les 12 autres.
+Nos bêta-testeurs.
 Vous avez testé pendant 3 mois. Critiqué sans filtre. Permis de corriger 23 bugs.
 Sans vous, WAC n'existerait pas.
 

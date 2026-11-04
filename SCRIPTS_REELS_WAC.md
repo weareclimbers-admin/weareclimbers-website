@@ -157,12 +157,12 @@ Voix off : "Pourquoi tu grimpes mieux certains jours que d'autres ?"
 
 [3-15s] PHASE 1
 Visuel : Illustration phase folliculaire (J1-J14)
-Texte overlay : "Phase folliculaire (J1-J14) | +15% force"
+[Statistique retirée le 04/11/2026 : non sourcée.]
 Voix off : "Phase folliculaire, jours 1 à 14 : ton corps performe. 15% de force en plus. Profites-en."
 
 [15-27s] PHASE 2
 Visuel : Illustration phase lutéale (J15-J28)
-Texte overlay : "Phase lutéale (J15-J28) | +48% risque blessure"
+[Statistique retirée le 04/11/2026 : non sourcée.]
 Voix off : "Phase lutéale, jours 15 à 28 : risque de blessure augmente de 48%. C'est pas une excuse. C'est une info."
 
 [27-38s] SOLUTION WAC

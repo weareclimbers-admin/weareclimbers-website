@@ -22,7 +22,7 @@ export const values: Value[] = [
     id: 'inclusivite',
     icon: '/icons/icons8-cadenas-ouvert-48.png',
     title: 'Jamais élitiste, toujours inclusif',
-    description: 'Pour tous les genres, toutes les morphologies, tous les niveaux. Première app escalade à prendre en compte l\'impact des cycles menstruels sur ta performance. Parce que ton corps mérite d\'être compris, pas jugé.'
+    description: 'Pour tous les genres, toutes les morphologies, tous les niveaux. Le suivi du cycle menstruel est intégré à l\'app, en option. Parce que ton corps mérite d\'être compris, pas jugé.'
   },
   {
     id: 'eco',

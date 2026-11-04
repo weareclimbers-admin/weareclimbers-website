@@ -21,7 +21,7 @@ const VALIDATEURS = [
   {
     role: 'Champion de France',
     detail: 'Difficulté 2024',
-    text: 'Un athlète du plus haut niveau national valide WAC sur le terrain.',
+    text: 'Un athlète du plus haut niveau national teste WAC sur le terrain.',
   },
   {
     role: 'Athlète de haut niveau',
@@ -86,7 +86,7 @@ export default function GrimpeursLanding() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ type: 'spring', stiffness: 120, damping: 18, delay: 0.3 }}
             >
-              Grimpeur régulier ou athlète confirmée : WAC est construit avec celles et ceux qui grimpent — et validé par celles et ceux qui entraînent.
+              Grimpeur régulier ou athlète confirmée : WAC est construit avec celles et ceux qui grimpent — et testé avec celles et ceux qui entraînent.
             </motion.p>
           </div>
         </div>
@@ -127,7 +127,7 @@ export default function GrimpeursLanding() {
         <div className="container-custom">
           <Reveal>
             <h2 className="text-3xl md:text-5xl text-center mb-6" style={{ fontFamily: 'var(--font-syne)', fontWeight: 700, textTransform: 'uppercase', color: 'var(--color-primary-green)' }}>
-              Validé par celles et ceux qui grimpent le plus fort.
+              Testé avec des grimpeurs et des coachs.
             </h2>
           </Reveal>
           <Reveal delay={0.08}>
@@ -218,7 +218,7 @@ export default function GrimpeursLanding() {
                 </PersonaCard>
               </Reveal>
               <Reveal delay={0.08}>
-                <PersonaCard icon="/icons/icons8-bouclier-50.png" title="Grimpe plus longtemps sans te blesser">
+                <PersonaCard icon="/icons/icons8-bouclier-50.png" title="Suis ta charge pour grimper dans la durée">
                   WAC t'aide à suivre ta charge et ta récupération. Parce que grimper longtemps vaut mieux que grimper fort une seule saison.
                 </PersonaCard>
               </Reveal>
@@ -260,8 +260,8 @@ export default function GrimpeursLanding() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
               <Reveal delay={0}>
-                <PersonaCard icon="/icons/icons8-cycle-menstruel-64.png" title="L'analyse hormonale — une première dans l'escalade">
-                  WAC intègre l'impact de ton cycle menstruel sur ta performance. Force et intensité en phase folliculaire, technique et endurance en phase lutéale. Tu adaptes ton entraînement à ton corps — pas l'inverse.
+                <PersonaCard icon="/icons/icons8-cycle-menstruel-64.png" title="Le suivi de ton cycle, en option">
+                  Si tu le souhaites, tu renseignes ton cycle menstruel dans l'app, de façon optionnelle et privée. WAC met alors tes séances et tes indicateurs de récupération en regard de ton cycle, dans des graphiques dédiés.
                 </PersonaCard>
               </Reveal>
               <Reveal delay={0.08}>
@@ -270,7 +270,7 @@ export default function GrimpeursLanding() {
                 </PersonaCard>
               </Reveal>
               <Reveal delay={0.16}>
-                <PersonaCard icon="/icons/icons8-bouclier-50.png" title="Prévention pensée pour ton corps">
+                <PersonaCard icon="/icons/icons8-bouclier-50.png" title="Un suivi pensé pour ton corps">
                   Suivi de ta charge et de tes indicateurs de récupération. Pas un programme générique conçu pour un corps masculin.
                 </PersonaCard>
               </Reveal>

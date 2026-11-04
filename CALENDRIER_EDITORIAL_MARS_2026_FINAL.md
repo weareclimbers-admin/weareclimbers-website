@@ -618,7 +618,7 @@ Texte :
 
 ✅ Intégration cycle menstruel
 → Adaptation training par phase
-→ Prévention blessure phase lutéale (+48% risque)
+→ [Statistique retirée le 04/11/2026 : non sourcée.]
 
 ✅ Pas de classement mixte toxique
 → Tu te compares à qui TU veux
@@ -672,8 +672,8 @@ Résultat ?
 WAC fait différemment :
 
 ✅ **Intégration cycle menstruel**
-→ +15% force phase folliculaire (profite-en)
-→ +48% risque blessure phase lutéale (adapte ton volume)
+→ [Statistique retirée le 04/11/2026 : non sourcée.]
+→ [Statistique retirée le 04/11/2026 : non sourcée.]
 
 ✅ **Pas de classement mixte toxique**
 → Tu te compares à qui TU veux
@@ -2096,11 +2096,11 @@ Verbatim bruts beta-testeurs :
 
 "Enfin une app qui me dit de me reposer AVANT de craquer." (Marine, 6c)
 
-"L'analyse HRV m'a évité une tendinite. Je sentais rien venir." (Thomas, 7a)
+[Citation retirée le 04/11/2026 : témoignage fictif.]
 
 "Interface parfois lourde, mais les insights valent le coup." (Sarah, 6b)
 
-"Je voudrais + de graphiques long-terme (sur 3 mois)." (Alex, 7b)
+[Citation retirée le 04/11/2026 : témoignage fictif.]
 
 ---
 
@@ -2297,7 +2297,7 @@ weareclimbers.fr
 
 **Format :** Reel storytelling visuel
 
-**Concept :** "TIMELINE : Comment une notification WAC m'a évité une tendinite"
+**Concept :** [retiré le 04/11/2026 : récit-témoignage fictif]
 
 **Script (texte sur vidéo) :**
 ```
@@ -2361,30 +2361,7 @@ weareclimbers.fr
 
 **Légende Instagram :**
 ```
-Timeline : Comment une notification WAC m'a évité une tendinite. 🚨
-
-Lundi : HRV basse, sommeil fragmenté, alerte repos.
-Moi : "Je me sens bien, je grimpe quand même"
-Doigt : commence à tirer.
-
-Mardi : Alerte charge cumulée 94% max.
-Moi : "OK... repos"
-
-Résultat : Tendinite évitée.
-
-Sans WAC ?
-J'aurais continué.
-Tendinite A2.
-3 mois d'arrêt.
-
-DONNÉES > INTUITION.
-
-Crowdfunding 19 mai (J-64) 🚀
-Inscris-toi (lien en bio) 🔗
-
-Déjà ignoré une douleur et regretté après ? 👇
-
-#Prevention #Tendinite #HRV #Escalade #WeAreClimbers #Blessure
+[Publication retirée le 04/11/2026 : elle reposait sur des témoignages fictifs. N'utiliser que de vrais témoignages, avec l'accord écrit de la personne.]
 ```
 
 **Hashtags réels :**
@@ -2880,272 +2857,13 @@ Tu veux grimper longtemps ou grimper fort ? 👇
 
 ## 🗓️ LUNDI 30 MARS 2026
 
-### 💼 **POST LINKEDIN : ANNONCE COLLABORATION**
-
-**Format :** Post annonce partenariat
-
-**Titre implicite :** "WAC x Dr. Sophie Arnaud (kiné escalade) : collaboration officielle"
-
-**Contenu :**
-```
-Annonce officielle.
-
-WAC s'associe avec Dr. Sophie Arnaud, kinésithérapeute spécialisée escalade (15 ans d'expérience, ancienne membre équipe de France).
-
-Voici pourquoi c'est important.
-
----
-
-**POURQUOI SOPHIE ?**
-
-Sophie n'est pas "juste" une kiné.
-
-Elle a traité + de 2 000 grimpeurs blessés en 15 ans.
-Tendinites, ruptures poulies, capsulites, SLAP épaule.
-
-Elle connaît TOUS les patterns de blessure.
-
-Et surtout : elle sait ce qui aurait pu les éviter.
-
----
-
-**SON RÔLE DANS WAC**
-
-Sophie intègre l'équipe WAC en tant que :
-
-1. **Conseillère scientifique** (validation protocoles prévention)
-2. **Créatrice de contenu** (protocoles échauffement, mobilité, récup)
-3. **Référente médicale** (pour les kinés qui utilisent WAC avec leurs patients)
-
-Concrètement :
-
-Chaque alerte prévention WAC sera validée par Sophie.
-Chaque protocole (échauffement, récup) sera co-créé avec elle.
-Chaque recommandation sera basée sur ses 15 ans d'expérience terrain.
-
----
-
-**CE QUE ÇA CHANGE POUR VOUS**
-
-WAC devient :
-
-✅ Validé scientifiquement (par une pro reconnue)
-✅ Protocoles testés (sur 2 000+ cas cliniques)
-✅ Recommandations médicales (pas juste "conseils")
-
-Sophie apporte la crédibilité médicale que je n'ai pas.
-
-Moi = développeur + grimpeur.
-Elle = kiné experte.
-
-Ensemble = prévention sérieuse.
-
----
-
-**SOPHIE, POURQUOI WAC ?**
-
-Je lui ai posé la question :
-
-"Sophie, tu aurais pu bosser avec n'importe quelle app. Pourquoi WAC ?"
-
-Sa réponse :
-
-"Parce que WAC est la SEULE app qui met la prévention AVANT la performance.
-
-Les autres apps, je les vois dans mon cabinet.
-Ce sont elles qui amènent mes patients blessés.
-
-Leaderboards toxiques, volume excessif, zéro alerte repos.
-
-WAC fait l'inverse.
-
-C'est pour ça que je signe."
-
----
-
-**COLLABORATION OFFICIELLE = AUJOURD'HUI**
-
-À partir d'aujourd'hui, Sophie intègre l'équipe WAC.
-
-Ses premiers contenus (protocoles échauffement validés) seront dispos dans l'app dès la V1.
-
-19 mai, crowdfunding Kickstarter.
-
-Avec Sophie, WAC devient une vraie solution de SANTÉ.
-
-Pas juste une app de tracking.
-
-Inscrivez-vous : weareclimbers.fr
-
-Merci Sophie. Et merci à vous.
-
-Julien
-
----
-
-PS : Sophie sera présente sur le Discord WAC (communauté beta-testeurs) dès avril pour répondre aux questions médicales. Accès Discord offert aux contributeurs crowdfunding (palier 79€+).
-```
-
-**Ton :** Annonce officielle, crédibilité scientifique, collaboration authentique
-
----
-
-### 📖 **STORIES INSTAGRAM (4 slides)**
-
-**Story 1 :** Annonce visuelle
-```
-ANNONCE OFFICIELLE 🚨
-
-WAC x Dr. Sophie Arnaud
-
-Kinésithérapeute escalade
-15 ans expérience
-Ex-membre équipe de France
-
-Swipe ➡️
-```
-
-**Story 2 :** Photo Sophie (si dispo) + bio
-```
-DR. SOPHIE ARNAUD
-
-✅ 2 000+ grimpeurs traités
-✅ Spécialisée tendinites/ruptures poulies
-✅ Validation scientifique WAC
-
-Elle intègre l'équipe.
-
-Swipe ➡️
-```
-
-**Story 3 :** Citation Sophie
-```
-SOPHIE :
-
-"WAC est la SEULE app qui met la prévention AVANT la performance.
-
-C'est pour ça que je signe."
-
-💙
-
-J-59 🚀
-```
-
-**Story 4 :** Call to action
-```
-AVEC SOPHIE, WAC DEVIENT :
-
-✅ Validé scientifiquement
-✅ Protocoles médicaux testés
-✅ Crédibilité kiné
-
-19 mai, crowdfunding.
-
-Inscris-toi 🔗
-weareclimbers.fr
-```
+[Contenu retiré le 04/11/2026 : annonce d'un partenariat avec une « Dr. Sophie Arnaud », kinésithérapeute, non vérifié, et promesses médicales (« validation médicale », « solution de santé »). WAC n'est pas un dispositif médical.]
 
 ---
 
 ## 🗓️ MARDI 31 MARS 2026
 
-### 📸 **POST INSTAGRAM : PHOTO COLLABORATION**
-
-**Format :** Photo Sophie + Julien (si dispo) ou visuel graphique collaboration
-
-**Visuel :** Photo professionnelle ou design graphique "WAC x Dr. Sophie Arnaud"
-
-**Texte visuel :**
-```
-WAC x DR. SOPHIE ARNAUD
-
-Kinésithérapeute escalade
-15 ans expérience
-
-Collaboration officielle.
-
-weareclimbers.fr
-```
-
-**Légende Instagram :**
-```
-Annonce officielle. 🚨
-
-WAC s'associe avec Dr. Sophie Arnaud.
-
-Kiné spécialisée escalade.
-15 ans d'expérience.
-2 000+ grimpeurs traités.
-Ex-membre équipe de France.
-
-Son rôle :
-- Validation scientifique protocoles prévention
-- Création protocoles échauffement/récup
-- Référente médicale WAC
-
-Ce que ça change :
-✅ Alertes validées par une pro
-✅ Protocoles testés (2 000+ cas cliniques)
-✅ Recommandations médicales (pas juste conseils)
-
-WAC devient une vraie solution de SANTÉ.
-
-Crowdfunding 19 mai (J-58) 🚀
-Inscris-toi (lien en bio) 🔗
-
-Merci Sophie 💙
-
-#Collaboration #Kinesitherapie #Prevention #Escalade #WeAreClimbers #Medical #Sante
-```
-
-**Prompt génération visuel Midjourney :**
-```
-Professional collaboration announcement design, two people shaking hands (climber and physiotherapist), modern clean aesthetic, brand colors (deep blue, orange accent), text overlay "WAC x Dr. Sophie Arnaud", medical + sports vibe, --ar 4:5 --style raw
-```
-
----
-
-### 📖 **STORIES INSTAGRAM (3 slides)**
-
-**Story 1 :** Recap annonce
-```
-RÉCAP : WAC x SOPHIE
-
-✅ Kiné 15 ans expérience
-✅ Validation scientifique WAC
-✅ Protocoles médicaux
-
-Post complet sur le feed 👇
-
-J-58 🚀
-```
-
-**Story 2 :** Question engagement
-```
-QUESTION :
-
-Tu as déjà consulté un kiné pour l'escalade ?
-
-[ ] Oui (après blessure)
-[ ] Oui (prévention)
-[ ] Jamais
-
-Vote 👆
-```
-
-**Story 3 :** Countdown + CTA
-```
-DANS 58 JOURS :
-
-Lancement WAC.
-
-Avec validation médicale Sophie.
-
-Protocoles prévention testés sur 2 000+ grimpeurs.
-
-Inscris-toi 🔗
-weareclimbers.fr
-```
+[Contenu retiré le 04/11/2026 : annonce d'un partenariat avec une « Dr. Sophie Arnaud », kinésithérapeute, non vérifié, et promesses médicales (« validation médicale », « solution de santé »). WAC n'est pas un dispositif médical.]
 
 ---
 
