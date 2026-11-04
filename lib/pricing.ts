@@ -59,7 +59,6 @@ export const pricingPlans: PricingPlan[] = [
     features: {
       included: [
         'Tout du pack Grimpeur',
-        'Chargeur USB-C supplémentaire',
         'Bracelet textile de remplacement',
         'Support technique prioritaire',
         'Stickers WeAreClimbers',
