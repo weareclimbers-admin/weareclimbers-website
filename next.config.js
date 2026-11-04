@@ -1,6 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  // Les pages du blog sont régénérées à l'exécution (revalidate du layout racine) :
+  // elles relisent content/blog, qu'il faut donc embarquer dans leurs fonctions.
+  outputFileTracingIncludes: {
+    '/blog': ['./content/blog/**/*'],
+    '/blog/**/*': ['./content/blog/**/*'],
+    '/auteurs/**/*': ['./content/blog/**/*'],
+    '/sitemap.xml': ['./content/blog/**/*'],
+  },
   async redirects() {
     return [
       {

@@ -1,0 +1,184 @@
+/*
+ * Blog — styles de lecture. Reprend les tokens de app/globals.css
+ * (vert, beige, orange, Syne / Roboto) ; rien n'est redéfini ici.
+ * Le corps de texte reste vert sur beige (contraste ≈ 8:1) ; l'orange ne sert
+ * qu'aux accents décoratifs (filets, puces), jamais au texte courant.
+ */
+
+.blog-scope :focus-visible {
+  outline: 3px solid var(--color-secondary-orange);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Sur fond vert, l'orange manque de contraste : contour beige */
+.blog-scope .blog-dark :focus-visible {
+  outline-color: var(--color-primary-beige);
+}
+
+.blog-scope a:not([class*='btn-']):hover {
+  text-decoration-thickness: 2px;
+}
+
+/* Petite étiquette de catégorie */
+.blog-chip {
+  display: inline-block;
+  font-family: var(--font-roboto);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  line-height: 1;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+}
+
+/* ── Corps d'article ── */
+
+.blog-prose {
+  font-size: 1.0625rem;
+  max-width: 42rem;
+}
+
+@media (min-width: 768px) {
+  .blog-prose {
+    font-size: 1.125rem;
+  }
+}
+
+.blog-prose > * + * {
+  margin-top: 1.25em;
+}
+
+.blog-prose p,
+.blog-prose li {
+  line-height: 1.7;
+}
+
+.blog-prose h2 {
+  font-size: 1.5rem;
+  line-height: 1.15;
+  margin-top: 2.25em;
+  padding-top: 0.5em;
+  border-top: 3px solid var(--color-secondary-orange);
+  width: fit-content;
+  max-width: 100%;
+  scroll-margin-top: 7rem;
+}
+
+.blog-prose h3 {
+  font-size: 1.2rem;
+  line-height: 1.2;
+  margin-top: 1.75em;
+  scroll-margin-top: 7rem;
+}
+
+@media (min-width: 768px) {
+  .blog-prose h2 {
+    font-size: 1.875rem;
+  }
+
+  .blog-prose h3 {
+    font-size: 1.35rem;
+  }
+}
+
+.blog-prose a {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.blog-prose strong {
+  font-weight: 700;
+}
+
+.blog-prose ul,
+.blog-prose ol {
+  padding-left: 1.4em;
+}
+
+.blog-prose ul {
+  list-style: disc;
+}
+
+.blog-prose ol {
+  list-style: decimal;
+}
+
+.blog-prose li + li {
+  margin-top: 0.4em;
+}
+
+.blog-prose li::marker {
+  color: var(--color-secondary-orange);
+}
+
+.blog-prose blockquote {
+  border-left: 3px solid var(--color-secondary-orange);
+  padding-left: 1em;
+  font-style: italic;
+}
+
+.blog-prose hr {
+  border: 0;
+  border-top: 1px solid rgba(38, 83, 53, 0.2);
+  margin: 2.5em 0;
+}
+
+.blog-prose code {
+  font-size: 0.9em;
+  background: var(--color-secondary-beige-light);
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+}
+
+.blog-prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95em;
+  display: block;
+  overflow-x: auto;
+}
+
+.blog-prose th,
+.blog-prose td {
+  text-align: left;
+  padding: 0.6em 0.75em;
+  border-bottom: 1px solid rgba(38, 83, 53, 0.2);
+}
+
+.blog-prose th {
+  font-family: var(--font-roboto);
+  font-weight: 700;
+}
+
+/* Contenu imbriqué dans les composants (encadrés, réponses de FAQ) */
+.blog-stack > * + * {
+  margin-top: 0.75em;
+}
+
+/* FAQ (details / summary : clavier natif) */
+.blog-faq summary {
+  cursor: pointer;
+  list-style: none;
+}
+
+.blog-faq summary::-webkit-details-marker {
+  display: none;
+}
+
+.blog-faq summary .blog-faq-icon {
+  transition: transform 0.2s ease;
+}
+
+.blog-faq details[open] summary .blog-faq-icon {
+  transform: rotate(45deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .blog-faq summary .blog-faq-icon {
+    transition: none;
+  }
+}
