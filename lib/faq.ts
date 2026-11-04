@@ -8,7 +8,7 @@ export const faqItems: FAQItem[] = [
   {
     id: '1',
     question: "L'app fonctionne-t-elle sans le bracelet ?",
-    answer: "Oui ! L'app est 100% gratuite et utilisable sans bracelet. Tu peux saisir manuellement tes sessions, accéder à la communauté, participer aux challenges de groupe.\n\nMais pour notre mission principale — suivre ta charge et ta récupération grâce à l'analyse cardiaque en temps réel — le bracelet est indispensable. Sans lui, tu n'as pas accès aux fonctionnalités avancées qui font vraiment la différence : détection de fatigue, suivi de la charge et de la récupération, analyse cycles menstruels.\n\nC'est comme avoir une voiture sans GPS : tu peux rouler, mais tu rates plein de raccourcis."
+    answer: "Oui ! L'app est 100% gratuite et utilisable sans bracelet. Tu peux saisir manuellement tes sessions, accéder à la communauté, participer aux challenges de groupe.\n\nMais pour notre mission principale — suivre ta charge et ta récupération grâce à l'analyse cardiaque en temps réel — le bracelet est indispensable. Sans lui, tu n'as pas accès aux fonctionnalités avancées qui font vraiment la différence : suivi de tes indicateurs de récupération, suivi de la charge et de la récupération, analyse cycles menstruels.\n\nC'est comme avoir une voiture sans GPS : tu peux rouler, mais tu rates plein de raccourcis."
   },
   {
     id: '2',

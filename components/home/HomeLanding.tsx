@@ -326,7 +326,7 @@ export default function HomeLanding() {
                   Suivi de la charge et de la récupération
                 </h3>
                 <p className="text-sm md:text-base" style={{ fontFamily: 'var(--font-roboto)', lineHeight: '1.6', opacity: 0.88 }}>
-                  WAC t'alerte avant que ton corps craque&nbsp;: suivi de récupération, charge hebdomadaire, recommandations adaptées à ton état réel.
+                  WAC t'aide à suivre ta charge et ta récupération.
                 </p>
               </div>
             </Reveal>

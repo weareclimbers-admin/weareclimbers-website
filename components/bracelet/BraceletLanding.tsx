@@ -263,7 +263,7 @@ export default function BraceletLanding() {
             {[
               { n: '1', t: 'Tu grimpes', d: 'Le bracelet enregistre en continu — même sans ton téléphone, grâce à sa mémoire interne.' },
               { n: '2', t: 'Il se synchronise', d: "De retour près de ton téléphone, tout remonte automatiquement en Bluetooth. Zéro manipulation." },
-              { n: '3', t: "L'app analyse", d: "Une heure de grimpe est analysée en moins de 30 secondes : zones d'effort, tentatives, récupération, état de forme." },
+              { n: '3', t: "L'app analyse", d: "Une heure enregistrée est analysée en moins de 30 secondes : zones d'effort, tentatives, récupération, état de forme." },
             ].map((s, i) => (
               <Reveal key={s.n} delay={i * 0.1}>
                 <div className="text-center">
