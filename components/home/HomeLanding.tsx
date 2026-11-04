@@ -17,6 +17,7 @@ import { faqItems } from '@/lib/faq'
 import { DERNIER_ARTICLE } from '@/lib/press'
 import { getPrimaryCta } from '@/lib/campaign'
 import { CLIMBERS_EQUIPPED } from '@/lib/proof'
+import StoreReviews from '@/components/StoreReviews'
 
 /** Numéro de section en filigrane orange — motif structurant WAC 2.0 */
 function SectionNum({ n }: { n: string }) {
@@ -547,44 +548,8 @@ export default function HomeLanding() {
         )}
       </section>
 
-      {/* ───────────── TÉMOIGNAGES ───────────── */}
-      <section className="py-20 md:py-24">
-        <div className="container-custom">
-          <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
-            {[
-              {
-                quote:
-                  "J'ai évité une tendinite grâce aux alertes récupération de WAC. L'app m'a conseillé de me reposer alors que je me sentais en pleine forme. Le bracelet avait vu avant moi ce que mon corps me cachait. Depuis six mois : zéro blessure, progression constante.",
-                author: 'Marie, 7b, grimpe 3x/semaine',
-              },
-              {
-                quote:
-                  "Grâce au bracelet, j'ai compris que je grimpais systématiquement en zone rouge. WAC m'a montré comment doser mes efforts. Paradoxalement, depuis que j'en fais moins, je progresse plus vite.",
-                author: 'Alex, 7a+, salle et falaise',
-              },
-            ].map((t, i) => (
-              <Reveal key={t.author} delay={i * 0.1}>
-                <motion.div
-                  className="h-full p-8 rounded-[20px]"
-                  style={{ backgroundColor: 'var(--color-secondary-beige-light)', border: '1px solid rgba(38,83,53,0.1)' }}
-                  whileHover={{ y: -6, boxShadow: '0 14px 40px rgba(216,90,26,0.16)' }}
-                  transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-                >
-                  <span aria-hidden className="block leading-none mb-3" style={{ fontFamily: 'var(--font-syne)', fontWeight: 700, fontSize: '2.5rem', color: 'var(--color-secondary-orange)' }}>
-                    “
-                  </span>
-                  <p className="text-base md:text-lg mb-6 italic" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', lineHeight: '1.6' }}>
-                    {t.quote}
-                  </p>
-                  <p className="font-bold" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)' }}>
-                    {t.author}
-                  </p>
-                </motion.div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* ───────────── AVIS (stores, texte non retouché — lib/proof.ts) ───────────── */}
+      <StoreReviews />
 
       {/* ───────────── POUR QUI ───────────── */}
       <section className="py-20 md:py-24" style={{ backgroundColor: 'var(--color-secondary-beige-light)' }}>

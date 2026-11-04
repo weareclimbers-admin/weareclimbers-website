@@ -68,7 +68,7 @@ const STEPS: { title: string; text: string }[] = [
 const FAQ: { q: string; a: string }[] = [
   {
     q: 'Faut-il payer un abonnement ?',
-    a: 'Non. Avec ton bracelet, l’app WAC gratuite te donne tout ce qu’il faut pour éviter la surcharge d’entraînement : ton État de Forme chaque matin, l’analyse de tes séances, tes graphiques de suivi, ta récupération nocturne et le suivi de ton cycle. Le premium (9,99 €/mois ou 99 €/an) est une option pour aller plus loin : séances de renforcement et mixtes grimpe + renfo, analyses avancées, analyses IA illimitées en fin de séance et connexion à un coach.',
+    a: 'Non. Avec ton bracelet, l’app WAC gratuite te donne déjà l’essentiel : ton État de Forme chaque matin, l’analyse de tes séances, tes graphiques de suivi, ta récupération nocturne et le suivi de ton cycle. Le premium (9,99 €/mois ou 99 €/an) est une option pour aller plus loin : séances de renforcement et mixtes grimpe + renfo, analyses avancées, analyses IA illimitées en fin de séance et connexion à un coach.',
   },
   {
     q: 'Quand est-ce que je serai livré·e ?',
