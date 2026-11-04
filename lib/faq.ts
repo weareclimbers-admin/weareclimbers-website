@@ -13,7 +13,7 @@ export const faqItems: FAQItem[] = [
   {
     id: '2',
     question: "Pourquoi pas ma montre Garmin ou Apple Watch ?",
-    answer: "Les montres connectées estiment la fréquence cardiaque via capteur optique au poignet. Le problème ? Cette technologie est imprécise dans les mouvements explosifs typiques de l'escalade (variations rapides de rythme, positions extrêmes du poignet).\n\nLe bracelet Polar 360 mesure sur l'avant-bras avec haute précision (99,4%), même dans les surplombs les plus intenses. Tests cliniques à l'appui.\n\nPour ta sécurité et pour nos recommandations anti-blessure, on ne fait pas de compromis sur la fiabilité des données. Ta santé mérite mieux qu'une estimation."
+    answer: "Ta montre mesure aussi ta fréquence cardiaque, avec un capteur optique au poignet. On ne prétend pas faire mieux qu'elle en escalade : aucune mesure ne le montre à ce jour.\n\nOn a fait un autre choix : un seul capteur, le Polar 360, pour que l'app sache exactement d'où viennent ses données. On le porte à l'avant-bras. Notre R&D mesure actuellement ce placement face à une ceinture thoracique.\n\nNous avons choisi le Polar 360 après une analyse de ses caractéristiques, sans banc d'essai comparatif."
   },
   {
     id: '3',

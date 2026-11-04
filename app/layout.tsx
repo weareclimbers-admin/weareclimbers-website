@@ -29,7 +29,7 @@ export const revalidate = 300
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.weareclimbers.fr'),
   title: 'We Are Climbers — L\'analyse physiologique intelligente pour grimpeurs',
-  description: 'Le bracelet connecté et l\'app qui analysent ton corps en escalade : fréquence cardiaque à ±1 BPM, récupération, prévention des blessures. Grimpons mieux, plus longtemps.',
+  description: 'Le bracelet connecté et l\'app qui analysent ton corps en escalade : fréquence cardiaque ±1 BPM (donnée Polar), récupération, prévention des blessures. Grimpons mieux, plus longtemps.',
   keywords: ['escalade', 'climbing', 'application escalade', 'bracelet connecté escalade', 'analyse physiologique', 'prévention blessures escalade', 'récupération grimpeur', 'coach escalade'],
   icons: {
     icon: '/WAC-acronyme-1-green.svg',
@@ -42,7 +42,7 @@ export const metadata: Metadata = {
     url: 'https://www.weareclimbers.fr',
     siteName: 'We Are Climbers',
     title: 'We Are Climbers — L\'analyse physiologique intelligente pour grimpeurs',
-    description: 'Le bracelet connecté et l\'app qui analysent ton corps en escalade : fréquence cardiaque à ±1 BPM, récupération, prévention des blessures. Grimpons mieux, plus longtemps.',
+    description: 'Le bracelet connecté et l\'app qui analysent ton corps en escalade : fréquence cardiaque ±1 BPM (donnée Polar), récupération, prévention des blessures. Grimpons mieux, plus longtemps.',
     images: [
       {
         url: '/WAC-acronyme-1-green.svg',
@@ -57,7 +57,7 @@ export const metadata: Metadata = {
     site: '@weareclimbers',
     creator: '@weareclimbers',
     title: 'We Are Climbers — L\'analyse physiologique intelligente pour grimpeurs',
-    description: 'Le bracelet connecté et l\'app qui analysent ton corps en escalade : ±1 BPM, récupération, prévention des blessures. Grimpons mieux, plus longtemps.',
+    description: 'Le bracelet connecté et l\'app qui analysent ton corps en escalade : ±1 BPM (donnée Polar), récupération, prévention des blessures. Grimpons mieux, plus longtemps.',
     images: ['/WAC-acronyme-1-green.svg'],
   },
 }

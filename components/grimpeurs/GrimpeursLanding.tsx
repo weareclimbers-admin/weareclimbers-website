@@ -213,7 +213,7 @@ export default function GrimpeursLanding() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
               <Reveal delay={0}>
                 <PersonaCard icon="/icons/icons8-objectif-50.png" title="Comprends comment tu grimpes vraiment">
-                  Zones d'effort, fréquence cardiaque à ±1 BPM, patterns de récupération. WAC t'explique ce que ton corps fait pendant que tu grimpes — pour que tu puisses grimper plus intelligemment.
+                  Zones d'effort, fréquence cardiaque (±1 BPM, donnée Polar), patterns de récupération. WAC t'explique ce que ton corps fait pendant que tu grimpes — pour que tu puisses grimper plus intelligemment.
                 </PersonaCard>
               </Reveal>
               <Reveal delay={0.08}>

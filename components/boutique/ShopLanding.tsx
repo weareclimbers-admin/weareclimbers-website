@@ -41,7 +41,7 @@ const GALLERY = [
 /** Largeur « ordinateur » (lg) : le formulaire vit dans la fiche, pas dans le panneau mobile. */
 const DESKTOP_QUERY = '(min-width: 1024px)'
 
-const METRIC_CHIPS = ['±1 BPM', '29 g', '10 jours d’autonomie']
+const METRIC_CHIPS = ['±1 BPM (donnée Polar)', 'Sans écran', 'Porté à l’avant-bras']
 
 // Ordre validé par Julien le 14/08 : transparence totale sur la mécanique de
 // pré-commande (commande groupée à Polar après clôture, expédition par nos soins).
@@ -97,33 +97,33 @@ const SPECS_RESUME: { title: string; items: string[] }[] = [
   {
     title: 'Capteurs',
     items: [
-      'Cardio optique 9 LED (Precision Prime™), ±1 BPM',
-      'Échantillonnage 50 Hz — 180 000 données par heure',
-      'Accéléromètre 3 axes, gyroscope, température cutanée',
+      'Cardio optique Precision Prime™ : ±1 BPM (donnée Polar)',
+      'Accéléromètre : 50 Hz, soit 180 000 points de mesure par heure.',
+      'Température cutanée',
     ],
   },
   {
     title: 'Autonomie & charge',
     items: [
-      'Jusqu’à 10 jours en usage quotidien',
-      '40 heures en enregistrement continu',
-      'Recharge USB-C — 2 h pour une charge complète',
+      "Polar annonce jusqu’à 5 jours. Avec l’usage We Are Climbers, on recharge le nôtre environ tous les 10 jours. L’autonomie varie selon l’utilisation.",
+      'Batterie Li-Po rechargeable de 148 mAh',
+      'Recharge avec le câble fourni, sur un port ou un chargeur USB',
     ],
   },
   {
     title: 'Connectivité',
     items: [
-      'Bluetooth 5.0, synchronisation automatique avec l’app',
-      'Mode offline intelligent (enregistre sans connexion)',
-      'Mémoire interne : 200 heures de sessions',
+      'Bluetooth Low Energy et ANT, synchronisation automatique avec l’app',
+      'Mode hors connexion (enregistre sans téléphone)',
+      'Mémoire interne : 16 Mo',
     ],
   },
   {
     title: 'Physique & compatibilité',
     items: [
-      '29 g, sans écran, porté à l’avant-bras',
-      'Résistant à l’eau, aux chocs et à la magnésie',
-      'iOS 15.1+ · Android 13+ · Garantie Polar 2 ans',
+      '17 g avec bracelet, 5 g pour le module seul (données Polar), sans écran',
+      "On le porte à l’avant-bras. Notre R&D mesure actuellement ce placement face à une ceinture thoracique.",
+      'Étanche à 30 mètres (WR30, selon Polar) · iOS 15.1+ · Android 13+ · Garantie légale 2 ans',
     ],
   },
 ]
@@ -131,7 +131,7 @@ const SPECS_RESUME: { title: string; items: string[] }[] = [
 // TODO(Julien) : contenu exact de la boîte à valider avant mise en ligne.
 const INCLUS: { title: string; text: string }[] = [
   { title: 'Le bracelet Polar 360', text: 'Édition We Are Climbers, prêt à grimper.' },
-  { title: 'Son câble de charge USB-C', text: '2 h de charge pour 10 jours d’autonomie.' },
+  { title: 'Son câble de charge', text: 'Le câble Polar fourni, à brancher sur un port ou un chargeur USB.' },
   { title: 'Ton guide de démarrage', text: 'Connexion à l’app WAC en quelques minutes.' },
 ]
 
@@ -747,7 +747,7 @@ export default function ShopLanding({
             {[
               {
                 title: 'Le bracelet Polar 360',
-                text: 'Capteur cardio haute précision (±1 BPM), 29 g, 10 jours d’autonomie. Porté à l’avant-bras, sans écran : tu l’oublies pendant la grimpe.',
+                text: "Capteur cardio sans écran, ±1 BPM (donnée Polar). On le porte à l’avant-bras. Notre R&D mesure actuellement ce placement face à une ceinture thoracique.",
               },
               {
                 title: 'L’app WAC',
