@@ -24,7 +24,7 @@ export default function Histoire() {
       name: 'We Are Climbers'
     },
     description: 'Fondateur de We Are Climbers. Ancien grimpeur blessé par une double tendinite, Julien a créé WAC pour aider les grimpeurs à progresser durablement sans se détruire.',
-    knowsAbout: ['Escalade', 'Analyse physiologique', 'Prévention des blessures', 'Entraînement sportif'],
+    knowsAbout: ['Escalade', 'Analyse physiologique', 'Suivi de la charge et de la récupération', 'Entraînement sportif'],
     url: 'https://www.weareclimbers.fr/histoire'
   };
 

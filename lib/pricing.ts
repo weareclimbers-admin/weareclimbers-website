@@ -25,7 +25,7 @@ export const pricingPlans: PricingPlan[] = [
       ],
       excluded: [
         'Fréquence cardiaque temps réel',
-        'Prévention blessure',
+        'Suivi de la charge et de la récupération',
         'Analyse cycles menstruels',
         'Détection automatique mouvements'
       ]

@@ -8,7 +8,7 @@ export const faqItems: FAQItem[] = [
   {
     id: '1',
     question: "L'app fonctionne-t-elle sans le bracelet ?",
-    answer: "Oui ! L'app est 100% gratuite et utilisable sans bracelet. Tu peux saisir manuellement tes sessions, accéder à la communauté, participer aux challenges de groupe.\n\nMais pour notre mission principale — prévenir les blessures via l'analyse cardiaque en temps réel — le bracelet est indispensable. Sans lui, tu n'as pas accès aux fonctionnalités avancées qui font vraiment la différence : détection de fatigue, prévention blessure, analyse cycles menstruels.\n\nC'est comme avoir une voiture sans GPS : tu peux rouler, mais tu rates plein de raccourcis."
+    answer: "Oui ! L'app est 100% gratuite et utilisable sans bracelet. Tu peux saisir manuellement tes sessions, accéder à la communauté, participer aux challenges de groupe.\n\nMais pour notre mission principale — suivre ta charge et ta récupération grâce à l'analyse cardiaque en temps réel — le bracelet est indispensable. Sans lui, tu n'as pas accès aux fonctionnalités avancées qui font vraiment la différence : détection de fatigue, suivi de la charge et de la récupération, analyse cycles menstruels.\n\nC'est comme avoir une voiture sans GPS : tu peux rouler, mais tu rates plein de raccourcis."
   },
   {
     id: '2',
@@ -33,7 +33,7 @@ export const faqItems: FAQItem[] = [
   {
     id: '6',
     question: "Les modules premium sont obligatoires ?",
-    answer: "Non ! Les modules (Outdoor, Nutrition, etc.) sont optionnels.\n\nL'app + bracelet te donnent déjà tout pour progresser en sécurité :\n- Analyse fréquence cardiaque temps réel\n- Prévention blessures\n- Analyse cycles menstruels\n- Recommandations personnalisées\n- Coaching de base\n\nLes modules premium sont des bonus pour aller encore plus loin selon tes besoins spécifiques. À toi de choisir ce qui te correspond."
+    answer: "Non ! Les modules (Outdoor, Nutrition, etc.) sont optionnels.\n\nL'app + bracelet te donnent déjà tout pour progresser en sécurité :\n- Analyse fréquence cardiaque temps réel\n- Suivi de la charge et de la récupération\n- Analyse cycles menstruels\n- Recommandations personnalisées\n- Coaching de base\n\nLes modules premium sont des bonus pour aller encore plus loin selon tes besoins spécifiques. À toi de choisir ce qui te correspond."
   },
   {
     id: '7',

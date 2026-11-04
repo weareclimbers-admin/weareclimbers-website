@@ -323,7 +323,7 @@ export default function HomeLanding() {
               <div className="card-dark h-full">
                 <IconChip src="/icons/icons8-bouclier-50.png" />
                 <h3 className="text-xl mb-3" style={{ fontFamily: 'var(--font-syne)', fontWeight: 700 }}>
-                  Prévention des blessures
+                  Suivi de la charge et de la récupération
                 </h3>
                 <p className="text-sm md:text-base" style={{ fontFamily: 'var(--font-roboto)', lineHeight: '1.6', opacity: 0.88 }}>
                   WAC t'alerte avant que ton corps craque&nbsp;: suivi de récupération, charge hebdomadaire, recommandations adaptées à ton état réel.
@@ -399,7 +399,7 @@ export default function HomeLanding() {
                   </p>
                 </Reveal>
                 <ul className="space-y-3 mb-8">
-                  {['Analyse physiologique en temps réel', 'Prévention des blessures', 'Analyse du cycle menstruel (optionnel)', 'Entraînement intentionnel'].map((item, i) => (
+                  {['Analyse physiologique en temps réel', 'Suivi de la charge et de la récupération', 'Analyse du cycle menstruel (optionnel)', 'Entraînement intentionnel'].map((item, i) => (
                     <Reveal key={item} delay={0.08 + i * 0.08}>
                       <li className="flex items-center gap-3">
                         <span
@@ -444,7 +444,7 @@ export default function HomeLanding() {
               <div>
                 <Reveal>
                   <p className="text-lg md:text-xl leading-relaxed mb-8 italic" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', lineHeight: '1.6' }}>
-                    Des capteurs de haute précision utilisés par les sportifs de haut niveau. Tu l'oublies pendant la grimpe. Lui, n'oublie rien.
+                    Tu l'oublies pendant la grimpe. Lui, n'oublie rien.
                   </p>
                 </Reveal>
 

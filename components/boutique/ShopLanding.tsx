@@ -747,7 +747,7 @@ export default function ShopLanding({
             {[
               {
                 title: 'Le bracelet Polar 360',
-                text: "Capteur cardio sans écran, ±1 BPM (donnée Polar). On le porte à l’avant-bras. Notre R&D mesure actuellement ce placement face à une ceinture thoracique.",
+                text: "Capteur cardio sans écran, ±1 BPM (donnée Polar), porté à l’avant-bras.",
               },
               {
                 title: 'L’app WAC',

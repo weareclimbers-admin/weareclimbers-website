@@ -383,7 +383,7 @@ export default function BraceletLanding() {
                   On est transparents&nbsp;: le capteur est fabriqué par <strong>Polar</strong>, fabricant finlandais de capteurs cardio pour le sport. Fabriquer notre propre hardware dès le premier jour aurait signifié des années de retard. Nous avons choisi le Polar 360 après une analyse de ses caractéristiques, sans banc d'essai comparatif.
                 </p>
                 <p>
-                  <strong>Toute l'intelligence, elle, est française</strong>&nbsp;: les algorithmes d'analyse, l'app, l'analyse de la charge et de la récupération sont développés en France, avec des grimpeurs et des coachs fédéraux.
+                  <strong>Toute l'intelligence, elle, est française</strong>&nbsp;: l'app et ses algorithmes d'analyse de la charge et de la récupération sont développés en France, avec des grimpeurs et des coachs fédéraux.
                 </p>
                 <p>
                   Et c'est une étape&nbsp;: notre roadmap prévoit un <strong>bracelet WAC éco-conçu</strong>, développé en propre. On y va pas à pas — en commençant par un capteur existant.

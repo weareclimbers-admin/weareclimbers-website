@@ -35,7 +35,7 @@ const flashMetadata: Metadata = {
 const shopMetadata: Metadata = {
   title: 'Prévente — Bracelet Polar 360 + App | We Are Climbers',
   description:
-    'Commande en prévente le bracelet Polar 360 haute précision (±1 BPM, donnée Polar) et l’app WAC. Paiement sécurisé, livraison France, Belgique, Luxembourg, Suisse et outre-mer.',
+    'Commande en prévente le bracelet Polar 360 (±1 BPM, donnée Polar) et l’app WAC. Paiement sécurisé, livraison France, Belgique, Luxembourg, Suisse et outre-mer.',
   alternates: { canonical: 'https://www.weareclimbers.fr/boutique' },
   openGraph: {
     title: 'Prévente — Bracelet Polar 360 + App | We Are Climbers',
