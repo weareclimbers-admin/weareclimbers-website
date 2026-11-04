@@ -53,7 +53,7 @@ const FEATURES: {
   {
     kicker: "L'analyse IA",
     title: 'Des insights, pas des graphiques de plus.',
-    desc: "L'app transforme tes données en recommandations actionnables : « Ta récupération plafonne depuis 5 jours, allège ta prochaine séance. » Parfois elle te dit simplement : « Stop. Repose-toi. » Et elle est fière de te le dire.",
+    desc: "L'app transforme tes données en analyses et en repères : l'évolution de ta récupération, de ta charge et de ton État de Forme, séance après séance.",
     src: '/videos/app/ia.mp4',
     placeholder: 'Analyses de tes séances',
   },

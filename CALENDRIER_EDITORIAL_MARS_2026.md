@@ -181,7 +181,7 @@ Texte :
 
 "PHASE LUTÉALE (J15-J28)
 
-⚠️ +48% risque blessure ligamentaire
+⚠️ [Statistique retirée le 04/11/2026 : non sourcée.]
 ⚠️ Fatigue accrue
 ⚠️ Récupération ralentie
 
@@ -248,7 +248,7 @@ LES FAITS :
 → C'est le moment de pousser, tester tes projets limites
 
 📊 Phase lutéale (J15-J28) :
-→ +48% de risque de blessure ligamentaire
+→ [Statistique retirée le 04/11/2026 : non sourcée.]
 → Fatigue accrue
 → C'est le moment de baisser le volume, travailler la technique
 
@@ -516,7 +516,7 @@ Texte :
 "Les faits :
 
 📊 +15% de force en phase folliculaire
-📊 +48% de risque blessure en phase lutéale
+📊 [Statistique retirée le 04/11/2026 : non sourcée.]
 
 Ignorer le cycle = ignorer 50% des grimpeurs.
 
@@ -555,7 +555,7 @@ Parce que la tech sportive est pensée par des hommes, pour des hommes.
 
 Les faits :
 📊 +15% de force en phase folliculaire
-📊 +48% de risque blessure en phase lutéale
+📊 [Statistique retirée le 04/11/2026 : non sourcée.]
 
 Ignorer le cycle = ignorer la réalité physiologique de 50% des grimpeurs.
 

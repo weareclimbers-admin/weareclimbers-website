@@ -670,7 +670,7 @@ WAC fait différemment :
 
 ✅ **Intégration cycle menstruel**
 → +15% force phase folliculaire (profite-en)
-→ +48% risque blessure phase lutéale (adapte ton volume)
+→ [Statistique retirée le 04/11/2026 : non sourcée.]
 
 ✅ **Pas de classement mixte toxique**
 → Tu te compares à qui TU veux

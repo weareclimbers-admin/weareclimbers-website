@@ -307,7 +307,7 @@ Parce que [valeur fondamentale].
 Pourquoi on a intégré le cycle menstruel dans WAC ?
 
 Parce que ma compagne me parlait de ses variations d'énergie en grimpe.
-Parce que j'ai lu des études qui prouvaient l'impact sur la performance et le risque de blessure (+48% en phase lutéale).
+[Statistique retirée le 04/11/2026 : non sourcée.]
 Parce qu'AUCUNE app d'escalade n'en parlait.
 
 WAC analyse ton cycle pour adapter tes recommandations d'entraînement.
@@ -467,7 +467,7 @@ Alors pourquoi aucune app d'escalade n'en parle ?
 Les faits :
 
 📊 Phase folliculaire (J1-J14) : +15% de force maximale
-📊 Phase lutéale (J15-J28) : +48% risque blessure ligamentaire
+📊 [Statistique retirée le 04/11/2026 : non sourcée.]
 📊 Adapter son training selon son cycle = progression + saine
 
 WAC est la première app d'escalade à intégrer cette donnée.
@@ -802,7 +802,7 @@ C'est quoi TON moment préféré en grimpe ? 👇
 
 ✅ **Question directe** : "Tu sais pourquoi la plupart des grimpeurs se blessent ?"
 ✅ **Aveu vulnérable** : "J'ai failli abandonner. Plusieurs fois."
-✅ **Fait surprenant** : "+48% de risque de blessure en phase lutéale. Aucune app d'escalade n'en parle."
+✅ [Statistique retirée le 04/11/2026 : non sourcée.]
 ✅ **Constat relatable** : "La magnésie, c'est notre poussière d'étoiles."
 ✅ **Phrase manifeste** : "On grimpe pour progresser. Pas pour se comparer."
 

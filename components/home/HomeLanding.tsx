@@ -177,9 +177,9 @@ export default function HomeLanding() {
             {[
               { num: <CountUp to={CLIMBERS_EQUIPPED} duration={2} />, label: 'grimpeurs ont déjà acheté leur bracelet' },
               { num: <CountUp to={9} duration={1.4} />, label: "coachs embarqués dans l'aventure" },
-              { num: <CountUp to={180000} duration={2.2} />, label: 'données analysées par heure' },
-              { num: <CountUp to={30} prefix="<" suffix=" s" duration={1.6} />, label: 'pour analyser ta séance' },
-              { num: <CountUp to={1} prefix="±" suffix=" BPM" duration={1.2} />, label: 'de précision cardiaque' },
+              { num: <CountUp to={180000} duration={2.2} />, label: 'points de mesure par heure (accéléromètre, 50 Hz)' },
+              { num: <CountUp to={30} prefix="<" suffix=" s" duration={1.6} />, label: 'pour analyser une heure enregistrée' },
+              { num: <CountUp to={1} prefix="±" suffix=" BPM" duration={1.2} />, label: 'donnée Polar' },
             ].map((m, i) => (
               <Reveal key={i} delay={i * 0.08}>
                 <div>
@@ -276,7 +276,7 @@ export default function HomeLanding() {
               className="text-lg md:text-xl max-w-3xl mx-auto text-center mb-14 leading-relaxed"
               style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', lineHeight: '1.6' }}
             >
-              Un bracelet léger, sans écran, porté pendant tes sessions. Une app qui analyse tes données en temps réel et te donne des recommandations concrètes.{' '}
+              Un bracelet léger, sans écran, porté pendant tes sessions. Une app qui analyse tes données en temps réel et te donne des repères clairs sur ta charge et ta récupération.{' '}
               <strong>Pas des graphiques de plus. Une compréhension de ton corps que tu n'avais pas avant.</strong>
             </p>
           </Reveal>
@@ -297,7 +297,7 @@ export default function HomeLanding() {
                     Ton État de Forme.
                   </h3>
                   <p className="text-base md:text-lg leading-relaxed" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', lineHeight: '1.6' }}>
-                    Chaque matin, ton État de Forme te dit si ton corps est prêt à encaisser une grosse séance — calculé depuis ta récupération, ton sommeil et ta charge réelle. Tu n'as plus à deviner. Tu sais.
+                    Chaque matin, ton État de Forme te dit si ton corps est prêt à encaisser une grosse séance — calculé depuis ta récupération, ton sommeil et ta charge réelle.
                   </p>
                 </div>
                 <div className="flex-shrink-0">
@@ -359,7 +359,7 @@ export default function HomeLanding() {
               className="text-3xl md:text-5xl text-center mb-16"
               style={{ fontFamily: 'var(--font-syne)', fontWeight: 700, textTransform: 'uppercase', color: 'var(--color-primary-green)' }}
             >
-              Une technologie validée sur le terrain.
+              Une technologie testée sur le terrain.
             </h2>
           </Reveal>
 
@@ -396,7 +396,7 @@ export default function HomeLanding() {
               <div>
                 <Reveal>
                   <p className="text-lg md:text-xl leading-relaxed mb-8" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', lineHeight: '1.6' }}>
-                    Une app qui analyse tes données physiologiques en temps réel et te donne des recommandations concrètes pour progresser sans t'abîmer.
+                    Une app qui analyse tes données physiologiques en temps réel et te donne des repères sur ta charge et ta récupération.
                   </p>
                 </Reveal>
                 <ul className="space-y-3 mb-8">
@@ -451,8 +451,8 @@ export default function HomeLanding() {
 
                 <div className="grid grid-cols-2 gap-5 mb-8">
                   {[
-                    { num: '±1', unit: 'BPM', label: 'précision cardiaque' },
-                    { num: '10', unit: 'jours', label: "d'autonomie" },
+                    { num: '±1', unit: 'BPM', label: 'donnée Polar' },
+                    { num: '17', unit: 'g', label: 'avec bracelet, 5 g le module seul (données Polar)' },
                     { num: '0', unit: 'écran', label: 'zéro distraction' },
                     { num: '100', unit: '%', label: 'sync automatique' },
                   ].map((s, i) => (

@@ -324,7 +324,7 @@ J'ai lu les travaux de Juliette Bergmann.
 
 Les faits sont là :
 - +15% de force en phase folliculaire
-- +48% de risque de blessure ligamentaire en phase lutéale
+- [Statistique retirée le 04/11/2026 : non sourcée.]
 
 50% des grimpeurs ont un cycle.
 Et AUCUNE app d'escalade n'en parle.
@@ -1275,7 +1275,7 @@ C'est LE moment de :
 Texte :
 
 "Phase lutéale (J15-J28)
-+48% de risque blessure ligamentaire
+[Statistique retirée le 04/11/2026 : non sourcée.]
 
 C'est LE moment de :
 ✅ Baisser le volume
@@ -1316,7 +1316,7 @@ Les faits :
 📊 Phase folliculaire (J1-J14) : +15% de force maximale
 → C'est le moment de pousser, de tester tes projets limites
 
-📊 Phase lutéale (J15-J28) : +48% de risque de blessure ligamentaire
+📊 [Statistique retirée le 04/11/2026 : non sourcée.]
 → C'est le moment de baisser le volume, travailler la technique
 
 Ton cycle, c'est pas un handicap.

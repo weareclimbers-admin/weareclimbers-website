@@ -618,7 +618,7 @@ Texte :
 
 ✅ Intégration cycle menstruel
 → Adaptation training par phase
-→ Prévention blessure phase lutéale (+48% risque)
+→ [Statistique retirée le 04/11/2026 : non sourcée.]
 
 ✅ Pas de classement mixte toxique
 → Tu te compares à qui TU veux
@@ -673,7 +673,7 @@ WAC fait différemment :
 
 ✅ **Intégration cycle menstruel**
 → +15% force phase folliculaire (profite-en)
-→ +48% risque blessure phase lutéale (adapte ton volume)
+→ [Statistique retirée le 04/11/2026 : non sourcée.]
 
 ✅ **Pas de classement mixte toxique**
 → Tu te compares à qui TU veux
@@ -2096,11 +2096,11 @@ Verbatim bruts beta-testeurs :
 
 "Enfin une app qui me dit de me reposer AVANT de craquer." (Marine, 6c)
 
-"L'analyse HRV m'a évité une tendinite. Je sentais rien venir." (Thomas, 7a)
+[Citation retirée le 04/11/2026 : témoignage fictif.]
 
 "Interface parfois lourde, mais les insights valent le coup." (Sarah, 6b)
 
-"Je voudrais + de graphiques long-terme (sur 3 mois)." (Alex, 7b)
+[Citation retirée le 04/11/2026 : témoignage fictif.]
 
 ---
 
@@ -2297,7 +2297,7 @@ weareclimbers.fr
 
 **Format :** Reel storytelling visuel
 
-**Concept :** "TIMELINE : Comment une notification WAC m'a évité une tendinite"
+**Concept :** [retiré le 04/11/2026 : récit-témoignage fictif]
 
 **Script (texte sur vidéo) :**
 ```
@@ -2361,30 +2361,7 @@ weareclimbers.fr
 
 **Légende Instagram :**
 ```
-Timeline : Comment une notification WAC m'a évité une tendinite. 🚨
-
-Lundi : HRV basse, sommeil fragmenté, alerte repos.
-Moi : "Je me sens bien, je grimpe quand même"
-Doigt : commence à tirer.
-
-Mardi : Alerte charge cumulée 94% max.
-Moi : "OK... repos"
-
-Résultat : Tendinite évitée.
-
-Sans WAC ?
-J'aurais continué.
-Tendinite A2.
-3 mois d'arrêt.
-
-DONNÉES > INTUITION.
-
-Crowdfunding 19 mai (J-64) 🚀
-Inscris-toi (lien en bio) 🔗
-
-Déjà ignoré une douleur et regretté après ? 👇
-
-#Prevention #Tendinite #HRV #Escalade #WeAreClimbers #Blessure
+[Publication retirée le 04/11/2026 : elle reposait sur des témoignages fictifs. N'utiliser que de vrais témoignages, avec l'accord écrit de la personne.]
 ```
 
 **Hashtags réels :**
