@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "L'app d'entraînement escalade — We Are Climbers",
     description:
-      "État de Forme quotidien, suivi de charge, insights IA, cycle menstruel : l'app qui te dit ce que ton corps vit. Gratuite au lancement.",
+      "État de Forme quotidien, suivi de la charge et de la récupération, suivi du cycle menstruel en option : l'app qui analyse tes séances. Gratuite au lancement.",
     url: 'https://www.weareclimbers.fr/l-app',
   },
 }

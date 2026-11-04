@@ -781,7 +781,7 @@ Texte :
 
 WAC change leur façon de grimper.
 
-Merci Sophie, Alex, Léa 💙
+[Retiré le 04/11/2026 : contenu bâti sur des bêta-testeurs fictifs.]
 
 Crowdfunding J-44 🚀
 
@@ -814,19 +814,12 @@ Texte : "J-26 avant le crowdfunding 🚀"
 
 **Story 2 :**
 ```
-Visuel : Photo Sophie (beta-testeuse)
-Texte : "Hier, on a partagé 3 témoignages.
-Aujourd'hui, Sophie nous en dit plus 👇"
+[Retiré le 04/11/2026 : contenu bâti sur des bêta-testeurs fictifs.]
 ```
 
-**Story 3 - Question à Sophie :**
+**Story 3 :**
 ```
-Texte : "Q : Comment WAC a détecté ta fatigue ?
-
-R : Analyse HRV + récup cardiaque.
-L'app a vu que ma récup ralentissait.
-Elle m'a dit : 'Repos 3 jours.'
-J'ai suivi. Aucune blessure depuis."
+[Retiré le 04/11/2026 : contenu bâti sur des bêta-testeurs fictifs.]
 ```
 
 **Story 4 :**
@@ -2192,7 +2185,7 @@ Texte :
 
 "MERCI AUX BETA-TESTEURS
 
-Sophie, Alex, Léa, et les 12 autres.
+Nos bêta-testeurs.
 
 Vous avez testé WAC pendant 3 mois.
 Critiqué sans filtre.
@@ -2271,7 +2264,7 @@ Mais avant, je voulais dire merci.
 ---
 
 **MERCI AUX BETA-TESTEURS**
-Sophie, Alex, Léa, et les 12 autres.
+Nos bêta-testeurs.
 Vous avez testé pendant 3 mois. Critiqué sans filtre. Permis de corriger 23 bugs.
 Sans vous, WAC n'existerait pas.
 

@@ -466,7 +466,7 @@ Alors pourquoi aucune app d'escalade n'en parle ?
 
 Les faits :
 
-📊 Phase folliculaire (J1-J14) : +15% de force maximale
+📊 [Statistique retirée le 04/11/2026 : non sourcée.]
 📊 [Statistique retirée le 04/11/2026 : non sourcée.]
 📊 Adapter son training selon son cycle = progression + saine
 

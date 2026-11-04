@@ -323,7 +323,7 @@ J'ai creusé.
 J'ai lu les travaux de Juliette Bergmann.
 
 Les faits sont là :
-- +15% de force en phase folliculaire
+- [Statistique retirée le 04/11/2026 : non sourcée.]
 - [Statistique retirée le 04/11/2026 : non sourcée.]
 
 50% des grimpeurs ont un cycle.
@@ -1262,7 +1262,7 @@ Texte overlay : "Cycle menstruel & escalade : ce que la science dit 🔬"
 Texte :
 
 "Phase folliculaire (J1-J14)
-+15% de force maximale
+[Statistique retirée le 04/11/2026 : non sourcée.]
 
 C'est LE moment de :
 ✅ Tester tes projets limites
@@ -1313,7 +1313,7 @@ Parce que la tech sportive est pensée par des hommes, pour des hommes.
 
 Les faits :
 
-📊 Phase folliculaire (J1-J14) : +15% de force maximale
+📊 [Statistique retirée le 04/11/2026 : non sourcée.]
 → C'est le moment de pousser, de tester tes projets limites
 
 📊 [Statistique retirée le 04/11/2026 : non sourcée.]

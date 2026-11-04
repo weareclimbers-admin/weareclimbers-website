@@ -18,7 +18,7 @@ export const faqItems: FAQItem[] = [
   {
     id: '3',
     question: "C'est quoi la différence avec Strava ou MyClimb ?",
-    answer: "Strava = logbook généraliste (course, vélo, etc.)\nMyClimb = tracking cotations et voies\n\nWAC = coach intelligent spécialisé escalade qui écoute ton corps pour t'empêcher de te blesser et t'aider à progresser durablement.\n\nOn ne mesure pas juste la performance. On protège ta santé, on analyse ton état de fatigue, on adapte tes recommandations à ton cycle menstruel (si applicable), on te dit quand te reposer avant que ton corps craque.\n\nC'est une approche complètement différente : performance responsable, pas performance à tout prix."
+    answer: "Strava = logbook généraliste (course, vélo, etc.)\nMyClimb = tracking cotations et voies\n\nWAC = une app d'analyse spécialisée escalade : ta charge, ta récupération et ton État de Forme, à partir des données de ton bracelet.\n\nOn ne mesure pas juste la performance. On suit ta charge, tes indicateurs de récupération et, si tu le souhaites, ton cycle menstruel, pour t'aider à comprendre ce que ton corps vit.\n\nC'est une approche complètement différente : performance responsable, pas performance à tout prix."
   },
   {
     id: '4',
@@ -43,6 +43,6 @@ export const faqItems: FAQItem[] = [
   {
     id: '8',
     question: "L'analyse des cycles menstruels, comment ça marche ?",
-    answer: "Tu renseignes (de manière optionnelle et privée) tes dates de cycle dans l'app. WAC analyse ensuite tes performances selon les phases de ton cycle (folliculaire, ovulatoire, lutéale).\n\nTu reçois des graphiques dédiés et des recommandations adaptées :\n- Quand pousser plus fort (pic de forme naturel)\n- Quand privilégier la technique ou la récup\n- Comment adapter ton entraînement pour progresser avec ton corps, pas contre lui\n\nC'est 100% optionnel. Si tu ne veux pas renseigner ces infos, l'app fonctionne normalement."
+    answer: "Tu renseignes (de manière optionnelle et privée) tes dates de cycle dans l'app. WAC met ensuite tes performances et tes indicateurs de récupération en regard des phases de ton cycle, dans des graphiques dédiés.\n\nC'est 100% optionnel. Si tu ne veux pas renseigner ces infos, l'app fonctionne normalement."
   }
 ]

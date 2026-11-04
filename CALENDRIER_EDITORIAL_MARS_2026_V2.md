@@ -669,7 +669,7 @@ Résultat ?
 WAC fait différemment :
 
 ✅ **Intégration cycle menstruel**
-→ +15% force phase folliculaire (profite-en)
+→ [Statistique retirée le 04/11/2026 : non sourcée.]
 → [Statistique retirée le 04/11/2026 : non sourcée.]
 
 ✅ **Pas de classement mixte toxique**

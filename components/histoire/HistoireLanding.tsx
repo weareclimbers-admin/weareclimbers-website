@@ -264,10 +264,10 @@ export default function HistoireLanding() {
                 <div className="relative text-center py-10 px-8 my-6 max-w-xl mx-auto" style={{ backgroundColor: 'var(--color-secondary-orange)', color: 'var(--color-primary-beige)' }}>
                   <span className="absolute top-0 right-0 w-4 h-4" style={{ backgroundColor: 'var(--color-primary-green)' }} />
                   <p className="text-2xl md:text-3xl font-bold mb-4" style={{ fontFamily: 'var(--font-syne)' }}>
-                    50 % des grimpeurs ont un cycle hormonal.
+                    Le cycle menstruel fait partie de l'équation.
                   </p>
                   <p className="text-2xl md:text-3xl font-bold" style={{ fontFamily: 'var(--font-syne)' }}>
-                    Et 0 % des apps en parlent.
+                    WAC te permet de le suivre, en option.
                   </p>
                 </div>
               </Reveal>

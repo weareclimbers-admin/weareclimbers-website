@@ -297,7 +297,7 @@ export default function HomeLanding() {
                     Ton État de Forme.
                   </h3>
                   <p className="text-base md:text-lg leading-relaxed" style={{ fontFamily: 'var(--font-roboto)', color: 'var(--color-primary-green)', lineHeight: '1.6' }}>
-                    Chaque matin, ton État de Forme te dit si ton corps est prêt à encaisser une grosse séance — calculé depuis ta récupération, ton sommeil et ta charge réelle.
+                    Chaque matin, ton État de Forme résume ce que ton corps a vécu — calculé depuis ta récupération, ton sommeil et ta charge réelle.
                   </p>
                 </div>
                 <div className="flex-shrink-0">
@@ -341,7 +341,7 @@ export default function HomeLanding() {
                     Analyse adaptée à chaque corps
                   </h3>
                   <p className="text-sm md:text-base max-w-3xl" style={{ fontFamily: 'var(--font-roboto)', lineHeight: '1.6', opacity: 0.88 }}>
-                    WAC s'adapte aux spécificités physiologiques de chaque grimpeur. Y compris aux variations hormonales liées au cycle menstruel — une première dans l'escalade.
+                    WAC analyse les données de chaque grimpeur. Et si tu le souhaites, tu peux y ajouter le suivi de ton cycle menstruel.
                   </p>
                 </div>
               </div>
@@ -454,7 +454,7 @@ export default function HomeLanding() {
                     { num: '±1', unit: 'BPM', label: 'donnée Polar' },
                     { num: '17', unit: 'g', label: 'avec bracelet, 5 g le module seul (données Polar)' },
                     { num: '0', unit: 'écran', label: 'zéro distraction' },
-                    { num: '100', unit: '%', label: 'sync automatique' },
+                    { num: '30', unit: 'm', label: 'étanche (WR30, selon Polar)' },
                   ].map((s, i) => (
                     <Reveal key={s.label} delay={i * 0.06}>
                       <div>

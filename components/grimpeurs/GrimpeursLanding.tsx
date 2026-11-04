@@ -260,7 +260,7 @@ export default function GrimpeursLanding() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
               <Reveal delay={0}>
-                <PersonaCard icon="/icons/icons8-cycle-menstruel-64.png" title="L'analyse hormonale — une première dans l'escalade">
+                <PersonaCard icon="/icons/icons8-cycle-menstruel-64.png" title="Le suivi de ton cycle, en option">
                   Si tu le souhaites, tu renseignes ton cycle menstruel dans l'app, de façon optionnelle et privée. WAC met alors tes séances et tes indicateurs de récupération en regard de ton cycle, dans des graphiques dédiés.
                 </PersonaCard>
               </Reveal>

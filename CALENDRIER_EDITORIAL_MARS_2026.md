@@ -165,7 +165,7 @@ Texte vert foncé (#265335) :
 
 "PHASE FOLLICULAIRE (J1-J14)
 
-✅ +15% de force maximale
+✅ [Statistique retirée le 04/11/2026 : non sourcée.]
 ✅ Meilleure récupération
 ✅ Tendons plus résistants
 
@@ -243,7 +243,7 @@ Parce que la tech sportive est pensée par des hommes, pour des hommes.
 LES FAITS :
 
 📊 Phase folliculaire (J1-J14) :
-→ +15% de force maximale
+→ [Statistique retirée le 04/11/2026 : non sourcée.]
 → Meilleure récupération
 → C'est le moment de pousser, tester tes projets limites
 
@@ -515,7 +515,7 @@ Texte :
 
 "Les faits :
 
-📊 +15% de force en phase folliculaire
+📊 [Statistique retirée le 04/11/2026 : non sourcée.]
 📊 [Statistique retirée le 04/11/2026 : non sourcée.]
 
 Ignorer le cycle = ignorer 50% des grimpeurs.
@@ -554,7 +554,7 @@ Pourquoi ?
 Parce que la tech sportive est pensée par des hommes, pour des hommes.
 
 Les faits :
-📊 +15% de force en phase folliculaire
+📊 [Statistique retirée le 04/11/2026 : non sourcée.]
 📊 [Statistique retirée le 04/11/2026 : non sourcée.]
 
 Ignorer le cycle = ignorer la réalité physiologique de 50% des grimpeurs.
