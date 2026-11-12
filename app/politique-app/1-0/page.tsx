@@ -23,7 +23,10 @@ export default function AppPrivacyPolicyV10Page() {
       <LegalDocumentRenderer
         doc={APP_PRIVACY_POLICY_V1_0}
         notice="Cette version s'applique jusqu'au 29 novembre 2026."
-        links={[{ href: '/politique-app', label: 'Nouvelle version (1.1), en vigueur à partir du 30 novembre 2026' }]}
+        links={[
+          { href: '/politique-app/1-1', label: 'Version suivante (1.1), applicable du 30 novembre au 14 décembre 2026' },
+          { href: '/politique-app', label: 'Version en vigueur à partir du 15 décembre 2026 (1.2)' },
+        ]}
       />
       <Footer />
     </>

@@ -1,52 +1,100 @@
 import type { LegalDocumentContent } from './types';
 
 /**
- * Politique de confidentialité de l'APPLICATION MOBILE, version 1.1, servie sur
+ * Politique de confidentialité de l'APPLICATION MOBILE, version 1.2, servie sur
  * /politique-app. Copie conforme de `src/constants/legal/privacyPolicy.js` du
  * repo mobile (source de vérité) : ne pas réécrire ici, recopier depuis l'app.
+ * Générée le 12/11/2026 depuis le mobile (commit 571eccec) : même contenu, sans la
+ * date formatée de l'app (lastUpdate), avec le sous-titre du site.
  *
  * Distincte du document unifié /privacy (lib/legal/privacyPolicy.ts), qui a sa
- * propre numérotation. La 1.1 ne change que le §4.6 (planning de renfo lu par le
- * coach) et le §15 ; la 1.0 reste en ligne sur /politique-app/1-0.
+ * propre numérotation. La 1.2 (version « performance » de l'app) change les §2.2,
+ * §2.4, §3.3, §4.2, §4.6, §7.2, §11.2, §13.2 et §15 ; la 1.1 reste en ligne sur
+ * /politique-app/1-1 et la 1.0 sur /politique-app/1-0.
  */
-export const APP_PRIVACY_POLICY_EFFECTIVE_DATE = '2026-11-30';
+export const APP_PRIVACY_POLICY_EFFECTIVE_DATE = '2026-12-15';
 
 export const APP_PRIVACY_POLICY: LegalDocumentContent = {
   title: "Politique de Confidentialité WeAreClimbers",
-  subtitle: 'Application mobile WeAreClimbers',
-  version: "1.1",
-  lastUpdated: "2026-10-26",
+  subtitle: "Application mobile WeAreClimbers",
+  lastUpdated: "2026-11-09",
+  version: "1.2",
   summary: {
     title: "Résumé de la Politique de Confidentialité",
     sections: [
       {
         title: "Collecte, Utilisation et Partage des Données",
         items: [
-          { question: "Vendons-nous vos données personnelles ?", answer: "Non, jamais." },
-          { question: "Vendons-nous des données agrégées ?", answer: "Non." },
-          { question: "Partageons-nous vos informations avec des tiers ?", answer: "Non, durant la phase beta. À l'avenir, uniquement avec votre consentement explicite pour des partenariats de recherche scientifique approuvés par comité d'éthique (données anonymisées)." },
-          { question: "Utilisons-nous vos données à des fins publicitaires ?", answer: "Non, WeAreClimbers ne diffuse aucune publicité." },
-          { question: "Utilisons-nous des données de santé sensibles ?", answer: "Oui, avec votre consentement explicite (données cardiaques Polar : fréquence cardiaque, HRV, zones d'effort)." },
-          { question: "Protections pour les mineurs ?", answer: "Oui, accès dès 15 ans (consentement parental obligatoire en dessous). Entre 15-18 ans : profil privé par défaut, restrictions messagerie." },
-          { question: "Suppression de vos données ?", answer: "Oui, suppression complète et irréversible sur demande, sauf obligations légales." },
+          {
+            question: "Vendons-nous vos données personnelles ?",
+            answer: "Non, jamais.",
+          },
+          {
+            question: "Vendons-nous des données agrégées ?",
+            answer: "Non.",
+          },
+          {
+            question: "Partageons-nous vos informations avec des tiers ?",
+            answer: "Non, durant la phase beta. À l'avenir, uniquement avec votre consentement explicite pour des partenariats de recherche scientifique approuvés par comité d'éthique (données anonymisées).",
+          },
+          {
+            question: "Utilisons-nous vos données à des fins publicitaires ?",
+            answer: "Non, WeAreClimbers ne diffuse aucune publicité.",
+          },
+          {
+            question: "Utilisons-nous des données de santé sensibles ?",
+            answer: "Oui, avec votre consentement explicite (données cardiaques Polar : fréquence cardiaque, HRV, zones d'effort).",
+          },
+          {
+            question: "Protections pour les mineurs ?",
+            answer: "Oui, accès dès 15 ans (consentement parental obligatoire en dessous). Entre 15-18 ans : profil privé par défaut, restrictions messagerie.",
+          },
+          {
+            question: "Suppression de vos données ?",
+            answer: "Oui, suppression complète et irréversible sur demande, sauf obligations légales.",
+          },
         ],
       },
       {
         title: "Paramètres de Confidentialité",
         items: [
-          { question: "Contrôlez-vous qui voit vos activités ?", answer: "Oui (public, abonnés uniquement, privé)." },
-          { question: "Contrôlez-vous votre géolocalisation ?", answer: "Oui, précision approximative + masquage zones sensibles." },
-          { question: "Profil public par défaut ?", answer: "Non, profil privé par défaut pour tous les nouveaux utilisateurs." },
-          { question: "Téléchargement et suppression de données ?", answer: "Oui, export complet + suppression en un clic." },
+          {
+            question: "Contrôlez-vous qui voit vos activités ?",
+            answer: "Oui (public, abonnés uniquement, privé).",
+          },
+          {
+            question: "Contrôlez-vous votre géolocalisation ?",
+            answer: "Oui, précision approximative + masquage zones sensibles.",
+          },
+          {
+            question: "Profil public par défaut ?",
+            answer: "Non, profil privé par défaut pour tous les nouveaux utilisateurs.",
+          },
+          {
+            question: "Téléchargement et suppression de données ?",
+            answer: "Oui, export complet + suppression en un clic.",
+          },
         ],
       },
       {
         title: "Suivi et Cookies",
         items: [
-          { question: "Suivons-nous votre localisation dans l'application ?", answer: "Oui, uniquement pendant vos sessions d'escalade, avec votre consentement." },
-          { question: "Suivons-nous votre localisation hors application ?", answer: "Non, jamais." },
-          { question: "Utilisons-nous des cookies non essentiels ?", answer: "Oui, uniquement pour analytics internes (Firebase), avec votre consentement." },
-          { question: "Suivons-nous votre navigation sur d'autres sites ?", answer: "Non." },
+          {
+            question: "Suivons-nous votre localisation dans l'application ?",
+            answer: "Oui, uniquement pendant vos sessions d'escalade, avec votre consentement.",
+          },
+          {
+            question: "Suivons-nous votre localisation hors application ?",
+            answer: "Non, jamais.",
+          },
+          {
+            question: "Utilisons-nous des cookies non essentiels ?",
+            answer: "Oui, uniquement pour analytics internes (Firebase), avec votre consentement.",
+          },
+          {
+            question: "Suivons-nous votre navigation sur d'autres sites ?",
+            answer: "Non.",
+          },
         ],
       },
     ],
@@ -122,6 +170,9 @@ Base légale : Exécution du contrat (fourniture du service) + Consentement pour
 • Badges et accomplissements : Progression dans le système de gamification
 • Photos et vidéos : Contenu que vous uploadez sur vos sessions
 • Publications sociales : Posts, commentaires, likes, mentions
+• Salle de la séance : identifiant de la salle dans notre liste, nom et ville de notre liste ou saisis par vous ; pour une salle trouvée via Google Maps, l'identifiant Google du lieu
+• Difficulté de la séance (facultatif) : votre bloc ou votre voie la plus dure et votre projet, dans l'échelle de votre salle ; les échelles de salle que vous définissez ou proposez
+• Questionnaire mensuel de forme (facultatif) : vos réponses à 15 questions sur votre vigueur et votre fatigue
 
 Pourquoi nous les collectons :
 • Suivre votre progression et calculer vos performances
@@ -177,6 +228,8 @@ Pourquoi nous les collectons :
 • Suggérer des salles et spots d'escalade à proximité
 • Vous permettre de découvrir où grimpent d'autres utilisateurs
 • Faciliter l'organisation de sorties collectives
+
+Recherche de la salle au démarrage d'une séance : votre position approximative est envoyée à Google Maps (Google Places) pour vous proposer la salle la plus proche. WeAreClimbers ne conserve ni vos coordonnées ni le contenu renvoyé par Google : seulement l'identifiant Google du lieu, et le nom de la salle issu de notre liste ou de votre saisie. Voir les Conditions d'utilisation de Google Maps (section 3.5 des CGU) et les Règles de confidentialité de Google (https://policies.google.com/privacy).
 
 Base légale : Consentement (permissions appareil).`,
         },
@@ -281,6 +334,25 @@ Lorsque la fonctionnalité de recherche sera activée (post-beta) :
 • Vos informations personnelles identifiables (nom, email, photos) systématiquement retirées
 • Possibilité de retirer votre consentement à tout moment
 
+Bilans de fatigue :
+• L'app calcule chaque semaine et chaque mois un bilan de fatigue (sommeil, ressenti, profil cardiaque, muscles) à partir des données que vous avez déjà enregistrées
+• Ces bilans sont conservés dans votre compte, visibles par vous et, si vous l'activez dans « Mon Coach », par votre coach ; vos réponses détaillées au questionnaire restent privées
+• Ils sont utilisés sous forme pseudonymisée, au sein de WeAreClimbers uniquement, pour étudier les liens entre charge d'entraînement, fatigue et performance et améliorer nos indicateurs
+• Base légale : intérêt légitime ; vous pouvez vous y opposer à tout moment (dpo@weareclimbers.fr)
+
+Nouvelle version de l'analyse du mouvement (en arrière-plan) :
+• Après une séance de bloc avec bracelet, une nouvelle version de notre algorithme analyse aussi les données de l'accéléromètre, sans rien changer à ce que vous voyez
+• Son résultat (essais, mouvements, prises, temps d'effort détectés) est enregistré à part dans votre compte, visible par vous seul, pour comparer les deux versions avant de changer celle qui s'affiche
+• Il est supprimé avec la séance ou avec votre compte
+• Base légale : intérêt légitime
+
+Envoi volontaire de l'accéléromètre brut (facultatif) :
+• Si vous l'activez (Confidentialité > « Améliorer l'analyse du mouvement »), l'app envoie à WeAreClimbers les données brutes de l'accéléromètre de vos séances d'escalade, en Wi-Fi ou en données mobiles
+• Elles servent uniquement à améliorer nos algorithmes, sont liées à votre compte, ne sont jamais montrées à votre coach ni partagées
+• Elles sont stockées dans l'Union européenne (Google Cloud Storage) et supprimées au bout de 90 jours, avec la séance, ou dès que vous supprimez votre compte
+• Désactivé par défaut et réservé aux utilisateurs majeurs
+• Base légale : consentement, retirable à tout moment ; au retrait, vous pouvez aussi faire supprimer les fichiers déjà envoyés
+
 Base légale : Intérêt légitime (amélioration service) + Consentement explicite séparé (recherche future).`,
         },
         {
@@ -348,6 +420,7 @@ Vous contrôlez TOUT : Chaque activité peut être publique, visible par vos abo
 • Polar Electro : SDK bracelets cardiaques - Aucune (SDK local uniquement) - N/A
 • Expo/EAS : Infrastructure application mobile - Logs techniques - UE/USA
 • Vercel Inc. : Hébergement de la webapp coach (https://app.weareclimbers.fr) - Données partagées avec votre coach si vous l'avez autorisé - région Paris (Europe)
+• Google Maps Platform (Google Places) : Recherche de la salle la plus proche - Position approximative au moment de la recherche, non conservée par WeAreClimbers - voir les Règles de confidentialité de Google
 
 Garanties : Tous nos prestataires sont soumis à des clauses contractuelles strictes de confidentialité et de protection des données conformes au RGPD. Ils ne peuvent utiliser vos données que pour nous fournir les services demandés.`,
         },
@@ -388,6 +461,7 @@ Lorsque la fonctionnalité sera activée (post-beta avec approbation IRB) :
 • Vous choisissez précisément les catégories de données partagées via les permissions de l'écran « Mon Coach »
 • Vous pouvez révoquer l'accès à tout moment ; la révocation coupe immédiatement l'accès du coach
 • Ces données restent les vôtres : le coach ne peut ni les revendre ni les réutiliser hors du cadre de votre entraînement
+• Ne sont jamais partagés avec votre coach : vos réponses détaillées au questionnaire du mois des bilans de fatigue, les résultats de la nouvelle version de l'analyse du mouvement et les données brutes de l'accéléromètre
 • Si vous partagez vos séances à venir avec votre coach, il voit aussi votre planning de renfo : les séances que vous programmez vous-même, à venir et déjà passées dans ce programme (date, nom, durée estimée, exercices, faite ou passée), et l'heure de votre rappel. Il ne peut pas le modifier`,
         },
       ],
@@ -548,6 +622,10 @@ Données anonymisées :
 • Profil et compte : Tant que compte actif - Supprimé sous 45j après suppression
 • Sessions d'escalade : Tant que compte actif - Supprimé sous 45j
 • Données Polar (HR/HRV) : Tant que compte actif - Supprimé sous 45j
+• Bilans de fatigue : 36 mois après la période, puis suppression automatique - Supprimé sous 45j
+• Résultats de la nouvelle version de l'analyse du mouvement : Tant que la séance existe - Supprimé avec la séance ou sous 45j
+• Données brutes de l'accéléromètre (envoi volontaire) : 90 jours maximum - Supprimé avec la séance, à votre demande au retrait du consentement, ou sous 45j
+• Échelles de salle proposées : Tant que compte actif - Supprimé sous 45j (les échelles publiées ne portent pas votre identifiant)
 • Photos/vidéos : Tant que compte actif - Supprimé sous 45j
 • Messages privés : Tant que compte actif - Supprimé sous 45j
 • Transactions/factures : 10 ans (obligation légale) - Conservé 10 ans
@@ -697,6 +775,7 @@ Transparence :
 • Données agrégées et anonymisées de tous les utilisateurs
 • Tests A/B sur nouvelles fonctionnalités (opt-out possible)
 • Feedback utilisateur sur la pertinence des recommandations
+• Comparaison de deux versions de l'analyse du mouvement sur vos séances et, si vous l'avez activé, données brutes de l'accéléromètre (section 3.3)
 
 Vos données personnelles identifiables ne sont JAMAIS utilisées pour entraîner des modèles IA externes (ex : OpenAI, Google) sans votre consentement explicite.`,
         },
@@ -749,7 +828,7 @@ Modération assistée : Les signalements de contenu peuvent être pré-triés pa
           content: `En cas de modification importante :
 • Email à tous les utilisateurs au moins 30 jours avant
 • Notification in-app
-• Archive des anciennes versions accessible
+• Archive des anciennes versions accessible (versions 1.1 et 1.0 : voir section 15)
 
 En cas de modification mineure :
 • Mise à jour de la date d'entrée en vigueur
@@ -792,7 +871,7 @@ Formulaire de plainte : https://www.cnil.fr/fr/plaintes`,
     {
       id: "15",
       title: "15. Versions Précédentes",
-      content: "La version précédente de cette politique (1.0) reste consultable dans l'application : Réglages, Politique de confidentialité, « Version précédente ».",
+      content: "La version précédente de cette politique (1.1) reste consultable dans l'application : Réglages, Politique de confidentialité, « Version précédente ». La version 1.0 reste consultable depuis la version 1.1, par son lien « Version précédente ».",
     },
   ],
   footer: "© 2025 WeAreClimbers. Tous droits réservés.",
