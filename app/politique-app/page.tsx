@@ -21,7 +21,10 @@ export default function AppPrivacyPolicyPage() {
       <LegalDocumentRenderer
         doc={APP_PRIVACY_POLICY}
         effectiveDate={APP_PRIVACY_POLICY_EFFECTIVE_DATE}
-        links={[{ href: '/politique-app/1-0', label: 'Version précédente (1.0)' }]}
+        links={[
+          { href: '/politique-app/1-1', label: 'Version précédente (1.1), applicable du 30 novembre au 14 décembre 2026' },
+          { href: '/politique-app/1-0', label: 'Version 1.0, applicable jusqu’au 29 novembre 2026' },
+        ]}
       />
       <Footer />
     </>
