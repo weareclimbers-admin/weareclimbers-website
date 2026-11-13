@@ -24,14 +24,14 @@ export type OnboardingVideo = {
 }
 
 export const ONBOARDING = {
-  /** Étape 1 — le mot de remerciement */
+  /**
+   * Étape 1 — message de bienvenue (texte, plus de vidéo depuis le 13/11/2026).
+   * L'étape est validée quand le visiteur a lu jusqu'en bas. La clé `merci`
+   * est conservée telle quelle : ceux qui avaient vu l'ancienne vidéo gardent
+   * leur avancement.
+   */
   merci: {
-    video: {
-      key: 'merci',
-      youtubeId: 't567GnJQj0Y',
-      title: "Un mot de l'équipe",
-      description: 'Deux minutes pour te dire merci — et te raconter la suite.',
-    } satisfies OnboardingVideo,
+    key: 'merci',
   },
 
   /** Étape 2 — présentation du bracelet (regardées dans l'ordre affiché) */
@@ -64,6 +64,6 @@ export const ONBOARDING = {
     playStoreUrl: 'https://play.google.com/store/apps/details?id=com.juliensalvadori.WeAreClimbersClean' as string | null,
   },
 
-  /** Contact support affiché en fin de parcours */
-  supportEmail: 'contact@weareclimbers.fr',
+  /** Contact support affiché à l'étape 1 (premium créateurs) et en fin de parcours */
+  supportEmail: 'support@weareclimbers.fr',
 } as const

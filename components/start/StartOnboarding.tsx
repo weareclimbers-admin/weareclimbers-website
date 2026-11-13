@@ -3,7 +3,7 @@
 import { AnimatePresence, motion } from 'motion/react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { ONBOARDING } from '@/lib/onboarding'
 import { TitleReveal } from '@/components/Reveal'
 import TopoLines from '@/components/TopoLines'
@@ -11,9 +11,10 @@ import YouTubeGate from './YouTubeGate'
 
 /**
  * Parcours de démarrage /start — façon e-learning en 3 étapes :
- * 1. Merci (vidéo de l'équipe) → 2. Le bracelet (vidéos) → 3. L'app (stores).
- * Chaque étape se débloque quand ses vidéos ont été vues ; la progression est
- * mémorisée en localStorage pour que la page serve aussi de guide à revisiter.
+ * 1. Merci (message de bienvenue + 2 infos clés) → 2. Le bracelet (vidéos) → 3. L'app (stores).
+ * L'étape 1 se valide quand on a lu jusqu'en bas, l'étape 2 quand ses vidéos
+ * ont été vues ; la progression est mémorisée en localStorage pour que la page
+ * serve aussi de guide à revisiter.
  */
 
 const STORAGE_KEY = 'wac-start-progress-v1'
@@ -69,7 +70,7 @@ export default function StartOnboarding() {
   const markWatched = (key: string) =>
     setWatched((prev) => (prev.includes(key) ? prev : [...prev, key]))
 
-  const merciDone = watched.includes(ONBOARDING.merci.video.key)
+  const merciDone = watched.includes(ONBOARDING.merci.key)
   const braceletDone = ONBOARDING.bracelet.videos.every((v) => watched.includes(v.key))
 
   /** Une étape est accessible si toutes les précédentes sont complétées. */
@@ -171,28 +172,57 @@ export default function StartOnboarding() {
             exit={{ opacity: 0, y: -16 }}
             transition={SPRING}
           >
-            {/* ── Étape 1 : Merci ── */}
+            {/* ── Étape 1 : Merci (message de bienvenue, validé à la lecture) ── */}
             {step === 0 && (
               <section>
                 <p className="text-sm font-bold uppercase tracking-[0.15em] text-[var(--color-secondary-orange)] md:text-base" style={{ fontFamily: 'var(--font-syne)' }}>
                   Ton bracelet est là
                 </p>
                 <TitleReveal
-                  lines={['Merci d’être', 'de la première cordée.']}
+                  lines={['Merci pour', 'ta commande.']}
                   className="mt-3 text-3xl md:text-5xl"
                 />
                 <p className="mt-4 max-w-xl text-lg opacity-80">
-                  Tu tiens entre les mains le résultat d’une aventure que tu as rendue possible.
-                  Avant d’enfiler ton bracelet, prends deux minutes : on t’explique tout, étape par étape.
+                  Nous espérons que grâce à ton bracelet et à l’app We Are Climbers, tu comprendras
+                  mieux ton corps, et tu grimperas mieux, plus longtemps.
                 </p>
 
-                <div className="mt-8">
-                  <YouTubeGate
-                    video={ONBOARDING.merci.video}
-                    watched={merciDone}
-                    onWatched={() => markWatched(ONBOARDING.merci.video.key)}
-                  />
+                <p className="metric-label mt-10 text-[var(--color-secondary-orange)]">
+                  Avant de commencer, 2 choses importantes
+                </p>
+                <div className="mt-4 space-y-4">
+                  <ImportantNote index={1} title="Charge ton bracelet avant tout">
+                    <p>
+                      Tu vas voir 3 vidéos d’aide à l’installation du bracelet. Première étape
+                      importante : branche ton bracelet et laisse-le charger{' '}
+                      <strong>au moins 30 minutes</strong> avant de le configurer.
+                    </p>
+                    <p className="mt-2">
+                      Certains bracelets arrivent avec la batterie vide : ne t’inquiète pas si aucune
+                      LED ne s’allume pendant les 5 à 10 premières minutes, ça arrive.
+                    </p>
+                  </ImportantNote>
+
+                  <ImportantNote index={2} title="Tu as commandé via un de nos créateurs ?">
+                    <p>
+                      Pour bénéficier de tes 3 mois de premium offerts dans WAC, crée ton compte sur
+                      l’app <strong>avec le même mail que celui utilisé pour ta commande</strong>.
+                    </p>
+                    <p className="mt-2">
+                      Un souci ? Écris-nous à{' '}
+                      <a
+                        href={`mailto:${ONBOARDING.supportEmail}`}
+                        className="font-bold underline underline-offset-4"
+                      >
+                        {ONBOARDING.supportEmail}
+                      </a>
+                      .
+                    </p>
+                  </ImportantNote>
                 </div>
+
+                {/* Repère de fin de lecture : visible à l'écran → l'étape est validée */}
+                <ReadSentinel onRead={() => markWatched(ONBOARDING.merci.key)} />
               </section>
             )}
 
@@ -317,7 +347,7 @@ export default function StartOnboarding() {
                 ) : (
                   <motion.p key="locked" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-sm opacity-60">
                     {step === 0
-                      ? 'Regarde la vidéo pour continuer'
+                      ? 'Lis jusqu’en bas pour continuer'
                       : 'Regarde les vidéos pour continuer'}
                   </motion.p>
                 )}
@@ -333,6 +363,63 @@ export default function StartOnboarding() {
       </div>
     </div>
   )
+}
+
+/** Encadré « à savoir » de l'étape 1 — numéro orange façon checklist. */
+function ImportantNote({ index, title, children }: { index: number; title: string; children: ReactNode }) {
+  return (
+    <div
+      className="flex gap-4 border-2 border-[rgba(38,83,53,0.15)] p-5 md:p-6"
+      style={{ borderRadius: 20 }}
+    >
+      <span
+        className="flex h-8 w-8 shrink-0 items-center justify-center bg-[var(--color-secondary-orange)] text-sm font-bold text-[var(--color-primary-beige)]"
+        style={{ fontFamily: 'var(--font-syne)' }}
+        aria-hidden
+      >
+        {index}
+      </span>
+      <div>
+        <h2 className="text-lg">{title}</h2>
+        <div className="mt-2 opacity-85">{children}</div>
+      </div>
+    </div>
+  )
+}
+
+/**
+ * Repère invisible placé en fin de lecture : dès qu'il entre à l'écran,
+ * on considère le texte lu (une seule fois). Sans IntersectionObserver
+ * (très vieux navigateurs), on valide directement pour ne bloquer personne.
+ */
+function ReadSentinel({ onRead }: { onRead: () => void }) {
+  const ref = useRef<HTMLDivElement>(null)
+  const onReadRef = useRef(onRead)
+  useEffect(() => {
+    onReadRef.current = onRead
+  }, [onRead])
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    if (typeof IntersectionObserver === 'undefined') {
+      onReadRef.current()
+      return
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          onReadRef.current()
+          observer.disconnect()
+        }
+      },
+      { threshold: 1 },
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+
+  return <div ref={ref} className="h-px" aria-hidden />
 }
 
 /** Bouton store — passe en « Bientôt disponible » tant que le lien est null. */
